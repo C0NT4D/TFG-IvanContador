@@ -1,1 +1,35 @@
-<p>listado works!</p>
+<div class="container py-4">
+  <h1 class="mb-4">Catálogo de Libros</h1>
+  
+  <!-- Filtro por género -->
+  <div class="mb-4">
+    <select class="form-select" (change)="filtrarPorGenero($event)">
+      <option value="">Todos los géneros</option>
+      @for (genero of generos; track genero) {
+        <option [value]="genero">{{ genero }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Grid de libros -->
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    @for (libro of libros; track libro.id) {
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ libro.titulo }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ libro.autor }}</h6>
+            <p class="card-text">{{ libro.sinopsis }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-primary">{{ libro.genero }}</span>
+              <span class="text-muted">{{ libro.anioPublicacion }}</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a [routerLink]="['/libro', libro.id]" class="btn btn-primary w-100">Ver detalles</a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
