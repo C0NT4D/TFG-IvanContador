@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { ListadoComponent } from './components/libro/listado/listado.component';
-import { DetalleComponent } from './components/libro/detalle/detalle.component';
-import { LoginComponent } from './components/usuario/login/login.component';
-import { RegistroComponent } from './components/usuario/registro/registro.component';
-import { PerfilComponent } from './components/usuario/perfil/perfil.component';
+import { ListadoComponent } from './views/libro/listado/listado.component';
+import { DetalleComponent } from './views/libro/detalle/detalle.component';
+import { LoginComponent } from './views/usuario/login/login.component';
+import { RegistroComponent } from './views/usuario/registro/registro.component';
+import { PerfilComponent } from './views/usuario/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'libros', pathMatch: 'full' },
