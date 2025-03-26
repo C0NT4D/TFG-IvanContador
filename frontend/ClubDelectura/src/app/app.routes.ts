@@ -1,22 +1,24 @@
 import { Routes } from '@angular/router';
-import { ListadoComponent } from './views/libro/listado/listado.component';
-import { DetalleComponent } from './views/libro/detalle/detalle.component';
+import { ListadoComponent as LibroListadoComponent } from './views/libro/listado/listado.component';
+import { DetalleComponent as LibroDetalleComponent } from './views/libro/detalle/detalle.component';
+import { ListadoComponent as ForoListadoComponent } from './views/foro/listado/listado.component';
+import { DetalleComponent as ForoDetalleComponent } from './views/foro/detalle/detalle.component';
 import { LoginComponent } from './views/usuario/login/login.component';
 import { RegistroComponent } from './views/usuario/registro/registro.component';
 import { PerfilComponent } from './views/usuario/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'libros', pathMatch: 'full' },
-  { path: 'libros', component: ListadoComponent },
-  { path: 'libros/:id', component: DetalleComponent },
-  { path: 'foros', component: ListadoComponent },
-  { path: 'foros/:id', component: DetalleComponent },
-  { path: 'eventos', component: ListadoComponent },
-  { path: 'eventos/:id', component: DetalleComponent },
-  { path: 'lecturas', component: ListadoComponent },
-  { path: 'lecturas/:id', component: DetalleComponent },
-  { path: 'recomendaciones', component: ListadoComponent },
-  { path: 'recomendaciones/:id', component: DetalleComponent },
+  { path: 'libros', component: LibroListadoComponent },
+  { path: 'libros/:id', component: LibroDetalleComponent },
+  { path: 'foros', component: ForoListadoComponent },
+  { path: 'foros/:id', component: ForoDetalleComponent },
+  { path: 'eventos', component: LibroListadoComponent },
+  { path: 'eventos/:id', component: LibroDetalleComponent },
+  { path: 'lecturas', component: LibroListadoComponent },
+  { path: 'lecturas/:id', component: LibroDetalleComponent },
+  { path: 'recomendaciones', component: LibroListadoComponent },
+  { path: 'recomendaciones/:id', component: LibroDetalleComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: PerfilComponent }

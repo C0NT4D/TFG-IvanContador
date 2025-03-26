@@ -1,1 +1,47 @@
-<p>detalle works!</p>
+<div class="forum-detail-container">
+  @if (loading) {
+    <app-loading></app-loading>
+  }
+  @if (error) {
+    <app-error [message]="error"></app-error>
+  }
+
+  @if (!loading && !error && foro) {
+    <div class="forum-content">
+      <div class="forum-header">
+        <h1>{{ foro.titulo }}</h1>
+        <div class="forum-meta">
+          <span>Creado por: {{ foro.admin.nombre }}</span>
+          <span>{{ foro.fechaCreacion | date:'medium' }}</span>
+        </div>
+      </div>
+
+      <p class="forum-description">{{ foro.descripcion }}</p>
+
+      <div class="messages-container">
+        <div class="messages-list">
+          @for (mensaje of mensajes; track mensaje) {
+            <app-forum-message
+              [message]="mensaje"
+              [isCurrentUser]="mensaje.usuario.id === currentUserId">
+            </app-forum-message>
+          }
+        </div>
+
+        <div class="message-input">
+          <textarea
+            [(ngModel)]="nuevoMensaje"
+            placeholder="Escribe tu mensaje..."
+            rows="3">
+          </textarea>
+          <button
+            class="btn btn-primary"
+            (click)="enviarMensaje()"
+            [disabled]="!nuevoMensaje.trim()">
+            Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,1 +1,29 @@
-<p>listado works!</p>
+<div class="forum-list-container">
+  <div class="forum-header">
+    <h1>Foros de Discusión</h1>
+    <button class="btn btn-primary" routerLink="/foros/nuevo">
+      <i class="fas fa-plus"></i> Nuevo Foro
+    </button>
+  </div>
+
+  @if (loading) {
+    <app-loading></app-loading>
+  }
+  @if (error) {
+    <app-error [message]="error"></app-error>
+  }
+
+  @if (!loading && !error) {
+    <div class="forum-grid">
+      @for (foro of foros; track foro) {
+        <app-forum-card [forum]="foro"></app-forum-card>
+      }
+    </div>
+  }
+
+  @if (!loading && !error && foros.length === 0) {
+    <div class="no-forums">
+      <p>No hay foros disponibles en este momento.</p>
+    </div>
+  }
+</div>
