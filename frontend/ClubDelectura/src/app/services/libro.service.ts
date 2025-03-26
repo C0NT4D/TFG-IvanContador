@@ -59,8 +59,7 @@ export class LibroService {
 
   // Get unique genres
   getGenres(): Observable<string[]> {
-    const genres = [...new Set(this.books.map(book => book.genero))];
-    return of(genres);
+    return of([...new Set(this.books.map(book => book.genero))]);
   }
 
   // Create a new book

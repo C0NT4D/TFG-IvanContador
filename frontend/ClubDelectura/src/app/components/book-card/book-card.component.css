@@ -1,0 +1,42 @@
+.card {
+  transition: transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-subtitle {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.card-text {
+  font-size: 0.875rem;
+  color: #495057;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5em 0.75em;
+}
+
+.card-footer {
+  background-color: transparent;
+  border-top: 1px solid rgba(0,0,0,0.125);
+  padding: 0.75rem;
+}
+
+.btn-primary {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+} 

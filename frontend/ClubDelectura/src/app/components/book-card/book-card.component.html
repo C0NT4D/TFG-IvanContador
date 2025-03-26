@@ -1,0 +1,14 @@
+<div class="card h-100">
+  <div class="card-body">
+    <h5 class="card-title">{{ libro.titulo }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ libro.autor }}</h6>
+    <p class="card-text">{{ libro.sinopsis }}</p>
+    <div class="d-flex justify-content-between align-items-center">
+      <span class="badge bg-primary">{{ libro.genero }}</span>
+      <span class="text-muted">{{ libro.anioPublicacion }}</span>
+    </div>
+  </div>
+  <div class="card-footer">
+    <a [routerLink]="['/libros', libro.id]" class="btn btn-primary w-100">Ver detalles</a>
+  </div>
+</div> 
