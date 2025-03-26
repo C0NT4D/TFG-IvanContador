@@ -1,0 +1,12 @@
+<div class="message-container" [ngClass]="{'message-current-user': isCurrentUser}">
+  <div class="message-header">
+    <span class="message-author">{{ message.usuario.nombre }}</span>
+    <span class="message-date">{{ message.fechaEnvio | date:'medium' }}</span>
+  </div>
+  <div class="message-content">
+    <p>{{ message.contenido }}</p>
+  </div>
+  <div class="message-footer">
+    <span class="message-time">{{ message.fechaEnvio | date:'shortTime' }}</span>
+  </div>
+</div> 

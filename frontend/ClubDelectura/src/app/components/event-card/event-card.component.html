@@ -1,0 +1,18 @@
+<div class="event-card">
+  <div class="event-header">
+    <h3>{{ event.titulo }}</h3>
+    <span class="event-date">{{ event.fecha | date:'medium' }}</span>
+  </div>
+  <div class="event-location">
+    <i class="fas fa-map-marker-alt"></i>
+    <span>{{ event.ubicacion }}</span>
+  </div>
+  <p class="event-description">{{ event.descripcion }}</p>
+  <div class="event-footer">
+    <div class="event-participants">
+      <i class="fas fa-users"></i>
+      <span>{{ event.inscripcions.length || 0 }} participantes</span>
+    </div>
+    <a *ngIf="showDetails" [routerLink]="['/eventos', event.id]" class="btn btn-primary">Ver detalles</a>
+  </div>
+</div> 

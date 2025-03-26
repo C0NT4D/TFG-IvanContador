@@ -1,0 +1,50 @@
+.message-container {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 80%;
+}
+
+.message-current-user {
+  margin-left: auto;
+  background-color: #e3f2fd;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.message-author {
+  font-weight: 600;
+  color: #333;
+}
+
+.message-date {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.message-content {
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.message-content p {
+  margin: 0;
+}
+
+.message-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.message-time {
+  color: #888;
+  font-size: 0.75rem;
+} 

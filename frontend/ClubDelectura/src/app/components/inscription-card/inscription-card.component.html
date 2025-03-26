@@ -1,0 +1,19 @@
+<div class="inscription-card">
+  <div class="inscription-header">
+    <h3>{{ inscription.evento.titulo }}</h3>
+  </div>
+  <div class="inscription-details">
+    <div class="inscription-date">
+      <i class="fas fa-calendar"></i>
+      <span>{{ inscription.evento.fecha | date:'medium' }}</span>
+    </div>
+    <div class="inscription-user">
+      <i class="fas fa-user"></i>
+      <span>{{ inscription.usuario.nombre }}</span>
+    </div>
+  </div>
+  <div class="inscription-footer">
+    <span class="inscription-time">{{ inscription.fechaInscripcion | date:'medium' }}</span>
+    <a *ngIf="showDetails" [routerLink]="['/eventos', inscription.evento.id]" class="btn btn-primary">Ver evento</a>
+  </div>
+</div> 
