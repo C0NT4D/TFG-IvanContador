@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Libro, Lectura, Recomendacion, Usuario } from '../models/libro.model';
+import { Libro, Lectura, Recomendacion } from '../models/libro.model';
+import { Usuario } from '../models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LibroService {
-  private libros: Libro[] = [
+  private books: Libro[] = [
     {
       id: 1,
       titulo: 'El Quijote',
@@ -41,36 +42,86 @@ export class LibroService {
 
   constructor() { }
 
-  // Obtener todos los libros
-  getLibros(): Observable<Libro[]> {
-    return of(this.libros);
+  // Get all books
+  getBooks(): Observable<Libro[]> {
+    return of(this.books);
   }
 
-  // Obtener un libro por ID
-  getLibro(id: number): Observable<Libro | undefined> {
-    return of(this.libros.find(libro => libro.id === id));
+  // Get a book by ID
+  getBook(id: number): Observable<Libro | undefined> {
+    return of(this.books.find(book => book.id === id));
   }
 
-  // Obtener libros por género
-  getLibrosPorGenero(genero: string): Observable<Libro[]> {
-    return of(this.libros.filter(libro => libro.genero === genero));
+  // Get books by genre
+  getBooksByGenre(genre: string): Observable<Libro[]> {
+    return of(this.books.filter(book => book.genero === genre));
   }
 
-  // Obtener géneros únicos
-  getGeneros(): Observable<string[]> {
-    const generos = [...new Set(this.libros.map(libro => libro.genero))];
-    return of(generos);
+  // Get unique genres
+  getGenres(): Observable<string[]> {
+    const genres = [...new Set(this.books.map(book => book.genero))];
+    return of(genres);
   }
 
-  // Métodos para lecturas
-  getLecturas(libroId: number): Observable<Lectura[]> {
-    const libro = this.libros.find(l => l.id === libroId);
-    return of(libro ? libro.lecturas : []);
+  // Create a new book
+  createBook(book: Omit<Libro, 'id'>): Observable<Libro> {
+    const newBook = {
+      ...book,
+      id: this.books.length + 1
+    };
+    this.books.push(newBook);
+    return of(newBook);
   }
 
-  // Métodos para recomendaciones
-  getRecomendaciones(libroId: number): Observable<Recomendacion[]> {
-    const libro = this.libros.find(l => l.id === libroId);
-    return of(libro ? libro.recomendacions : []);
+  // Update an existing book
+  updateBook(id: number, book: Partial<Libro>): Observable<Libro | undefined> {
+    const index = this.books.findIndex(b => b.id === id);
+    if (index !== -1) {
+      this.books[index] = { ...this.books[index], ...book };
+      return of(this.books[index]);
+    }
+    return of(undefined);
+  }
+
+  // Delete a book
+  deleteBook(id: number): Observable<boolean> {
+    const index = this.books.findIndex(b => b.id === id);
+    if (index !== -1) {
+      this.books.splice(index, 1);
+      return of(true);
+    }
+    return of(false);
+  }
+
+  // Methods for readings
+  getReadings(bookId: number): Observable<Lectura[]> {
+    const book = this.books.find(b => b.id === bookId);
+    return of(book ? book.lecturas : []);
+  }
+
+  // Add a reading to a book
+  addReading(bookId: number, reading: Lectura): Observable<Lectura> {
+    const book = this.books.find(b => b.id === bookId);
+    if (book) {
+      book.lecturas.push(reading);
+      return of(reading);
+    }
+    throw new Error('Book not found');
+  }
+
+  // Methods for recommendations
+  getRecommendations(bookId: number): Observable<Recomendacion[]> {
+    const book = this.books.find(b => b.id === bookId);
+    return of(book ? book.recomendacions : []);
+  }
+
+  // Add a recommendation to a book
+  addRecommendation(bookId: number, recommendation: Recomendacion): Observable<Recomendacion> {
+    const book = this.books.find(b => b.id === bookId);
+    if (book) {
+      book.recomendacions.push(recommendation);
+      return of(recommendation);
+    }
+    throw new Error('Book not found');
   }
 } 

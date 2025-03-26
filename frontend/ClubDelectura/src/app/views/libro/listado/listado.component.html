@@ -3,7 +3,7 @@
   
   <!-- Filtro por género -->
   <div class="mb-4">
-    <select class="form-select" (change)="filtrarPorGenero($event)">
+    <select class="form-select" (change)="filterByGenre($event)">
       <option value="">Todos los géneros</option>
       @for (genero of generos; track genero) {
         <option [value]="genero">{{ genero }}</option>
@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="card-footer">
-            <a [routerLink]="['/libro', libro.id]" class="btn btn-primary w-100">Ver detalles</a>
+            <a [routerLink]="['/libros', libro.id]" class="btn btn-primary w-100">Ver detalles</a>
           </div>
         </div>
       </div>

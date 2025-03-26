@@ -18,33 +18,33 @@ export class ListadoComponent implements OnInit {
   constructor(private libroService: LibroService) {}
 
   ngOnInit(): void {
-    this.cargarLibros();
-    this.cargarGeneros();
+    this.loadBooks();
+    this.loadGenres();
   }
 
-  cargarLibros(): void {
-    this.libroService.getLibros().subscribe(libros => {
+  loadBooks(): void {
+    this.libroService.getBooks().subscribe((libros: Libro[]) => {
       this.libros = libros;
     });
   }
 
-  cargarGeneros(): void {
-    this.libroService.getGeneros().subscribe(generos => {
+  loadGenres(): void {
+    this.libroService.getGenres().subscribe((generos: string[]) => {
       this.generos = generos;
     });
   }
 
-  filtrarPorGenero(event: Event): void {
+  filterByGenre(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const genero = select.value;
     this.generoSeleccionado = genero;
     
     if (genero) {
-      this.libroService.getLibrosPorGenero(genero).subscribe(libros => {
+      this.libroService.getBooksByGenre(genero).subscribe((libros: Libro[]) => {
         this.libros = libros;
       });
     } else {
-      this.cargarLibros();
+      this.loadBooks();
     }
   }
 }

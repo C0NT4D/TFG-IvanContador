@@ -1,1 +1,85 @@
-<p>detalle works!</p>
+<div class="book-detail-container">
+  @if (loading) {
+    <div class="loading">
+      Cargando detalles del libro...
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">
+      {{ error }}
+    </div>
+  }
+
+  @if (book && !loading) {
+    <div class="book-detail">
+      <div class="book-header">
+        <h1>{{ book.titulo }}</h1>
+        <h2>por {{ book.autor }}</h2>
+      </div>
+
+      <div class="book-info">
+        <div class="info-item">
+          <span class="label">Género:</span>
+          <span class="value">{{ book.genero }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Año de publicación:</span>
+          <span class="value">{{ book.anioPublicacion }}</span>
+        </div>
+      </div>
+
+      <div class="book-synopsis">
+        <h3>Sinopsis</h3>
+        <p>{{ book.sinopsis }}</p>
+      </div>
+
+      <div class="book-actions">
+        <button (click)="addReading()" class="btn btn-primary">
+          Empezar a leer
+        </button>
+        <button (click)="addRecommendation()" class="btn btn-secondary">
+          Añadir recomendación
+        </button>
+      </div>
+
+      <div class="book-readings">
+        <h3>Lecturas actuales</h3>
+        @if (book.lecturas.length > 0) {
+          <ul class="readings-list">
+            @for (reading of book.lecturas; track reading.id) {
+              <li>
+                <span class="user">{{ reading.usuario.nombre }}</span>
+                <span class="date">Iniciado: {{ reading.fechaInicio | date }}</span>
+                <span class="status" [ngClass]="reading.estadoLectura.toLowerCase()">
+                  {{ reading.estadoLectura }}
+                </span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>Nadie está leyendo este libro actualmente.</p>
+        }
+      </div>
+
+      <div class="book-recommendations">
+        <h3>Recomendaciones</h3>
+        @if (book.recomendacions.length > 0) {
+          <ul class="recommendations-list">
+            @for (rec of book.recomendacions; track rec.id) {
+              <li>
+                <div class="recommendation-header">
+                  <span class="user">{{ rec.usuario.nombre }}</span>
+                  <span class="date">{{ rec.fecha | date }}</span>
+                </div>
+                <p class="comment">{{ rec.comentario }}</p>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p>No hay recomendaciones todavía.</p>
+        }
+      </div>
+    </div>
+  }
+</div>

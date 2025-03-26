@@ -1,3 +1,5 @@
+import { Usuario } from './usuario.model';
+
 export interface Libro {
   id: number;
   titulo: string;
@@ -11,26 +13,17 @@ export interface Libro {
 
 export interface Lectura {
   id: number;
-  libro: Libro;
   usuario: Usuario;
+  libro: Libro;
+  estadoLectura: string;
   fechaInicio: Date;
   fechaFin: Date;
-  estado: string;
-  valoracion: number;
-  comentario: string;
 }
 
 export interface Recomendacion {
   id: number;
-  libro: Libro;
   usuario: Usuario;
-  fecha: Date;
+  libro: Libro;
   comentario: string;
-}
-
-export interface Usuario {
-  id: number;
-  nombre: string;
-  email: string;
-  // Otros campos del usuario que necesitemos
+  fecha: Date;
 } 
