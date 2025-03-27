@@ -3,18 +3,20 @@ import { ListadoComponent as LibroListadoComponent } from './views/libro/listado
 import { DetalleComponent as LibroDetalleComponent } from './views/libro/detalle/detalle.component';
 import { ListadoComponent as ForoListadoComponent } from './views/foro/listado/listado.component';
 import { DetalleComponent as ForoDetalleComponent } from './views/foro/detalle/detalle.component';
+import { ListadoComponent as EventoListadoComponent } from './views/evento/listado/listado.component';
+import { DetalleComponent as EventoDetalleComponent } from './views/evento/detalle/detalle.component';
 import { LoginComponent } from './views/usuario/login/login.component';
 import { RegistroComponent } from './views/usuario/registro/registro.component';
 import { PerfilComponent } from './views/usuario/perfil/perfil.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'libros', pathMatch: 'full' },
+  { path: '', redirectTo: '/libros', pathMatch: 'full' },
   { path: 'libros', component: LibroListadoComponent },
   { path: 'libros/:id', component: LibroDetalleComponent },
   { path: 'foros', component: ForoListadoComponent },
   { path: 'foros/:id', component: ForoDetalleComponent },
-  { path: 'eventos', component: LibroListadoComponent },
-  { path: 'eventos/:id', component: LibroDetalleComponent },
+  { path: 'eventos', component: EventoListadoComponent },
+  { path: 'eventos/:id', component: EventoDetalleComponent },
   { path: 'lecturas', component: LibroListadoComponent },
   { path: 'lecturas/:id', component: LibroDetalleComponent },
   { path: 'recomendaciones', component: LibroListadoComponent },

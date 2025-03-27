@@ -1,1 +1,28 @@
-<p>listado works!</p>
+<div class="evento-list-container">
+  <div class="evento-header">
+    <h1>Eventos</h1>
+    <button class="btn btn-primary" routerLink="/eventos/nuevo">
+      Crear Evento
+    </button>
+  </div>
+
+  @if (loading) {
+    <app-loading></app-loading>
+  }
+  @if (error) {
+    <app-error [message]="error"></app-error>
+  }
+
+  @if (!loading && !error) {
+    <div class="evento-grid">
+      @for (evento of eventos; track evento) {
+        <app-event-card [event]="evento" [showDetails]="true"></app-event-card>
+      }
+      @if (eventos.length === 0) {
+        <div class="no-eventos">
+          <p>No hay eventos disponibles</p>
+        </div>
+      }
+    </div>
+  }
+</div>

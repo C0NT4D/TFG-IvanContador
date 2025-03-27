@@ -14,6 +14,7 @@ interface Evento {
   fecha: string; 
   ubicacion: string;
   organizador: Organizador | null;
+  inscripcions: any[];
 }
 
 @Injectable({
@@ -31,7 +32,8 @@ export class EventoService {
         id: 1,
         nombre: 'Admin',
         email: 'admin@example.com'
-      }
+      },
+      inscripcions: []
     },
     {
       id: 2,
@@ -43,7 +45,8 @@ export class EventoService {
         id: 1,
         nombre: 'Admin',
         email: 'admin@example.com'
-      }
+      },
+      inscripcions: []
     }
   ];
 

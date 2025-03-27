@@ -1,1 +1,53 @@
-<p>detalle works!</p>
+<div class="evento-detail-container">
+    @if (loading) {
+      <app-loading></app-loading>
+    }
+    @if (error) {
+      <app-error [message]="error"></app-error>
+    }
+  
+    @if (!loading && !error && evento) {
+      <div class="evento-content">
+        <div class="evento-header">
+          <h1>{{ evento.titulo }}</h1>
+          <div class="evento-meta">
+            <span>Organizado por: {{ evento.organizador.nombre }}</span>
+            <span>{{ evento.fecha | date:'medium' }}</span>
+          </div>
+        </div>
+  
+        <div class="evento-location">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>{{ evento.ubicacion }}</span>
+        </div>
+  
+        <p class="evento-description">{{ evento.descripcion }}</p>
+  
+        <div class="evento-actions">
+          @if (!isInscrito()) {
+            <button class="btn btn-primary" (click)="inscribirse()">
+              Inscribirse
+            </button>
+          } @else {
+            <button class="btn btn-danger" (click)="cancelarInscripcion()">
+              Cancelar Inscripción
+            </button>
+          }
+        </div>
+  
+        <div class="inscripciones-section">
+          <h2>Inscripciones ({{ inscripciones.length }})</h2>
+          <div class="inscripciones-list">
+            @for (inscripcion of inscripciones; track inscripcion.id) {
+              <div class="inscripcion-item">
+                <div class="inscripcion-info">
+                  <span class="usuario">{{ inscripcion.usuario.nombre }}</span>
+                  <span class="fecha">{{ inscripcion.fechaInscripcion | date:'medium' }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
