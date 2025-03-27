@@ -1,7 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Evento } from '../models/evento.model';
-import { UsuarioService } from './usuario.service';
+
+interface Organizador {
+  id: number;
+  nombre: string;
+  email: string;
+}
+
+interface Evento {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  fecha: string; 
+  ubicacion: string;
+  organizador: Organizador | null;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -12,49 +25,29 @@ export class EventoService {
       id: 1,
       titulo: 'Club de Lectura Mensual',
       descripcion: 'Reunión mensual para discutir el libro seleccionado',
-      fecha: new Date('2024-04-01'),
+      fecha: '2024-04-01 19:00:00',
       ubicacion: 'Biblioteca Municipal',
       organizador: {
         id: 1,
         nombre: 'Admin',
-        email: 'admin@example.com',
-        contrasena: 'admin123',
-        rol: 'ROLE_ADMIN',
-        fechaRegistro: new Date(),
-        lecturas: [],
-        foros: [],
-        mensajes: [],
-        eventos: [],
-        inscripcions: [],
-        recomendacions: []
-      },
-      inscripcions: []
+        email: 'admin@example.com'
+      }
     },
     {
       id: 2,
       titulo: 'Taller de Escritura Creativa',
       descripcion: 'Taller para desarrollar técnicas de escritura creativa',
-      fecha: new Date('2024-04-15'),
+      fecha: '2024-04-15 18:30:00', 
       ubicacion: 'Centro Cultural',
       organizador: {
         id: 1,
         nombre: 'Admin',
-        email: 'admin@example.com',
-        contrasena: 'admin123',
-        rol: 'ROLE_ADMIN',
-        fechaRegistro: new Date(),
-        lecturas: [],
-        foros: [],
-        mensajes: [],
-        eventos: [],
-        inscripcions: [],
-        recomendacions: []
-      },
-      inscripcions: []
+        email: 'admin@example.com'
+      }
     }
   ];
 
-  constructor(private usuarioService: UsuarioService) { }
+  constructor() { }
 
   getEventos(): Observable<Evento[]> {
     return of(this.eventos);
@@ -91,12 +84,8 @@ export class EventoService {
     return of(false);
   }
 
+  // Métodos adicionales para mantener consistencia
   getEventosByOrganizador(organizadorId: number): Observable<Evento[]> {
-    return of(this.eventos.filter(evento => evento.organizador.id === organizadorId));
+    return of(this.eventos.filter(evento => evento.organizador?.id === organizadorId));
   }
-
-  getEventosProximos(): Observable<Evento[]> {
-    const hoy = new Date();
-    return of(this.eventos.filter(evento => evento.fecha > hoy));
-  }
-} 
+}
