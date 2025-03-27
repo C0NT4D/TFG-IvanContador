@@ -9,5 +9,5 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  isLoggedIn = false; // Esto se manejará con el servicio de autenticación más adelante
+  isLoggedIn = false; 
 }

@@ -1,8 +1,8 @@
 <div class="forum-list-container">
   <div class="forum-header">
-    <h1>Foros de Discusión</h1>
+    <h1>Forums</h1>
     <button class="btn btn-primary" routerLink="/foros/nuevo">
-      <i class="fas fa-plus"></i> Nuevo Foro
+      Crear Foro
     </button>
   </div>
 
@@ -15,15 +15,14 @@
 
   @if (!loading && !error) {
     <div class="forum-grid">
-      @for (foro of foros; track foro) {
-        <app-forum-card [forum]="foro"></app-forum-card>
+      @for (forum of forums; track forum) {
+        <app-forum-card [forum]="forum"></app-forum-card>
       }
-    </div>
-  }
-
-  @if (!loading && !error && foros.length === 0) {
-    <div class="no-forums">
-      <p>No hay foros disponibles en este momento.</p>
+      @if (forums.length === 0) {
+        <div class="no-forums">
+          <p>No hay foros disponibles en este momento.</p>
+        </div>
+      }
     </div>
   }
 </div>

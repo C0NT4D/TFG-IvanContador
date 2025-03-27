@@ -18,9 +18,9 @@ import { ErrorComponent } from '../../../components/error/error.component';
   styleUrls: ['./detalle.component.css']
 })
 export class DetalleComponent implements OnInit {
-  foro: Foro | undefined;
-  mensajes: Mensaje[] = [];
-  nuevoMensaje = '';
+  forum: Foro | undefined;
+  messages: Mensaje[] = [];
+  newMessage = '';
   loading = true;
   error = '';
   currentUserId = 1; // TODO: Get from auth service
@@ -33,38 +33,38 @@ export class DetalleComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadForo(id);
+    this.loadForum(id);
   }
 
-  private loadForo(id: number): void {
+  private loadForum(id: number): void {
     this.loading = true;
     this.foroService.getForo(id).subscribe({
-      next: (foro) => {
-        if (foro) {
-          this.foro = foro;
-          this.mensajes = foro.mensajes;
+      next: (forum) => {
+        if (forum) {
+          this.forum = forum;
+          this.messages = forum.mensajes;
           this.loading = false;
         } else {
-          this.error = 'Foro no encontrado';
+          this.error = 'Forum not found';
           this.loading = false;
         }
       },
       error: (error: Error) => {
-        this.error = 'Error al cargar el foro';
+        this.error = 'Error loading forum';
         this.loading = false;
       }
     });
   }
 
-  enviarMensaje(): void {
-    if (!this.foro || !this.nuevoMensaje.trim()) return;
+  sendMessage(): void {
+    if (!this.forum || !this.newMessage.trim()) return;
 
-    const mensaje: Omit<Mensaje, 'id' | 'fechaEnvio'> = {
-      foro: this.foro,
+    const message: Omit<Mensaje, 'id' | 'fechaEnvio'> = {
+      foro: this.forum,
       usuario: {
         id: this.currentUserId,
-        nombre: 'Usuario Actual', // TODO: Get from auth service
-        email: 'usuario@example.com',
+        nombre: 'Current User', // TODO: Get from auth service
+        email: 'user@example.com',
         contrasena: '',
         rol: 'ROLE_USER',
         fechaRegistro: new Date(),
@@ -75,16 +75,16 @@ export class DetalleComponent implements OnInit {
         inscripcions: [],
         recomendacions: []
       },
-      contenido: this.nuevoMensaje.trim()
+      contenido: this.newMessage.trim()
     };
 
-    this.mensajeService.createMensaje(mensaje).subscribe({
-      next: (mensajeCreado) => {
-        this.mensajes.push(mensajeCreado);
-        this.nuevoMensaje = '';
+    this.mensajeService.createMensaje(message).subscribe({
+      next: (createdMessage) => {
+        this.messages.push(createdMessage);
+        this.newMessage = '';
       },
       error: (error: Error) => {
-        this.error = 'Error al enviar el mensaje';
+        this.error = 'Error sending message';
       }
     });
   }

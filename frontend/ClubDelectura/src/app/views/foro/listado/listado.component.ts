@@ -15,25 +15,25 @@ import { ErrorComponent } from '../../../components/error/error.component';
   styleUrls: ['./listado.component.css']
 })
 export class ListadoComponent implements OnInit {
-  foros: Foro[] = [];
+  forums: Foro[] = [];
   loading = true;
   error = '';
 
   constructor(private foroService: ForoService) {}
 
   ngOnInit(): void {
-    this.loadForos();
+    this.loadForums();
   }
 
-  private loadForos(): void {
+  private loadForums(): void {
     this.loading = true;
     this.foroService.getForos().subscribe({
-      next: (foros: Foro[]) => {
-        this.foros = foros;
+      next: (forums: Foro[]) => {
+        this.forums = forums;
         this.loading = false;
       },
       error: (error: Error) => {
-        this.error = 'Error al cargar los foros';
+        this.error = 'Error loading forums';
         this.loading = false;
       }
     });

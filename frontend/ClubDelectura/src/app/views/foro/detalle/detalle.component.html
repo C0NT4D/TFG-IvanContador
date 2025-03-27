@@ -6,39 +6,39 @@
     <app-error [message]="error"></app-error>
   }
 
-  @if (!loading && !error && foro) {
+  @if (!loading && !error && forum) {
     <div class="forum-content">
       <div class="forum-header">
-        <h1>{{ foro.titulo }}</h1>
+        <h1>{{ forum.titulo }}</h1>
         <div class="forum-meta">
-          <span>Creado por: {{ foro.admin.nombre }}</span>
-          <span>{{ foro.fechaCreacion | date:'medium' }}</span>
+          <span>Created by: {{ forum.admin.nombre }}</span>
+          <span>{{ forum.fechaCreacion | date:'medium' }}</span>
         </div>
       </div>
 
-      <p class="forum-description">{{ foro.descripcion }}</p>
+      <p class="forum-description">{{ forum.descripcion }}</p>
 
       <div class="messages-container">
         <div class="messages-list">
-          @for (mensaje of mensajes; track mensaje) {
+          @for (message of messages; track message) {
             <app-forum-message
-              [message]="mensaje"
-              [isCurrentUser]="mensaje.usuario.id === currentUserId">
+              [message]="message"
+              [isCurrentUser]="message.usuario.id === currentUserId">
             </app-forum-message>
           }
         </div>
 
         <div class="message-input">
           <textarea
-            [(ngModel)]="nuevoMensaje"
-            placeholder="Escribe tu mensaje..."
+            [(ngModel)]="newMessage"
+            placeholder="Write your message..."
             rows="3">
           </textarea>
           <button
             class="btn btn-primary"
-            (click)="enviarMensaje()"
-            [disabled]="!nuevoMensaje.trim()">
-            Enviar
+            (click)="sendMessage()"
+            [disabled]="!newMessage.trim()">
+            Send
           </button>
         </div>
       </div>

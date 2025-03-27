@@ -14,6 +14,8 @@
   </div>
   <div class="inscription-footer">
     <span class="inscription-time">{{ inscription.fechaInscripcion | date:'medium' }}</span>
-    <a *ngIf="showDetails" [routerLink]="['/eventos', inscription.evento.id]" class="btn btn-primary">Ver evento</a>
+    @if (showDetails) {
+      <a [routerLink]="['/eventos', inscription.evento.id]" class="btn btn-primary">Ver evento</a>
+    }
   </div>
-</div> 
+</div>
