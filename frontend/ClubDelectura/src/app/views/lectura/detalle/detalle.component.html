@@ -1,1 +1,59 @@
-<p>detalle works!</p>
+<div class="lectura-detail-container">
+  @if (loading) {
+    <app-loading></app-loading>
+  }
+  @if (error) {
+    <app-error [message]="error"></app-error>
+  }
+
+  @if (!loading && !error && lectura) {
+    <div class="lectura-content">
+      <div class="lectura-header">
+        <h1>{{ lectura.libro.titulo }}</h1>
+        <div class="lectura-meta">
+          <div class="meta-item">
+            <span class="label">Autor:</span>
+            <span class="value">{{ lectura.libro.autor }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Género:</span>
+            <span class="value">{{ lectura.libro.genero }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lectura-status">
+        <label class="status-label">Estado de lectura</label>
+        <select [(ngModel)]="lectura.estadoLectura" 
+                (change)="updateStatus()"
+                class="form-select">
+          <option value="EN_PROGRESS">En progreso</option>
+          <option value="COMPLETED">Completado</option>
+          <option value="ABANDONED">Abandonado</option>
+        </select>
+      </div>
+
+      <div class="lectura-dates">
+        <div class="date-item">
+          <span class="label">Fecha de inicio:</span>
+          <span class="value">{{ lectura.fechaInicio | date:'medium' }}</span>
+        </div>
+        <div class="date-item">
+          <span class="label">Fecha de finalización:</span>
+          <span class="value">{{ lectura.fechaFin ? (lectura.fechaFin | date:'medium') : 'En curso' }}</span>
+        </div>
+      </div>
+
+      <div class="lectura-description">
+        <h2>Sobre el libro</h2>
+        <p>{{ lectura.libro.sinopsis }}</p>
+      </div>
+
+      <div class="lectura-actions">
+        <a [routerLink]="['/libros', lectura.libro.id]" class="btn btn-primary">
+          Ver libro
+        </a>
+      </div>
+    </div>
+  }
+</div>
