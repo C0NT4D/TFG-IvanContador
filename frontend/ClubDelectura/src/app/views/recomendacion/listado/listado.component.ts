@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RecomendacionService } from '@app/services/recomendacion.service';
 import { Recomendacion } from '@app/models/recomendacion.model';
 import { RecommendationCardComponent } from '@app/components/recommendation-card/recommendation-card.component';
 import { LoadingComponent } from '@app/components/loading/loading.component';
 import { ErrorComponent } from '@app/components/error/error.component';
+import { ConfirmModalComponent } from '@app/components/confirm-modal/confirm-modal.component';
+import { RecomendacionFormComponent } from '@app/components/recomendacion-form/recomendacion-form.component';
 
 @Component({
   selector: 'app-listado',
@@ -13,9 +16,12 @@ import { ErrorComponent } from '@app/components/error/error.component';
   imports: [
     CommonModule,
     RouterModule,
+    ReactiveFormsModule,
     RecommendationCardComponent,
     LoadingComponent,
-    ErrorComponent
+    ErrorComponent,
+    ConfirmModalComponent,
+    RecomendacionFormComponent
   ],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
@@ -23,7 +29,10 @@ import { ErrorComponent } from '@app/components/error/error.component';
 export class ListadoComponent implements OnInit {
   recomendaciones: Recomendacion[] = [];
   loading = true;
-  error = false;
+  error: string | null = null;
+  showDeleteModal = false;
+  showAddForm = false;
+  recomendacionToDelete: number | null = null;
 
   constructor(private recomendacionService: RecomendacionService) {}
 
@@ -33,7 +42,7 @@ export class ListadoComponent implements OnInit {
 
   loadRecomendaciones(): void {
     this.loading = true;
-    this.error = false;
+    this.error = null;
     
     this.recomendacionService.getRecomendaciones().subscribe({
       next: (recomendaciones) => {
@@ -41,28 +50,43 @@ export class ListadoComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = true;
+        this.error = 'Error al cargar las recomendaciones';
         this.loading = false;
       }
     });
   }
 
   openAddRecomendacion(): void {
-    // Por ahora solo un console.log, luego implementaremos el diálogo
-    console.log('Abrir diálogo para añadir recomendación');
+    console.log('Abriendo formulario de recomendación');
+    this.showAddForm = true;
   }
 
-  deleteRecomendacion(id: number): void {
-    if (confirm('¿Estás seguro de que quieres eliminar esta recomendación?')) {
-      this.recomendacionService.deleteRecomendacion(id).subscribe({
+  closeAddForm(): void {
+    this.showAddForm = false;
+  }
+
+  onDeleteRecomendacion(id: number) {
+    this.recomendacionToDelete = id;
+    this.showDeleteModal = true;
+  }
+
+  onConfirmDelete() {
+    if (this.recomendacionToDelete) {
+      this.recomendacionService.deleteRecomendacion(this.recomendacionToDelete).subscribe({
         next: () => {
-          this.recomendaciones = this.recomendaciones.filter(r => r.id !== id);
+          this.recomendaciones = this.recomendaciones.filter(r => r.id !== this.recomendacionToDelete);
+          this.showDeleteModal = false;
+          this.recomendacionToDelete = null;
         },
-        error: () => {
-          // Por ahora solo un console.error, luego implementaremos un mensaje de error
-          console.error('Error al eliminar la recomendación');
+        error: (error) => {
+          console.error('Error al eliminar la recomendación:', error);
         }
       });
     }
+  }
+
+  onCancelDelete() {
+    this.showDeleteModal = false;
+    this.recomendacionToDelete = null;
   }
 }

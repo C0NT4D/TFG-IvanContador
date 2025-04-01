@@ -10,27 +10,15 @@ describe('ReadingCardComponent', () => {
 
   const mockLectura: Lectura = {
     id: 1,
-    usuario: {
-      id: 1,
-      nombre: 'Test User',
-      email: 'test@test.com',
-      contrasena: '123456',
-      rol: 'usuario',
-      fechaRegistro: new Date()
-    },
-    libro: {
-      id: 1,
-      titulo: 'Test Book',
-      autor: 'Test Author',
-      genero: 'Test Genre',
-      anioPublicacion: 2024,
-      sinopsis: 'Test synopsis',
-      lecturas: [],
-      recomendacions: []
-    },
-    estadoLectura: 'EN_PROGRESS',
-    fechaInicio: new Date(),
-    fechaFin: null
+    titulo: 'Test Book',
+    autor: 'Test Author',
+    genero: 'Test Genre',
+    descripcion: 'Test Description',
+    estado: 'EN_PROGRESO',
+    fechaInicio: new Date('2024-01-01'),
+    fechaFin: null,
+    valoracion: 4,
+    reseña: 'Test Review'
   };
 
   beforeEach(async () => {
@@ -48,12 +36,36 @@ describe('ReadingCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display book title and author', () => {
-    const titleElement = fixture.debugElement.query(By.css('h2'));
-    const authorElement = fixture.debugElement.query(By.css('p'));
+  it('should display lectura data correctly', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('h3').textContent).toContain(mockLectura.titulo);
+    expect(compiled.querySelector('.text-gray-600').textContent).toContain(mockLectura.autor);
+    expect(compiled.querySelector('.text-sm.text-gray-500').textContent).toContain(mockLectura.genero);
+  });
 
-    expect(titleElement.nativeElement.textContent).toContain('Test Book');
-    expect(authorElement.nativeElement.textContent).toContain('Test Author');
+  it('should display correct status badge', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.status-badge').textContent).toContain('En progreso');
+  });
+
+  it('should display correct date format', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.text-sm.text-gray-500').textContent).toContain('1 de enero de 2024');
+  });
+
+  it('should display rating stars correctly', () => {
+    const compiled = fixture.nativeElement;
+    const stars = compiled.querySelectorAll('.text-yellow-400');
+    expect(stars.length).toBe(mockLectura.valoracion);
+  });
+
+  it('should display empty stars for no rating', () => {
+    component.lectura.valoracion = 0;
+    fixture.detectChanges();
+    
+    const compiled = fixture.nativeElement;
+    const emptyStars = compiled.querySelectorAll('.text-gray-300');
+    expect(emptyStars.length).toBe(5);
   });
 
   it('should display correct status badge for EN_PROGRESS', () => {

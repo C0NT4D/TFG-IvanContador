@@ -1,6 +1,6 @@
 <div class="recomendacion-list-container p-6">
   <div class="recomendacion-header">
-    <div class="flex items-center gap-4">
+    <div class="flex flex-col">
       <h1 class="text-2xl font-bold text-gray-800">Recomendaciones</h1>
       <button 
         (click)="openAddRecomendacion()" 
@@ -15,31 +15,53 @@
   </div>
 
   @if (loading) {
-    <app-loading />
+    <div class="flex justify-center items-center h-64">
+      <app-loading></app-loading>
+    </div>
   }
 
   @if (error) {
-    <app-error (retry)="loadRecomendaciones()" />
+    <div class="flex justify-center items-center h-64">
+      <app-error></app-error>
+    </div>
   }
 
   @if (!loading && !error) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @if (recomendaciones.length > 0) {
-        @for (recomendacion of recomendaciones; track recomendacion.id) {
-          <app-recommendation-card 
-            [recomendacion]="recomendacion"
-            (delete)="deleteRecomendacion($event)" />
-        }
-      } @else {
-        <div class="col-span-full text-center py-8">
-          <p class="text-gray-600 mb-4">No hay recomendaciones disponibles.</p>
-          <button 
-            (click)="openAddRecomendacion()" 
-            class="first-recommendation-button">
-            ¡Sé el primero en recomendar un libro!
-          </button>
-        </div>
+    <div class="recomendacion-grid">
+      @for (recomendacion of recomendaciones; track recomendacion.id) {
+        <app-recommendation-card
+          [recomendacion]="recomendacion"
+          (delete)="onDeleteRecomendacion($event)" />
       }
     </div>
   }
+
+  @if (!loading && !error && recomendaciones.length === 0) {
+    <div class="no-recomendaciones">
+      <p>No hay recomendaciones todavía.</p>
+      <button 
+        (click)="openAddRecomendacion()" 
+        class="first-recommendation-button">
+        ¡Sé el primero en recomendar un libro!
+      </button>
+    </div>
+  }
 </div>
+
+@if (showDeleteModal) {
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Recomendación"
+    message="¿Estás seguro de que deseas eliminar esta recomendación? Esta acción no se puede deshacer."
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-modal>
+}
+
+@if (showAddForm) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <app-recomendacion-form (closeForm)="closeAddForm()"></app-recomendacion-form>
+    </div>
+  </div>
+}
