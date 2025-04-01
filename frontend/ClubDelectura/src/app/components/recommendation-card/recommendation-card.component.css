@@ -1,0 +1,13 @@
+.recommendation-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transform-origin: center;
+  transition: all 0.2s ease;
+}
+
+.recommendation-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} 

@@ -1,1 +1,33 @@
-<p>listado works!</p>
+<div class="recomendacion-list-container p-6">
+  <div class="recomendacion-header mb-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-gray-800">Recomendaciones</h1>
+    <a routerLink="/libros" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+      Explorar Libros
+    </a>
+  </div>
+
+  @if (loading) {
+    <app-loading />
+  }
+
+  @if (error) {
+    <app-error (retry)="loadRecomendaciones()" />
+  }
+
+  @if (!loading && !error) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @if (recomendaciones.length > 0) {
+        @for (recomendacion of recomendaciones; track recomendacion.id) {
+          <app-recommendation-card [recomendacion]="recomendacion" />
+        }
+      } @else {
+        <div class="col-span-full text-center py-8">
+          <p class="text-gray-600">No hay recomendaciones disponibles.</p>
+          <a routerLink="/libros" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+            ¡Sé el primero en recomendar un libro!
+          </a>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -7,6 +7,7 @@ import { ListadoComponent as EventoListadoComponent } from './views/evento/lista
 import { DetalleComponent as EventoDetalleComponent } from './views/evento/detalle/detalle.component';
 import { ListadoComponent as LecturaListadoComponent } from './views/lectura/listado/listado.component';
 import { DetalleComponent as LecturaDetalleComponent } from './views/lectura/detalle/detalle.component';
+import { ListadoComponent as RecomendacionListadoComponent } from './views/recomendacion/listado/listado.component';
 import { LoginComponent } from './views/usuario/login/login.component';
 import { RegistroComponent } from './views/usuario/registro/registro.component';
 import { PerfilComponent } from './views/usuario/perfil/perfil.component';
@@ -21,8 +22,7 @@ export const routes: Routes = [
   { path: 'eventos/:id', component: EventoDetalleComponent },
   { path: 'lecturas', component: LecturaListadoComponent },
   { path: 'lecturas/:id', component: LecturaDetalleComponent },
-  { path: 'recomendaciones', component: LibroListadoComponent },
-  { path: 'recomendaciones/:id', component: LibroDetalleComponent },
+  { path: 'recomendaciones', component: RecomendacionListadoComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'perfil', component: PerfilComponent }
