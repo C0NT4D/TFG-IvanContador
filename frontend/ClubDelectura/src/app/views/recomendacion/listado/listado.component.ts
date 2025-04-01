@@ -46,4 +46,23 @@ export class ListadoComponent implements OnInit {
       }
     });
   }
+
+  openAddRecomendacion(): void {
+    // Por ahora solo un console.log, luego implementaremos el diálogo
+    console.log('Abrir diálogo para añadir recomendación');
+  }
+
+  deleteRecomendacion(id: number): void {
+    if (confirm('¿Estás seguro de que quieres eliminar esta recomendación?')) {
+      this.recomendacionService.deleteRecomendacion(id).subscribe({
+        next: () => {
+          this.recomendaciones = this.recomendaciones.filter(r => r.id !== id);
+        },
+        error: () => {
+          // Por ahora solo un console.error, luego implementaremos un mensaje de error
+          console.error('Error al eliminar la recomendación');
+        }
+      });
+    }
+  }
 }

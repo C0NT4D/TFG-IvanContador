@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Recomendacion } from '@app/models/recomendacion.model';
@@ -12,4 +12,9 @@ import { Recomendacion } from '@app/models/recomendacion.model';
 })
 export class RecommendationCardComponent {
   @Input() recomendacion!: Recomendacion;
+  @Output() delete = new EventEmitter<number>();
+
+  onDelete() {
+    this.delete.emit(this.recomendacion.id);
+  }
 } 
