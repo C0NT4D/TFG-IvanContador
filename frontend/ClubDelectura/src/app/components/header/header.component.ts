@@ -10,4 +10,5 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class HeaderComponent {
   isLoggedIn = false; 
+  isAdmin = true; // TODO: Implementar verificación de rol
 }

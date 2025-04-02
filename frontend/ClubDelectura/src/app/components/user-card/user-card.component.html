@@ -1,0 +1,25 @@
+<div class="user-card">
+  <div class="user-info">
+    <h3 class="user-name">{{ usuario.nombre }}</h3>
+    <p class="user-email">{{ usuario.email }}</p>
+    <span class="user-role">{{ usuario.rol }}</span>
+    <p class="user-date">Registrado: {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
+  </div>
+  <div class="user-stats">
+    <div class="stat-item">
+      <span class="stat-label">Lecturas</span>
+      <span class="stat-value">{{ usuario.lecturas.length }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Foros</span>
+      <span class="stat-value">{{ usuario.foros.length }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Eventos</span>
+      <span class="stat-value">{{ usuario.eventos.length }}</span>
+    </div>
+  </div>
+  <div class="user-actions">
+    <a [routerLink]="['/usuarios', usuario.id]" class="view-button">Ver detalles</a>
+  </div>
+</div> 

@@ -11,6 +11,8 @@ import { ListadoComponent as RecomendacionListadoComponent } from './views/recom
 import { LoginComponent } from './views/usuario/login/login.component';
 import { RegistroComponent } from './views/usuario/registro/registro.component';
 import { PerfilComponent } from './views/usuario/perfil/perfil.component';
+import { ListadoComponent as UsuarioListadoComponent } from './views/usuario/listado/listado.component';
+import { DetalleComponent as UsuarioDetalleComponent } from './views/usuario/detalle/detalle.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/libros', pathMatch: 'full' },
@@ -25,5 +27,7 @@ export const routes: Routes = [
   { path: 'recomendaciones', component: RecomendacionListadoComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
-  { path: 'perfil', component: PerfilComponent }
+  { path: 'perfil', component: PerfilComponent },
+  { path: 'usuarios', component: UsuarioListadoComponent },
+  { path: 'usuarios/:id', component: UsuarioDetalleComponent }
 ];

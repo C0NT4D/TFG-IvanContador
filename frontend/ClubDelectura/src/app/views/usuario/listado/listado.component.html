@@ -1,0 +1,33 @@
+<div class="usuario-list-container">
+  <div class="usuario-header">
+    <h1>Usuarios</h1>
+    <button class="add-button" routerLink="/usuarios/nuevo">
+      Añadir Usuario
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="flex justify-center items-center h-64">
+      <app-loading></app-loading>
+    </div>
+  }
+
+  @if (error) {
+    <div class="flex justify-center items-center h-64">
+      <app-error [message]="error"></app-error>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="usuario-grid">
+      @for (usuario of usuarios; track usuario.id) {
+        <app-user-card [usuario]="usuario"></app-user-card>
+      }
+      @if (usuarios.length === 0) {
+        <div class="no-usuarios">
+          <p>No hay usuarios registrados</p>
+        </div>
+      }
+    </div>
+  }
+</div> 

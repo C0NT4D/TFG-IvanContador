@@ -1,0 +1,60 @@
+.usuario-list-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.usuario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.usuario-header h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.add-button {
+  background-color: #16a34a;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background-color: #15803d;
+}
+
+.usuario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.no-usuarios {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .usuario-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .usuario-grid {
+    grid-template-columns: 1fr;
+  }
+} 

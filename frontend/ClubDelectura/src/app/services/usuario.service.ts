@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Usuario } from '../models/usuario.model';
+import { Usuario } from '@app/models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class UsuarioService {
       email: 'admin@example.com',
       contrasena: 'admin123',
       rol: 'ROLE_ADMIN',
-      fechaRegistro: new Date(),
+      fechaRegistro: '2024-01-01',
       lecturas: [],
       foros: [],
       mensajes: [],
@@ -27,7 +27,7 @@ export class UsuarioService {
       email: 'usuario@example.com',
       contrasena: 'user123',
       rol: 'ROLE_USER',
-      fechaRegistro: new Date(),
+      fechaRegistro: '2024-01-02',
       lecturas: [],
       foros: [],
       mensajes: [],
@@ -47,30 +47,32 @@ export class UsuarioService {
     return of(this.usuarios.find(usuario => usuario.id === id));
   }
 
-  getUsuarioByEmail(email: string): Observable<Usuario | undefined> {
-    return of(this.usuarios.find(usuario => usuario.email === email));
-  }
-
-  login(email: string, contrasena: string): Observable<Usuario | undefined> {
-    return of(this.usuarios.find(usuario => 
-      usuario.email === email && usuario.contrasena === contrasena
-    ));
-  }
-
-  register(usuario: Omit<Usuario, 'id'>): Observable<Usuario> {
+  createUsuario(usuario: Omit<Usuario, 'id'>): Observable<Usuario> {
     const newUsuario = {
       ...usuario,
       id: this.usuarios.length + 1,
-      fechaRegistro: new Date()
+      fechaRegistro: new Date().toISOString(),
+      lecturas: [],
+      foros: [],
+      mensajes: [],
+      eventos: [],
+      inscripcions: [],
+      recomendacions: []
     };
     this.usuarios.push(newUsuario);
     return of(newUsuario);
   }
 
-  updateUsuario(id: number, usuario: Partial<Usuario>): Observable<Usuario | undefined> {
+  updateUsuario(id: number, usuario: Usuario): Observable<Usuario | undefined> {
     const index = this.usuarios.findIndex(u => u.id === id);
     if (index !== -1) {
-      this.usuarios[index] = { ...this.usuarios[index], ...usuario };
+      this.usuarios[index] = { 
+        ...this.usuarios[index], 
+        ...usuario,
+        fechaRegistro: typeof usuario.fechaRegistro === 'string' 
+          ? usuario.fechaRegistro 
+          : usuario.fechaRegistro.toISOString()
+      };
       return of(this.usuarios[index]);
     }
     return of(undefined);

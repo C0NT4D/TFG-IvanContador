@@ -1,0 +1,79 @@
+<div class="usuario-detail-container">
+  @if (loading) {
+    <app-loading></app-loading>
+  }
+
+  @if (error) {
+    <app-error [message]="error"></app-error>
+  }
+
+  @if (!loading && !error && usuario) {
+    <div class="usuario-content">
+      <div class="usuario-header">
+        <h1>{{ usuario.nombre }}</h1>
+        <div class="usuario-meta">
+          <div class="meta-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ usuario.email }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Rol:</span>
+            <span class="value">{{ usuario.rol }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Fecha de registro:</span>
+            <span class="value">{{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="usuario-stats">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Lecturas</h3>
+            <p class="stat-value">{{ usuario.lecturas.length }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Foros</h3>
+            <p class="stat-value">{{ usuario.foros.length }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Eventos</h3>
+            <p class="stat-value">{{ usuario.eventos.length }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Mensajes</h3>
+            <p class="stat-value">{{ usuario.mensajes.length }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Inscripciones</h3>
+            <p class="stat-value">{{ usuario.inscripcions.length }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>Recomendaciones</h3>
+            <p class="stat-value">{{ usuario.recomendacions.length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="usuario-actions">
+        <button class="btn btn-danger" (click)="openDeleteModal()">
+          Eliminar Usuario
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+@if (showDeleteModal) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <h2>Confirmar Eliminación</h2>
+      <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancelar</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+} 

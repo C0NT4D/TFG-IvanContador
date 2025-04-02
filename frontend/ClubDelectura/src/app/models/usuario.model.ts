@@ -11,7 +11,7 @@ export interface Usuario {
   email: string;
   contrasena: string;
   rol: string;
-  fechaRegistro: Date;
+  fechaRegistro: string | Date;
   lecturas: Lectura[];
   foros: Foro[];
   mensajes: Mensaje[];

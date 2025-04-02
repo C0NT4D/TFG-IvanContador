@@ -22,6 +22,11 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/recomendaciones" routerLinkActive="active">Recomendaciones</a>
           </li>
+          @if (isAdmin) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/usuarios" routerLinkActive="active">Usuarios</a>
+            </li>
+          }
         </ul>
         <ul class="navbar-nav">
           @if (!isLoggedIn) {
