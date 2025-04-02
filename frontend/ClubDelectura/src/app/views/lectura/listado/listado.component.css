@@ -37,6 +37,19 @@
   gap: 1.5rem;
 }
 
+.lectura-grid > div {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.lectura-grid > div:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .no-lecturas {
   grid-column: 1 / -1;
   text-align: center;

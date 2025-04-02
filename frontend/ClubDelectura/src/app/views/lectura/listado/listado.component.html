@@ -14,7 +14,7 @@
   }
 
   @if (!loading && !error) {
-    <div class="evento-grid">
+    <div class="lectura-grid">
       @for (lectura of lecturas; track lectura) {
         <app-reading-card [lectura]="lectura"></app-reading-card>
       }
