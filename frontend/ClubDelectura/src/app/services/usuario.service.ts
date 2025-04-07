@@ -47,10 +47,13 @@ export class UsuarioService {
     return of(this.usuarios.find(usuario => usuario.id === id));
   }
 
-  createUsuario(usuario: Omit<Usuario, 'id'>): Observable<Usuario> {
-    const newUsuario = {
-      ...usuario,
+  createUsuario(userData: { nombre: string; email: string; contrasena: string }): Observable<Usuario> {
+    const newUsuario: Usuario = {
       id: this.usuarios.length + 1,
+      nombre: userData.nombre,
+      email: userData.email,
+      contrasena: userData.contrasena,
+      rol: 'ROLE_USER',
       fechaRegistro: new Date().toISOString(),
       lecturas: [],
       foros: [],
@@ -59,31 +62,33 @@ export class UsuarioService {
       inscripcions: [],
       recomendacions: []
     };
+    
     this.usuarios.push(newUsuario);
     return of(newUsuario);
   }
 
-  updateUsuario(id: number, usuario: Usuario): Observable<Usuario | undefined> {
+  updateUsuario(id: number, usuario: Partial<Usuario>): Observable<Usuario> {
     const index = this.usuarios.findIndex(u => u.id === id);
-    if (index !== -1) {
-      this.usuarios[index] = { 
-        ...this.usuarios[index], 
-        ...usuario,
-        fechaRegistro: typeof usuario.fechaRegistro === 'string' 
-          ? usuario.fechaRegistro 
-          : usuario.fechaRegistro.toISOString()
-      };
-      return of(this.usuarios[index]);
+    if (index === -1) {
+      throw new Error('Usuario no encontrado');
     }
-    return of(undefined);
+    this.usuarios[index] = { ...this.usuarios[index], ...usuario };
+    return of(this.usuarios[index]);
   }
 
-  deleteUsuario(id: number): Observable<boolean> {
+  deleteUsuario(id: number): Observable<void> {
     const index = this.usuarios.findIndex(u => u.id === id);
-    if (index !== -1) {
-      this.usuarios.splice(index, 1);
-      return of(true);
+    if (index === -1) {
+      throw new Error('Usuario no encontrado');
     }
-    return of(false);
+    this.usuarios.splice(index, 1);
+    return of(void 0);
+  }
+
+  login(email: string, contrasena: string): Observable<Usuario | null> {
+    const usuario = this.usuarios.find(
+      u => u.email === email && u.contrasena === contrasena
+    );
+    return of(usuario || null);
   }
 } 

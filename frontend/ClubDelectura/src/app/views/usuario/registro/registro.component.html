@@ -1,1 +1,14 @@
-<p>registro works!</p>
+<div class="registro-container">
+    @if (loading) {
+      <app-loading></app-loading>
+    }
+  
+    @if (error) {
+      <app-error [message]="error"></app-error>
+    }
+  
+    <app-user-form 
+      mode="register"
+      (submitForm)="onRegistroSubmit($event)"
+    ></app-user-form>
+  </div>

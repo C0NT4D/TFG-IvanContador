@@ -1,1 +1,14 @@
-<p>login works!</p>
+<div class="login-container">
+    @if (loading) {
+      <app-loading></app-loading>
+    }
+  
+    @if (error) {
+      <app-error [message]="error"></app-error>
+    }
+  
+    <app-user-form 
+      mode="login"
+      (submitForm)="onLoginSubmit($event)"
+    ></app-user-form>
+  </div>
