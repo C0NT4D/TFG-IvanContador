@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ListadoComponent as LibroListadoComponent } from './views/libro/listado/listado.component';
 import { DetalleComponent as LibroDetalleComponent } from './views/libro/detalle/detalle.component';
+import { NuevoComponent as LibroNuevoComponent } from './views/libro/nuevo/nuevo.component';
 import { ListadoComponent as ForoListadoComponent } from './views/foro/listado/listado.component';
 import { DetalleComponent as ForoDetalleComponent } from './views/foro/detalle/detalle.component';
 import { NuevoComponent as ForoNuevoComponent } from './views/foro/nuevo/nuevo.component';
@@ -20,6 +21,7 @@ import { NuevoComponent } from './views/usuario/nuevo/nuevo.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/libros', pathMatch: 'full' },
   { path: 'libros', component: LibroListadoComponent },
+  { path: 'libros/nuevo', component: LibroNuevoComponent },
   { path: 'libros/:id', component: LibroDetalleComponent },
   { path: 'foros', component: ForoListadoComponent },
   { path: 'foros/nuevo', component: ForoNuevoComponent },

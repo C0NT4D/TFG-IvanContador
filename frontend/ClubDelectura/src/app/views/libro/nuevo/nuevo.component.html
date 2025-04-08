@@ -1,0 +1,142 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0">Añadir Nuevo Libro</h2>
+        </div>
+        <div class="card-body">
+          @if (loading) {
+            <app-loading></app-loading>
+          }
+          
+          @if (error) {
+            <app-error [message]="error"></app-error>
+          }
+          
+          @if (success) {
+            <div class="alert alert-success">
+              ¡Libro creado con éxito! Redirigiendo...
+            </div>
+          }
+
+          @if (!loading && !success) {
+            <form [formGroup]="libroForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="titulo" 
+                  formControlName="titulo"
+                  [class.is-invalid]="libroForm.get('titulo')?.invalid && libroForm.get('titulo')?.touched">
+                @if (libroForm.get('titulo')?.invalid && libroForm.get('titulo')?.touched) {
+                  <div class="invalid-feedback">
+                    @if (libroForm.get('titulo')?.errors?.['required']) {
+                      <div>El título es requerido</div>
+                    }
+                    @if (libroForm.get('titulo')?.errors?.['minlength']) {
+                      <div>El título debe tener al menos 3 caracteres</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="mb-3">
+                <label for="autor" class="form-label">Autor</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="autor" 
+                  formControlName="autor"
+                  [class.is-invalid]="libroForm.get('autor')?.invalid && libroForm.get('autor')?.touched">
+                @if (libroForm.get('autor')?.invalid && libroForm.get('autor')?.touched) {
+                  <div class="invalid-feedback">
+                    @if (libroForm.get('autor')?.errors?.['required']) {
+                      <div>El autor es requerido</div>
+                    }
+                    @if (libroForm.get('autor')?.errors?.['minlength']) {
+                      <div>El autor debe tener al menos 3 caracteres</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="mb-3">
+                <label for="genero" class="form-label">Género</label>
+                <select 
+                  class="form-select" 
+                  id="genero" 
+                  formControlName="genero"
+                  [class.is-invalid]="libroForm.get('genero')?.invalid && libroForm.get('genero')?.touched">
+                  <option value="">Selecciona un género</option>
+                  @for (genero of generos; track genero) {
+                    <option [value]="genero">{{ genero }}</option>
+                  }
+                </select>
+                @if (libroForm.get('genero')?.invalid && libroForm.get('genero')?.touched) {
+                  <div class="invalid-feedback">
+                    @if (libroForm.get('genero')?.errors?.['required']) {
+                      <div>El género es requerido</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="mb-3">
+                <label for="anioPublicacion" class="form-label">Año de Publicación</label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="anioPublicacion" 
+                  formControlName="anioPublicacion"
+                  [class.is-invalid]="libroForm.get('anioPublicacion')?.invalid && libroForm.get('anioPublicacion')?.touched">
+                @if (libroForm.get('anioPublicacion')?.invalid && libroForm.get('anioPublicacion')?.touched) {
+                  <div class="invalid-feedback">
+                    @if (libroForm.get('anioPublicacion')?.errors?.['required']) {
+                      <div>El año de publicación es requerido</div>
+                    }
+                    @if (libroForm.get('anioPublicacion')?.errors?.['min']) {
+                      <div>El año debe ser mayor a 1000</div>
+                    }
+                    @if (libroForm.get('anioPublicacion')?.errors?.['max']) {
+                      <div>El año no puede ser mayor al año actual</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="mb-3">
+                <label for="sinopsis" class="form-label">Sinopsis</label>
+                <textarea 
+                  class="form-control" 
+                  id="sinopsis" 
+                  rows="3" 
+                  formControlName="sinopsis"
+                  [class.is-invalid]="libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched">
+                </textarea>
+                @if (libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched) {
+                  <div class="invalid-feedback">
+                    @if (libroForm.get('sinopsis')?.errors?.['required']) {
+                      <div>La sinopsis es requerida</div>
+                    }
+                    @if (libroForm.get('sinopsis')?.errors?.['minlength']) {
+                      <div>La sinopsis debe tener al menos 10 caracteres</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="libroForm.invalid">
+                  Crear Libro
+                </button>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
