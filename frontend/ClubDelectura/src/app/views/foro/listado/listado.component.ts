@@ -6,11 +6,19 @@ import { Foro } from '../../../models/foro.model';
 import { ForumCardComponent } from '../../../components/forum-card/forum-card.component';
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
+import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-forum-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ForumCardComponent, LoadingComponent, ErrorComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ForumCardComponent,
+    LoadingComponent,
+    ErrorComponent,
+    ConfirmModalComponent
+  ],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
 })
@@ -18,6 +26,8 @@ export class ListadoComponent implements OnInit {
   forums: Foro[] = [];
   loading = true;
   error = '';
+  showDeleteModal = false;
+  forumToDelete: number | null = null;
 
   constructor(private foroService: ForoService) {}
 
@@ -37,5 +47,35 @@ export class ListadoComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  onDeleteForum(id: number): void {
+    this.forumToDelete = id;
+    this.showDeleteModal = true;
+  }
+
+  onConfirmDelete(): void {
+    if (this.forumToDelete) {
+      this.loading = true;
+      this.foroService.deleteForo(this.forumToDelete).subscribe({
+        next: () => {
+          this.forums = this.forums.filter(forum => forum.id !== this.forumToDelete);
+          this.loading = false;
+          this.showDeleteModal = false;
+          this.forumToDelete = null;
+        },
+        error: (error: Error) => {
+          this.error = 'Error deleting forum';
+          this.loading = false;
+          this.showDeleteModal = false;
+          this.forumToDelete = null;
+        }
+      });
+    }
+  }
+
+  onCancelDelete(): void {
+    this.showDeleteModal = false;
+    this.forumToDelete = null;
   }
 }

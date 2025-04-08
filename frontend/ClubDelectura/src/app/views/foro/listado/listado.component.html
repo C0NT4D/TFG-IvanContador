@@ -1,28 +1,50 @@
-<div class="forum-list-container">
+<div class="forum-list-container p-6">
   <div class="forum-header">
-    <h1>Foros</h1>
-    <button class="btn btn-primary" routerLink="/foros/nuevo">
+    <h1 class="text-2xl font-bold text-gray-800">Foros de Discusión</h1>
+    <a routerLink="/foros/nuevo" class="add-button">
       Crear Foro
-    </button>
+    </a>
   </div>
 
   @if (loading) {
-    <app-loading></app-loading>
+    <div class="flex justify-center items-center h-64">
+      <app-loading></app-loading>
+    </div>
   }
+
   @if (error) {
-    <app-error [message]="error"></app-error>
+    <div class="flex justify-center items-center h-64">
+      <app-error [message]="error"></app-error>
+    </div>
   }
 
   @if (!loading && !error) {
     <div class="forum-grid">
-      @for (forum of forums; track forum) {
-        <app-forum-card [forum]="forum"></app-forum-card>
-      }
-      @if (forums.length === 0) {
-        <div class="no-forums">
-          <p>No hay foros disponibles en este momento.</p>
-        </div>
+      @for (forum of forums; track forum.id) {
+        <app-forum-card
+          [forum]="forum"
+          (delete)="onDeleteForum($event)"
+        ></app-forum-card>
       }
     </div>
   }
+
+  @if (!loading && !error && forums.length === 0) {
+    <div class="no-forums">
+      <p>No hay foros disponibles.</p>
+      <a routerLink="/foros/nuevo" class="first-forum-button">
+        ¡Sé el primero en crear un foro!
+      </a>
+    </div>
+  }
 </div>
+
+@if (showDeleteModal) {
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Foro"
+    message="¿Estás seguro de que deseas eliminar este foro? Esta acción no se puede deshacer."
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-modal>
+}

@@ -6,6 +6,9 @@
   <p class="forum-description">{{ forum.descripcion }}</p>
   <div class="forum-footer">
     <span class="forum-author">Creado por: {{ forum.admin.nombre }}</span>
-    <a [routerLink]="['/foros', forum.id]" class="btn btn-primary">Ver discusión</a>
+    <div class="forum-actions">
+      <a [routerLink]="['/foros', forum.id]" class="btn btn-primary">Ver discusión</a>
+      <button (click)="onDelete()" class="btn btn-danger">Eliminar</button>
+    </div>
   </div>
 </div> 

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Foro } from '../../models/foro.model';
@@ -12,4 +12,9 @@ import { Foro } from '../../models/foro.model';
 })
 export class ForumCardComponent {
   @Input() forum!: Foro;
+  @Output() delete = new EventEmitter<number>();
+
+  onDelete() {
+    this.delete.emit(this.forum.id);
+  }
 } 

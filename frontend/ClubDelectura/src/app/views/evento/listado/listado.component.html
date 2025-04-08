@@ -15,14 +15,30 @@
 
   @if (!loading && !error) {
     <div class="evento-grid">
-      @for (evento of eventos; track evento) {
-        <app-event-card [event]="evento" [showDetails]="true"></app-event-card>
-      }
-      @if (eventos.length === 0) {
-        <div class="no-eventos">
-          <p>No hay eventos disponibles</p>
-        </div>
-      }
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (evento of eventos; track evento) {
+          <app-event-card 
+            [event]="evento" 
+            [showDetails]="true"
+            (delete)="onDeleteEvento($event)">
+          </app-event-card>
+        }
+        @if (eventos.length === 0) {
+          <div class="no-eventos">
+            <p>No hay eventos disponibles</p>
+          </div>
+        }
+      </div>
     </div>
+  }
+
+  @if (showDeleteModal) {
+    <app-confirm-modal
+      [isOpen]="showDeleteModal"
+      [title]="'Eliminar Evento'"
+      [message]="'¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.'"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()">
+    </app-confirm-modal>
   }
 </div>

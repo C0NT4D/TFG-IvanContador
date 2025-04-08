@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Evento } from '../../models/evento.model';
@@ -13,4 +13,9 @@ import { Evento } from '../../models/evento.model';
 export class EventCardComponent {
   @Input() event!: Evento;
   @Input() showDetails: boolean = true;
+  @Output() delete = new EventEmitter<number>();
+
+  onDelete() {
+    this.delete.emit(this.event.id);
+  }
 } 
