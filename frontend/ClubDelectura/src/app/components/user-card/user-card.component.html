@@ -1,25 +1,35 @@
-<div class="user-card">
-  <div class="user-info">
-    <h3 class="user-name">{{ usuario.nombre }}</h3>
-    <p class="user-email">{{ usuario.email }}</p>
-    <span class="user-role">{{ usuario.rol }}</span>
-    <p class="user-date">Registrado: {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
-  </div>
-  <div class="user-stats">
-    <div class="stat-item">
-      <span class="stat-label">Lecturas</span>
-      <span class="stat-value">{{ usuario.lecturas.length }}</span>
+<div class="card shadow-sm h-100">
+  <div class="card-body">
+    <div class="mb-4">
+      <h3 class="card-title h5 mb-2">{{ usuario.nombre }}</h3>
+      <p class="text-secondary mb-2">{{ usuario.email }}</p>
+      <span class="badge bg-primary-subtle text-primary mb-2">{{ usuario.rol }}</span>
+      <p class="text-secondary small mb-0">Registrado: {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
     </div>
-    <div class="stat-item">
-      <span class="stat-label">Foros</span>
-      <span class="stat-value">{{ usuario.foros.length }}</span>
+    
+    <div class="row g-3 py-3 border-top border-bottom mb-3">
+      <div class="col-4 text-center">
+        <div class="d-flex flex-column">
+          <span class="text-secondary small">Lecturas</span>
+          <span class="h5 mb-0">{{ usuario.lecturas.length }}</span>
+        </div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="d-flex flex-column">
+          <span class="text-secondary small">Foros</span>
+          <span class="h5 mb-0">{{ usuario.foros.length }}</span>
+        </div>
+      </div>
+      <div class="col-4 text-center">
+        <div class="d-flex flex-column">
+          <span class="text-secondary small">Eventos</span>
+          <span class="h5 mb-0">{{ usuario.eventos.length }}</span>
+        </div>
+      </div>
     </div>
-    <div class="stat-item">
-      <span class="stat-label">Eventos</span>
-      <span class="stat-value">{{ usuario.eventos.length }}</span>
+
+    <div class="d-flex justify-content-end">
+      <a [routerLink]="['/usuarios', usuario.id]" class="btn btn-primary btn-sm">Ver detalles</a>
     </div>
-  </div>
-  <div class="user-actions">
-    <a [routerLink]="['/usuarios', usuario.id]" class="view-button">Ver detalles</a>
   </div>
 </div> 

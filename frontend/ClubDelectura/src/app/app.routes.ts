@@ -11,6 +11,8 @@ import { ListadoComponent as EventoListadoComponent } from './views/evento/lista
 import { DetalleComponent as EventoDetalleComponent } from './views/evento/detalle/detalle.component';
 import { NuevoComponent as EventoNuevoComponent } from './views/evento/nuevo/nuevo.component';
 import { ListadoComponent as RecomendacionListadoComponent } from './views/recomendacion/listado/listado.component';
+import { ListadoComponent as LecturaListadoComponent } from './views/lectura/listado/listado.component';
+import { DetalleComponent as LecturaDetalleComponent } from './views/lectura/detalle/detalle.component';
 import { PerfilComponent } from './views/usuario/perfil/perfil.component';
 import { DetalleComponent as UsuarioDetalleComponent } from './views/usuario/detalle/detalle.component';
 import { authGuard } from './guards/auth.guard';
@@ -30,6 +32,8 @@ export const routes: Routes = [
   { path: 'eventos/:id', component: EventoDetalleComponent },
   { path: 'eventos/nuevo', component: EventoNuevoComponent, canActivate: [authGuard] },
   { path: 'recomendaciones', component: RecomendacionListadoComponent },
+  { path: 'lecturas', component: LecturaListadoComponent, canActivate: [authGuard] },
+  { path: 'lecturas/:id', component: LecturaDetalleComponent, canActivate: [authGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
   { path: 'usuarios', loadComponent: () => import('./views/usuario/listado/listado.component').then(m => m.ListadoComponent), canActivate: [adminGuard] },
   { path: 'usuarios/:id', component: UsuarioDetalleComponent, canActivate: [adminGuard] }

@@ -1,12 +1,12 @@
-<div class="message-container" [ngClass]="{'message-current-user': isCurrentUser}">
-  <div class="message-header">
-    <span class="message-author">{{ message.usuario.nombre }}</span>
-    <span class="message-date">{{ message.fechaEnvio | date:'medium' }}</span>
-  </div>
-  <div class="message-content">
-    <p>{{ message.contenido }}</p>
-  </div>
-  <div class="message-footer">
-    <span class="message-time">{{ message.fechaEnvio | date:'shortTime' }}</span>
+<div class="card mb-3" [ngClass]="{'ms-auto': isCurrentUser}" style="max-width: 80%;">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="fw-semibold">{{ message.usuario.nombre }}</span>
+      <span class="text-muted small">{{ message.fechaEnvio | date:'medium' }}</span>
+    </div>
+    <p class="card-text mb-2">{{ message.contenido }}</p>
+    <div class="text-end">
+      <small class="text-muted">{{ message.fechaEnvio | date:'shortTime' }}</small>
+    </div>
   </div>
 </div> 

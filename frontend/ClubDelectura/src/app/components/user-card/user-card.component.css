@@ -90,4 +90,32 @@
 
 .view-button:hover {
   background-color: #2563eb;
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bg-primary-subtle {
+  background-color: #e3f2fd !important;
+}
+
+.text-primary {
+  color: #1976d2 !important;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
 } 

@@ -1,44 +1,49 @@
-<header class="bg-primary text-white">
-  <nav class="navbar navbar-expand-lg">
+<header class="bg-primary bg-opacity-90 text-white">
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-      <a class="navbar-brand" routerLink="/">Club de Lectura</a>
+      <a class="navbar-brand fw-bold" routerLink="/">Club de Lectura</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/libros" routerLinkActive="active">Libros</a>
+            <a class="nav-link text-white" routerLink="/libros" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Libros</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/foros" routerLinkActive="active">Foros</a>
+            <a class="nav-link text-white" routerLink="/foros" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Foros</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/eventos" routerLinkActive="active">Eventos</a>
+            <a class="nav-link text-white" routerLink="/eventos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Eventos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/recomendaciones" routerLinkActive="active">Recomendaciones</a>
+            <a class="nav-link text-white" routerLink="/recomendaciones" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Recomendaciones</a>
           </li>
+          @if (isLoggedIn) {
+            <li class="nav-item">
+              <a class="nav-link text-white" routerLink="/lecturas" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Mis Lecturas</a>
+            </li>
+          }
           @if (isAdmin) {
             <li class="nav-item">
-              <a class="nav-link" routerLink="/usuarios" routerLinkActive="active">Usuarios</a>
+              <a class="nav-link text-white" routerLink="/usuarios" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Usuarios</a>
             </li>
           }
         </ul>
         <ul class="navbar-nav">
           @if (isLoggedIn) {
             <li class="nav-item">
-              <a class="nav-link" routerLink="/perfil" routerLinkActive="active">Mi Perfil</a>
+              <a class="nav-link text-white" routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Mi Perfil</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar Sesión</a>
+              <a class="nav-link text-white" (click)="logout()" style="cursor: pointer;">Cerrar Sesión</a>
             </li>
           } @else {
             <li class="nav-item">
-              <a class="nav-link" routerLink="/login" routerLinkActive="active">Iniciar Sesión</a>
+              <a class="nav-link text-white" routerLink="/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Iniciar Sesión</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/registro" routerLinkActive="active">Registro</a>
+              <a class="nav-link text-white" routerLink="/registro" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Registro</a>
             </li>
           }
         </ul>

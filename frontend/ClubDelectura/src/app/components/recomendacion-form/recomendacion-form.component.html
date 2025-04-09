@@ -1,50 +1,70 @@
-<div class="card mb-4">
-  <div class="card-body">
-    <h5 class="card-title">Nueva Recomendación</h5>
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <h5 class="card-title mb-4">Nueva Recomendación</h5>
     <form [formGroup]="recomendacionForm" (ngSubmit)="onSubmit()">
       <div class="mb-3">
-        <label for="titulo" class="form-label">Título del Libro</label>
-        <input type="text" class="form-control" id="titulo" formControlName="titulo">
-        <div class="invalid-feedback" *ngIf="recomendacionForm.get('titulo')?.invalid && recomendacionForm.get('titulo')?.touched">
+        <label for="titulo" class="form-label text-secondary">Título del Libro</label>
+        <input type="text" 
+               class="form-control" 
+               [class.is-invalid]="recomendacionForm.get('titulo')?.invalid && recomendacionForm.get('titulo')?.touched"
+               id="titulo" 
+               formControlName="titulo">
+        <div class="invalid-feedback">
           El título es requerido
         </div>
       </div>
 
       <div class="mb-3">
-        <label for="autor" class="form-label">Autor</label>
-        <input type="text" class="form-control" id="autor" formControlName="autor">
-        <div class="invalid-feedback" *ngIf="recomendacionForm.get('autor')?.invalid && recomendacionForm.get('autor')?.touched">
+        <label for="autor" class="form-label text-secondary">Autor</label>
+        <input type="text" 
+               class="form-control"
+               [class.is-invalid]="recomendacionForm.get('autor')?.invalid && recomendacionForm.get('autor')?.touched"
+               id="autor" 
+               formControlName="autor">
+        <div class="invalid-feedback">
           El autor es requerido
         </div>
       </div>
 
       <div class="mb-3">
-        <label for="genero" class="form-label">Género</label>
-        <input type="text" class="form-control" id="genero" formControlName="genero">
-        <div class="invalid-feedback" *ngIf="recomendacionForm.get('genero')?.invalid && recomendacionForm.get('genero')?.touched">
+        <label for="genero" class="form-label text-secondary">Género</label>
+        <input type="text" 
+               class="form-control"
+               [class.is-invalid]="recomendacionForm.get('genero')?.invalid && recomendacionForm.get('genero')?.touched"
+               id="genero" 
+               formControlName="genero">
+        <div class="invalid-feedback">
           El género es requerido
         </div>
       </div>
 
       <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" formControlName="descripcion" rows="3"></textarea>
-        <div class="invalid-feedback" *ngIf="recomendacionForm.get('descripcion')?.invalid && recomendacionForm.get('descripcion')?.touched">
+        <label for="descripcion" class="form-label text-secondary">Descripción</label>
+        <textarea class="form-control" 
+                  [class.is-invalid]="recomendacionForm.get('descripcion')?.invalid && recomendacionForm.get('descripcion')?.touched"
+                  id="descripcion" 
+                  formControlName="descripcion" 
+                  rows="3"></textarea>
+        <div class="invalid-feedback">
           La descripción es requerida
         </div>
       </div>
 
-      <div class="mb-3">
-        <label for="razonRecomendacion" class="form-label">Razón de la Recomendación</label>
-        <textarea class="form-control" id="razonRecomendacion" formControlName="razonRecomendacion" rows="3"></textarea>
-        <div class="invalid-feedback" *ngIf="recomendacionForm.get('razonRecomendacion')?.invalid && recomendacionForm.get('razonRecomendacion')?.touched">
+      <div class="mb-4">
+        <label for="razonRecomendacion" class="form-label text-secondary">Razón de la Recomendación</label>
+        <textarea class="form-control" 
+                  [class.is-invalid]="recomendacionForm.get('razonRecomendacion')?.invalid && recomendacionForm.get('razonRecomendacion')?.touched"
+                  id="razonRecomendacion" 
+                  formControlName="razonRecomendacion" 
+                  rows="3"></textarea>
+        <div class="invalid-feedback">
           La razón de la recomendación es requerida
         </div>
       </div>
 
       <div class="d-flex justify-content-end gap-2">
-        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="recomendacionForm.invalid">Guardar</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancelar</button>
+        <button type="submit" class="btn btn-success" [disabled]="recomendacionForm.invalid">Guardar</button>
       </div>
     </form>
   </div>

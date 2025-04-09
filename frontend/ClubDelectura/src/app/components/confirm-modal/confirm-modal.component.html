@@ -1,10 +1,17 @@
-<div *ngIf="isOpen" class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="modal-title">{{title}}</h2>
-    <p class="modal-message">{{message}}</p>
-    <div class="modal-actions">
-      <button class="cancel-button" (click)="onCancel()">Cancelar</button>
-      <button class="confirm-button" (click)="onConfirm()">Confirmar</button>
+@if (isOpen) {
+  <div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4">
+          <h5 class="modal-title mb-3">{{title}}</h5>
+          <p class="text-muted mb-4">{{message}}</p>
+          <div class="d-flex justify-content-end gap-2">
+            <button class="btn btn-outline-secondary" (click)="onCancel()">Cancelar</button>
+            <button class="btn btn-danger" (click)="onConfirm()">Confirmar</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div> 
+  <div class="modal-backdrop fade show"></div>
+} 

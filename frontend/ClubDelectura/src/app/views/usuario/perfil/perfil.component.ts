@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@app/services/auth.service';
 import { Usuario } from '@app/models/usuario.model';
+import { InscriptionCardComponent } from '../../../components/inscription-card/inscription-card.component';
 
 @Component({
   selector: 'app-perfil',
@@ -11,28 +12,17 @@ import { Usuario } from '@app/models/usuario.model';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    InscriptionCardComponent
   ],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css']
 })
 export class PerfilComponent implements OnInit {
   usuario: Usuario | null = null;
-  editedUsuario: Usuario = {
-    id: 0,
-    nombre: '',
-    email: '',
-    contrasena: '',
-    rol: 'user',
-    fechaRegistro: new Date().toISOString(),
-    lecturas: [],
-    foros: [],
-    mensajes: [],
-    eventos: [],
-    inscripcions: [],
-    recomendacions: []
-  };
+  editedUsuario: Usuario | null = null;
   isEditing = false;
+  inscripciones: any[] = []; // TODO: Tipar correctamente con el modelo de Inscripcion
 
   constructor(private authService: AuthService) {}
 
@@ -40,6 +30,7 @@ export class PerfilComponent implements OnInit {
     this.usuario = this.authService.getCurrentUser();
     if (this.usuario) {
       this.editedUsuario = { ...this.usuario };
+      // TODO: Cargar las inscripciones del usuario
     }
   }
 
@@ -49,15 +40,13 @@ export class PerfilComponent implements OnInit {
 
   cancelEditing() {
     this.isEditing = false;
-    if (this.usuario) {
-      this.editedUsuario = { ...this.usuario };
-    }
+    this.editedUsuario = this.usuario ? { ...this.usuario } : null;
   }
 
   saveChanges() {
     if (this.editedUsuario) {
-      this.authService.setCurrentUser(this.editedUsuario);
-      this.usuario = this.editedUsuario;
+      // TODO: Implementar la actualización del usuario
+      this.usuario = { ...this.editedUsuario };
       this.isEditing = false;
     }
   }

@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-header">
           <h3 class="card-title">Perfil de Usuario</h3>
         </div>
@@ -23,11 +23,11 @@
               <form (ngSubmit)="saveChanges()">
                 <div class="mb-3">
                   <label for="nombre" class="form-label">Nombre</label>
-                  <input type="text" class="form-control" id="nombre" [(ngModel)]="editedUsuario.nombre" name="nombre" required>
+                  <input type="text" class="form-control" id="nombre" [ngModel]="editedUsuario?.nombre" (ngModelChange)="editedUsuario && (editedUsuario.nombre = $event)" name="nombre" required>
                 </div>
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="email" [(ngModel)]="editedUsuario.email" name="email" required>
+                  <input type="email" class="form-control" id="email" [ngModel]="editedUsuario?.email" (ngModelChange)="editedUsuario && (editedUsuario.email = $event)" name="email" required>
                 </div>
                 <div class="mb-3">
                   <button type="submit" class="btn btn-success me-2">Guardar Cambios</button>
@@ -38,6 +38,26 @@
           }
         </div>
       </div>
+
+      @if (usuario && inscripciones && inscripciones.length > 0) {
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Mis Inscripciones a Eventos</h3>
+          </div>
+          <div class="card-body">
+            <div class="row row-cols-1 g-3">
+              @for (inscripcion of inscripciones; track inscripcion.id) {
+                <div class="col">
+                  <app-inscription-card 
+                    [inscription]="inscripcion"
+                    [showDetails]="true">
+                  </app-inscription-card>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>
