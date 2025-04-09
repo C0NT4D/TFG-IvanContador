@@ -18,7 +18,20 @@ import { Usuario } from '@app/models/usuario.model';
 })
 export class PerfilComponent implements OnInit {
   usuario: Usuario | null = null;
-  editedUsuario: Usuario | null = null;
+  editedUsuario: Usuario = {
+    id: 0,
+    nombre: '',
+    email: '',
+    contrasena: '',
+    rol: 'user',
+    fechaRegistro: new Date().toISOString(),
+    lecturas: [],
+    foros: [],
+    mensajes: [],
+    eventos: [],
+    inscripcions: [],
+    recomendacions: []
+  };
   isEditing = false;
 
   constructor(private authService: AuthService) {}
