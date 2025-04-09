@@ -17,9 +17,6 @@
             <a class="nav-link" routerLink="/eventos" routerLinkActive="active">Eventos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/lecturas" routerLinkActive="active">Lecturas</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" routerLink="/recomendaciones" routerLinkActive="active">Recomendaciones</a>
           </li>
           @if (isAdmin) {
@@ -29,20 +26,19 @@
           }
         </ul>
         <ul class="navbar-nav">
-          @if (!isLoggedIn) {
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/registro" routerLinkActive="active">Registro</a>
-            </li>
-          }
-          @if (isLoggedIn) {
+          @if (isAuthenticated) {
             <li class="nav-item">
               <a class="nav-link" routerLink="/perfil" routerLinkActive="active">Mi Perfil</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" (click)="logout()">Cerrar Sesión</a>
+              <a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar Sesión</a>
+            </li>
+          } @else {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/login" routerLinkActive="active">Iniciar Sesión</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/registro" routerLinkActive="active">Registro</a>
             </li>
           }
         </ul>

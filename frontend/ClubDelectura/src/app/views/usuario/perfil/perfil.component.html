@@ -1,100 +1,43 @@
-<div class="perfil-container">
-  @if (loading) {
-    <app-loading></app-loading>
-  }
-
-  @if (error) {
-    <app-error [message]="error"></app-error>
-  }
-
-  @if (!loading && !error && usuario) {
-    <div class="perfil-content">
-      <div class="perfil-header">
-        <h1>Mi Perfil</h1>
-        @if (!editMode) {
-          <button class="edit-button" (click)="toggleEditMode()">Editar Perfil</button>
-        }
-      </div>
-
-      <div class="perfil-info">
-        @if (editMode) {
-          <div class="edit-form">
-            <div class="form-group">
-              <label for="nombre">Nombre</label>
-              <input 
-                type="text" 
-                id="nombre" 
-                [(ngModel)]="editedUsuario.nombre" 
-                class="form-input"
-              >
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Perfil de Usuario</h3>
+        </div>
+        <div class="card-body">
+          @if (!usuario) {
+            <div class="alert alert-warning">
+              No hay usuario autenticado
             </div>
-
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                [(ngModel)]="editedUsuario.email" 
-                class="form-input"
-              >
-            </div>
-
-            <div class="form-actions">
-              <button class="save-button" (click)="saveChanges()">Guardar Cambios</button>
-              <button class="cancel-button" (click)="cancelEdit()">Cancelar</button>
-            </div>
-          </div>
-        } @else {
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">Nombre:</span>
-              <span class="value">{{ usuario.nombre }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Email:</span>
-              <span class="value">{{ usuario.email }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Rol:</span>
-              <span class="value">{{ usuario.rol }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Fecha de registro:</span>
-              <span class="value">{{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</span>
-            </div>
-          </div>
-        }
-      </div>
-
-      <div class="perfil-stats">
-        <h2>Estadísticas</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Lecturas</h3>
-            <p class="stat-value">{{ usuario.lecturas.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Foros</h3>
-            <p class="stat-value">{{ usuario.foros.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Eventos</h3>
-            <p class="stat-value">{{ usuario.eventos.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Mensajes</h3>
-            <p class="stat-value">{{ usuario.mensajes.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Inscripciones</h3>
-            <p class="stat-value">{{ usuario.inscripcions.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Recomendaciones</h3>
-            <p class="stat-value">{{ usuario.recomendacions.length }}</p>
-          </div>
+          } @else {
+            @if (!isEditing) {
+              <div class="mb-3">
+                <h4>Información Personal</h4>
+                <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+                <p><strong>Email:</strong> {{ usuario.email }}</p>
+                <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+                <button class="btn btn-primary" (click)="startEditing()">Editar Perfil</button>
+              </div>
+            } @else {
+              <form (ngSubmit)="saveChanges()">
+                <div class="mb-3">
+                  <label for="nombre" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="nombre" [(ngModel)]="editedUsuario.nombre" name="nombre" required>
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" [(ngModel)]="editedUsuario.email" name="email" required>
+                </div>
+                <div class="mb-3">
+                  <button type="submit" class="btn btn-success me-2">Guardar Cambios</button>
+                  <button type="button" class="btn btn-secondary" (click)="cancelEditing()">Cancelar</button>
+                </div>
+              </form>
+            }
+          }
         </div>
       </div>
     </div>
-  }
+  </div>
 </div>

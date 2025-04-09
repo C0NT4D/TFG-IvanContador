@@ -1,34 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  isLoggedIn: boolean = false;
-  isAdmin: boolean = false;
+  isAuthenticated = false;
+  isAdmin = false;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.checkAuthStatus();
-  }
-
-  checkAuthStatus() {
-    this.isLoggedIn = this.authService.getCurrentUser() !== null;
-    if (this.isLoggedIn) {
+    // Suscribirse a los cambios del usuario
+    this.authService.currentUser$.subscribe(user => {
+      this.isAuthenticated = !!user;
       this.isAdmin = this.authService.isAdmin();
-    }
+    });
   }
 
   logout() {
     this.authService.logout();
-    this.isLoggedIn = false;
-    this.isAdmin = false;
   }
 }

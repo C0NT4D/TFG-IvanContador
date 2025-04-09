@@ -1,53 +1,34 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UsuarioService } from '@app/services/usuario.service';
-import { UserFormComponent } from '@app/components/user-form/user-form.component';
-import { LoadingComponent } from '@app/components/loading/loading.component';
-import { ErrorComponent } from '@app/components/error/error.component';
+import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    UserFormComponent,
-    LoadingComponent,
-    ErrorComponent
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loading = false;
+  email: string = '';
+  password: string = '';
   error: string | null = null;
 
   constructor(
-    private usuarioService: UsuarioService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
-  onLoginSubmit(userData: { email: string; contrasena: string }): void {
-    this.loading = true;
+  onSubmit() {
     this.error = null;
-
-    const loginData = {
-      email: userData.email,
-      contrasena: userData.contrasena
-    };
-
-    this.usuarioService.login(loginData.email, loginData.contrasena).subscribe({
-      next: (usuario) => {
-        this.loading = false;
-        if (usuario) {
-          this.router.navigate(['/usuarios/perfil']);
-        } else {
-          this.error = 'Credenciales inválidas';
-        }
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        // La redirección se maneja en el AuthService
       },
       error: (error) => {
-        this.loading = false;
-        this.error = 'Error al iniciar sesión';
+        this.error = error.message || 'Error al iniciar sesión';
       }
     });
   }

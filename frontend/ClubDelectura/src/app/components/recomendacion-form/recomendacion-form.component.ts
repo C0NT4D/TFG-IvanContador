@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { Recomendacion } from '@app/models/recomendacion.model';
 import { Usuario } from '@app/models/usuario.model';
 import { Libro } from '@app/models/libro.model';
-import { AuthService, User } from '@app/services/auth.service';
+import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-recomendacion-form',
@@ -19,7 +19,7 @@ export class RecomendacionFormComponent {
   @Output() cancel = new EventEmitter<void>();
   
   recomendacionForm: FormGroup;
-  currentUser: User | null = null;
+  currentUser: Usuario | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -37,23 +37,6 @@ export class RecomendacionFormComponent {
     this.currentUser = this.authService.getCurrentUser();
   }
 
-  private convertUserToUsuario(user: User): Usuario {
-    return {
-      id: user.id,
-      nombre: user.nombre,
-      email: user.email,
-      contrasena: '', // No necesitamos la contraseña para la recomendación
-      rol: user.rol,
-      fechaRegistro: new Date(),
-      lecturas: [],
-      foros: [],
-      mensajes: [],
-      eventos: [],
-      inscripcions: [],
-      recomendacions: []
-    };
-  }
-
   onSubmit() {
     if (this.recomendacionForm.valid && this.currentUser) {
       const libro: Libro = {
@@ -68,7 +51,7 @@ export class RecomendacionFormComponent {
       };
 
       this.submit.emit({
-        usuario: this.convertUserToUsuario(this.currentUser),
+        usuario: this.currentUser,
         libro: libro,
         comentario: this.recomendacionForm.value.razonRecomendacion,
         fecha: new Date()

@@ -9,9 +9,9 @@ export class UsuarioService {
   private usuarios: Usuario[] = [
     {
       id: 1,
-      nombre: 'Admin',
-      email: 'admin@example.com',
-      contrasena: 'admin123',
+      nombre: 'Administrador',
+      email: 'admin@club.com',
+      contrasena: 'club123',
       rol: 'ROLE_ADMIN',
       fechaRegistro: '2024-01-01',
       lecturas: [],
@@ -24,8 +24,8 @@ export class UsuarioService {
     {
       id: 2,
       nombre: 'Usuario',
-      email: 'usuario@example.com',
-      contrasena: 'user123',
+      email: 'usuario@club.com',
+      contrasena: 'club123',
       rol: 'ROLE_USER',
       fechaRegistro: '2024-01-02',
       lecturas: [],
