@@ -12,6 +12,7 @@ import { Recomendacion } from '@app/models/recomendacion.model';
 })
 export class RecommendationCardComponent {
   @Input() recomendacion!: Recomendacion;
+  @Input() showDelete: boolean = false;
   @Output() delete = new EventEmitter<number>();
 
   onDelete() {

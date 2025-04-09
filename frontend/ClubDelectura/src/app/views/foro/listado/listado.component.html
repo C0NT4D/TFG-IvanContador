@@ -1,50 +1,41 @@
-<div class="forum-list-container p-6">
-  <div class="forum-header">
-    <h1 class="text-2xl font-bold text-gray-800">Foros de Discusión</h1>
-    <a routerLink="/foros/nuevo" class="add-button">
-      Crear Foro
-    </a>
-  </div>
-
+<div class="container py-4">
   @if (loading) {
-    <div class="flex justify-center items-center h-64">
-      <app-loading></app-loading>
-    </div>
+    <app-loading></app-loading>
   }
 
   @if (error) {
-    <div class="flex justify-center items-center h-64">
-      <app-error [message]="error"></app-error>
-    </div>
+    <app-error [message]="error"></app-error>
   }
 
   @if (!loading && !error) {
-    <div class="forum-grid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Foros</h1>
+      @if (isAdmin) {
+        <button class="btn btn-primary" routerLink="/foros/nuevo">
+          <i class="bi bi-plus-circle me-1"></i> Crear Foro
+        </button>
+      }
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
       @for (forum of forums; track forum.id) {
-        <app-forum-card
-          [forum]="forum"
-          (delete)="onDeleteForum($event)"
-        ></app-forum-card>
+        <div class="col">
+          <app-forum-card 
+            [forum]="forum"
+            [showDelete]="isAdmin"
+            (delete)="onDeleteForum(forum.id)">
+          </app-forum-card>
+        </div>
       }
     </div>
   }
 
-  @if (!loading && !error && forums.length === 0) {
-    <div class="no-forums">
-      <p>No hay foros disponibles.</p>
-      <a routerLink="/foros/nuevo" class="first-forum-button">
-        ¡Sé el primero en crear un foro!
-      </a>
-    </div>
+  @if (showDeleteModal) {
+    <app-confirm-modal
+      title="Eliminar Foro"
+      message="¿Estás seguro de que quieres eliminar este foro?"
+      (confirm)="onConfirmDelete()"
+      (cancel)="onCancelDelete()">
+    </app-confirm-modal>
   }
 </div>
-
-@if (showDeleteModal) {
-  <app-confirm-modal
-    [isOpen]="showDeleteModal"
-    title="Eliminar Foro"
-    message="¿Estás seguro de que deseas eliminar este foro? Esta acción no se puede deshacer."
-    (confirm)="onConfirmDelete()"
-    (cancel)="onCancelDelete()">
-  </app-confirm-modal>
-}

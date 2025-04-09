@@ -4,11 +4,14 @@ import { RouterModule } from '@angular/router';
 import { LibroService } from '../../../services/libro.service';
 import { Libro } from '../../../models/libro.model';
 import { BookCardComponent } from '../../../components/book-card/book-card.component';
+import { LoadingComponent } from '../../../components/loading/loading.component';
+import { ErrorComponent } from '../../../components/error/error.component';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-listado',
   standalone: true,
-  imports: [CommonModule, RouterModule, BookCardComponent],
+  imports: [CommonModule, RouterModule, BookCardComponent, LoadingComponent, ErrorComponent],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
 })
@@ -17,21 +20,29 @@ export class ListadoComponent implements OnInit {
   generos: string[] = [];
   generoSeleccionado: string = '';
   error: string = '';
+  loading = true;
+  isAdmin = false;
 
-  constructor(private libroService: LibroService) {}
+  constructor(
+    private libroService: LibroService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadBooks();
     this.loadGenres();
+    this.checkAdminStatus();
   }
 
   loadBooks(): void {
     this.libroService.getBooks().subscribe({
       next: (libros: Libro[]) => {
         this.libros = libros;
+        this.loading = false;
       },
       error: (error: Error) => {
         this.error = 'Error al cargar los libros';
+        this.loading = false;
         console.error('Error:', error);
       }
     });
@@ -63,5 +74,9 @@ export class ListadoComponent implements OnInit {
         }
       });
     }
+  }
+
+  private checkAdminStatus() {
+    this.isAdmin = this.authService.isAdmin();
   }
 }

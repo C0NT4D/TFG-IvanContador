@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@app/services/auth.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -8,7 +9,26 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
-  isLoggedIn = false; 
-  isAdmin = true; // TODO: Implementar verificación de rol
+export class HeaderComponent implements OnInit {
+  isLoggedIn: boolean = false;
+  isAdmin: boolean = false;
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    this.checkAuthStatus();
+  }
+
+  checkAuthStatus() {
+    this.isLoggedIn = this.authService.getCurrentUser() !== null;
+    if (this.isLoggedIn) {
+      this.isAdmin = this.authService.isAdmin();
+    }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.isAdmin = false;
+  }
 }

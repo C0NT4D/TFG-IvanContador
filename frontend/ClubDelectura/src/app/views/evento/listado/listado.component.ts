@@ -6,6 +6,8 @@ import { EventCardComponent } from '../../../components/event-card/event-card.co
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
+import { AuthService } from '../../../services/auth.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
   selector: 'app-evento-listado',
@@ -18,20 +20,26 @@ import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm
     ErrorComponent,
     ConfirmModalComponent
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
 })
 export class ListadoComponent implements OnInit {
   eventos: any[] = [];
   loading = true;
-  error = '';
+  error: string | null = null;
   showDeleteModal = false;
   eventoToDelete: number | null = null;
+  isAdmin = false;
 
-  constructor(private eventoService: EventoService) {}
+  constructor(
+    private eventoService: EventoService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadEventos();
+    this.checkAdminStatus();
   }
 
   private loadEventos(): void {
@@ -46,6 +54,10 @@ export class ListadoComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private checkAdminStatus() {
+    this.isAdmin = this.authService.isAdmin();
   }
 
   onDeleteEvento(id: number): void {

@@ -17,10 +17,12 @@
        class="view-book-link">
       Ver libro
     </a>
-    <button 
-      (click)="onDelete()" 
-      class="delete-button">
-      Eliminar
-    </button>
+    @if (showDelete) {
+      <button 
+        (click)="onDelete()" 
+        class="delete-button">
+        Eliminar
+      </button>
+    }
   </div>
 </div> 

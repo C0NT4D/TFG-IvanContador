@@ -12,6 +12,7 @@ import { Foro } from '../../models/foro.model';
 })
 export class ForumCardComponent {
   @Input() forum!: Foro;
+  @Input() showDelete = false;
   @Output() delete = new EventEmitter<number>();
 
   onDelete() {

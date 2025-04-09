@@ -1,33 +1,30 @@
-<div class="usuario-list-container">
-  <div class="usuario-header">
-    <h1>Usuarios</h1>
-    <button class="add-button" routerLink="/usuarios/nuevo">
-      Añadir Usuario
-    </button>
-  </div>
-
-  @if (loading) {
-    <div class="flex justify-center items-center h-64">
+<div class="container py-4">
+  @if (!isAdmin) {
+    <div class="alert alert-danger" role="alert">
+      No tienes permisos para acceder a esta página.
+    </div>
+  } @else {
+    @if (loading) {
       <app-loading></app-loading>
-    </div>
-  }
+    }
 
-  @if (error) {
-    <div class="flex justify-center items-center h-64">
+    @if (error) {
       <app-error [message]="error"></app-error>
-    </div>
-  }
+    }
 
-  @if (!loading && !error) {
-    <div class="usuario-grid">
-      @for (usuario of usuarios; track usuario.id) {
-        <app-user-card [usuario]="usuario"></app-user-card>
-      }
-      @if (usuarios.length === 0) {
-        <div class="no-usuarios">
-          <p>No hay usuarios registrados</p>
+    @if (!loading && !error) {
+      <div class="row">
+        <div class="col-12">
+          <h1 class="mb-4">Usuarios</h1>
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            @for (usuario of usuarios; track usuario.id) {
+              <div class="col">
+                <app-user-card [usuario]="usuario"></app-user-card>
+              </div>
+            }
+          </div>
         </div>
-      }
-    </div>
+      </div>
+    }
   }
 </div> 

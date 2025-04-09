@@ -13,6 +13,7 @@ import { Evento } from '../../models/evento.model';
 export class EventCardComponent {
   @Input() event!: Evento;
   @Input() showDetails: boolean = true;
+  @Input() showDelete: boolean = false;
   @Output() delete = new EventEmitter<number>();
 
   onDelete() {

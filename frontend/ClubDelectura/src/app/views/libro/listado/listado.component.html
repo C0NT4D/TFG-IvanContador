@@ -1,27 +1,39 @@
 <div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Catálogo de Libros</h1>
-    <button class="btn btn-primary" routerLink="/libros/nuevo">
-      <i class="bi bi-plus-circle me-1"></i> Añadir Libro
-    </button>
-  </div>
-  
-  <!-- Filtro por género -->
-  <div class="mb-4">
-    <select class="form-select" (change)="filterByGenre($any($event.target).value)">
-      <option value="">Todos los géneros</option>
-      @for (genero of generos; track genero) {
-        <option [value]="genero">{{ genero }}</option>
-      }
-    </select>
-  </div>
+  @if (loading) {
+    <app-loading></app-loading>
+  }
 
-  <!-- Grid de libros -->
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    @for (libro of libros; track libro.id) {
-      <div class="col">
-        <app-book-card [libro]="libro"></app-book-card>
-      </div>
-    }
-  </div>
+  @if (error) {
+    <app-error [message]="error"></app-error>
+  }
+
+  @if (!loading && !error) {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Catálogo de Libros</h1>
+      @if (isAdmin) {
+        <button class="btn btn-primary" routerLink="/libros/nuevo">
+          <i class="bi bi-plus-circle me-1"></i> Añadir Libro
+        </button>
+      }
+    </div>
+    
+    <!-- Filtro por género -->
+    <div class="mb-4">
+      <select class="form-select" (change)="filterByGenre($any($event.target).value)">
+        <option value="">Todos los géneros</option>
+        @for (genero of generos; track genero) {
+          <option [value]="genero">{{ genero }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Grid de libros -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      @for (libro of libros; track libro.id) {
+        <div class="col">
+          <app-book-card [libro]="libro"></app-book-card>
+        </div>
+      }
+    </div>
+  }
 </div>

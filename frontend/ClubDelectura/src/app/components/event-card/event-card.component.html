@@ -1,23 +1,18 @@
-<div class="event-card">
-  <div class="event-header">
-    <h3>{{ event.titulo }}</h3>
-    <span class="event-date">{{ event.fecha | date:'medium' }}</span>
-  </div>
-  <div class="event-location">
-    <i class="fas fa-map-marker-alt"></i>
-    <span>{{ event.ubicacion }}</span>
-  </div>
-  <p class="event-description">{{ event.descripcion }}</p>
-  <div class="event-footer">
-    <div class="event-participants">
-      <i class="fas fa-users"></i>
-      <span>{{ event.inscripcions.length || 0 }} participantes</span>
-    </div>
-    <div class="event-actions">
+<div class="card h-100">
+  <div class="card-body">
+    <h5 class="card-title">{{ event.titulo }}</h5>
+    <p class="card-text">{{ event.descripcion }}</p>
+    <div class="d-flex justify-content-between align-items-center">
       @if (showDetails) {
-        <a [routerLink]="['/eventos', event.id]" class="btn btn-primary">Ver detalles</a>
+        <a [routerLink]="['/eventos', event.id]" class="btn btn-primary">
+          Ver Detalles
+        </a>
       }
-      <button (click)="onDelete()" class="btn btn-danger">Eliminar</button>
+      @if (showDelete) {
+        <button class="btn btn-danger" (click)="onDelete()">
+          <i class="bi bi-trash"></i>
+        </button>
+      }
     </div>
   </div>
 </div>

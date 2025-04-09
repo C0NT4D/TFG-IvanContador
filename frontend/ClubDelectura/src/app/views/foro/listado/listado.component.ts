@@ -7,6 +7,7 @@ import { ForumCardComponent } from '../../../components/forum-card/forum-card.co
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-forum-list',
@@ -28,11 +29,16 @@ export class ListadoComponent implements OnInit {
   error = '';
   showDeleteModal = false;
   forumToDelete: number | null = null;
+  isAdmin = false;
 
-  constructor(private foroService: ForoService) {}
+  constructor(
+    private foroService: ForoService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadForums();
+    this.checkAdminStatus();
   }
 
   private loadForums(): void {
@@ -47,6 +53,10 @@ export class ListadoComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private checkAdminStatus() {
+    this.isAdmin = this.authService.isAdmin();
   }
 
   onDeleteForum(id: number): void {

@@ -1,42 +1,40 @@
-<div class="evento-list-container">
-  <div class="evento-header">
-    <h1>Eventos</h1>
-    <button class="btn btn-primary" routerLink="/eventos/nuevo">
-      Crear Evento
-    </button>
-  </div>
-
+<div class="container py-4">
   @if (loading) {
     <app-loading></app-loading>
   }
+
   @if (error) {
     <app-error [message]="error"></app-error>
   }
 
   @if (!loading && !error) {
-    <div class="evento-grid">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (evento of eventos; track evento) {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Eventos</h1>
+      @if (isAdmin) {
+        <button class="btn btn-primary" routerLink="/eventos/nuevo">
+          <i class="bi bi-plus-circle me-1"></i> Crear Evento
+        </button>
+      }
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      @for (evento of eventos; track evento.id) {
+        <div class="col">
           <app-event-card 
-            [event]="evento" 
+            [event]="evento"
             [showDetails]="true"
-            (delete)="onDeleteEvento($event)">
+            [showDelete]="isAdmin"
+            (delete)="onDeleteEvento(evento.id)">
           </app-event-card>
-        }
-        @if (eventos.length === 0) {
-          <div class="no-eventos">
-            <p>No hay eventos disponibles</p>
-          </div>
-        }
-      </div>
+        </div>
+      }
     </div>
   }
 
   @if (showDeleteModal) {
     <app-confirm-modal
-      [isOpen]="showDeleteModal"
-      [title]="'Eliminar Evento'"
-      [message]="'¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.'"
+      title="Eliminar Evento"
+      message="¿Estás seguro de que quieres eliminar este evento?"
       (confirm)="onConfirmDelete()"
       (cancel)="onCancelDelete()">
     </app-confirm-modal>
