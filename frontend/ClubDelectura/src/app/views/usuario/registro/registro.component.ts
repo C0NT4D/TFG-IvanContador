@@ -1,55 +1,47 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { UsuarioService } from '@app/services/usuario.service';
-import { UserFormComponent } from '@app/components/user-form/user-form.component';
-import { LoadingComponent } from '@app/components/loading/loading.component';
-import { ErrorComponent } from '@app/components/error/error.component';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '@app/services/auth.service';
+import { Usuario } from '@app/models/usuario.model';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [
-    CommonModule,
-    UserFormComponent,
-    LoadingComponent,
-    ErrorComponent
-  ],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css']
 })
 export class RegistroComponent {
-  loading = false;
+  nombre: string = '';
+  email: string = '';
+  password: string = '';
   error: string | null = null;
 
   constructor(
-    private usuarioService: UsuarioService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
-  onRegistroSubmit(userData: { nombre: string; email: string; contrasena: string }): void {
-    this.loading = true;
+  onSubmit() {
     this.error = null;
-
-    const newUser = {
-      nombre: userData.nombre,
-      email: userData.email,
-      contrasena: userData.contrasena
+    const newUser: Usuario = {
+      id: 0,
+      nombre: this.nombre,
+      email: this.email,
+      contrasena: this.password,
+      rol: 'user',
+      fechaRegistro: new Date().toISOString(),
+      lecturas: [],
+      foros: [],
+      mensajes: [],
+      eventos: [],
+      inscripcions: [],
+      recomendacions: []
     };
 
-    this.usuarioService.createUsuario(newUser).subscribe({
-      next: (usuario) => {
-        this.loading = false;
-        if (usuario) {
-          this.router.navigate(['/usuarios/login']);
-        } else {
-          this.error = 'Error al crear la cuenta';
-        }
-      },
-      error: (error) => {
-        this.loading = false;
-        this.error = 'Error al registrar usuario';
-      }
-    });
+    // En local, simplemente establecemos el usuario y redirigimos
+    this.authService.setCurrentUser(newUser);
+    this.router.navigate(['/perfil']);
   }
 }

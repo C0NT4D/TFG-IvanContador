@@ -11,15 +11,14 @@ import { AuthService } from '@app/services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  isAuthenticated = false;
+  isLoggedIn = false;
   isAdmin = false;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    // Suscribirse a los cambios del usuario
     this.authService.currentUser$.subscribe(user => {
-      this.isAuthenticated = !!user;
+      this.isLoggedIn = !!user;
       this.isAdmin = this.authService.isAdmin();
     });
   }

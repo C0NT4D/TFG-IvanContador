@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -24,11 +24,15 @@ export class LoginComponent {
   onSubmit() {
     this.error = null;
     this.authService.login(this.email, this.password).subscribe({
-      next: () => {
-        // La redirección se maneja en el AuthService
+      next: (success) => {
+        if (success) {
+          this.router.navigate(['/perfil']);
+        } else {
+          this.error = 'Credenciales inválidas';
+        }
       },
-      error: (error) => {
-        this.error = error.message || 'Error al iniciar sesión';
+      error: () => {
+        this.error = 'Error al iniciar sesión';
       }
     });
   }
