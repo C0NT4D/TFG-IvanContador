@@ -8,44 +8,45 @@
   }
 
   @if (!loading && !error) {
-    <div class="row">
-      <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h1>Recomendaciones</h1>
-          <button class="btn btn-primary" (click)="openAddRecomendacion()">
-            <i class="bi bi-plus-lg"></i> Añadir Recomendación
-          </button>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Recomendaciones</h1>
+      @if (isAdmin) {
+        <button class="btn btn-primary" (click)="openAddRecomendacion()">
+          <i class="bi bi-plus-circle me-1"></i> Crear Recomendación
+        </button>
+      }
+    </div>
 
-        @if (showAddForm) {
+    @if (showAddForm) {
+      <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title">Crear Nueva Recomendación</h3>
           <app-recomendacion-form
-            [recomendacion]="null"
             (submit)="onSubmitRecomendacion($event)"
             (cancel)="onCancelRecomendacion()">
           </app-recomendacion-form>
-        }
-
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-          @for (recomendacion of recomendaciones; track recomendacion.id) {
-            <div class="col">
-              <app-recommendation-card 
-                [recomendacion]="recomendacion"
-                [showDelete]="isAdmin"
-                (delete)="onDeleteRecomendacion(recomendacion.id)">
-              </app-recommendation-card>
-            </div>
-          }
         </div>
       </div>
+    }
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      @for (recomendacion of recomendaciones; track recomendacion.id) {
+        <div class="col">
+          <app-recommendation-card 
+            [recomendacion]="recomendacion"
+            [showDelete]="isAdmin"
+            (delete)="onDeleteRecomendacion(recomendacion.id)">
+          </app-recommendation-card>
+        </div>
+      }
     </div>
   }
 
-  @if (showDeleteModal) {
-    <app-confirm-modal
-      title="Eliminar Recomendación"
-      message="¿Estás seguro de que quieres eliminar esta recomendación?"
-      (confirm)="onConfirmDelete()"
-      (cancel)="onCancelDelete()">
-    </app-confirm-modal>
-  }
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Recomendación"
+    message="¿Estás seguro de que quieres eliminar esta recomendación?"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-modal>
 </div>

@@ -9,7 +9,7 @@
 
   @if (!loading && !error) {
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="mb-0">Eventos</h1>
+      <h1>Eventos</h1>
       @if (isAdmin) {
         <button class="btn btn-primary" (click)="openAddEvent()">
           <i class="bi bi-plus-circle me-1"></i> Crear Evento
@@ -17,75 +17,116 @@
       }
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      @for (evento of eventos; track evento.id) {
+    @if (showAddForm) {
+      <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title">Crear Nuevo Evento</h3>
+          <form [formGroup]="eventoForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="titulo" class="form-label">Título</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="titulo" 
+                formControlName="titulo"
+                [class.is-invalid]="eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched">
+              @if (eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched) {
+                <div class="invalid-feedback">
+                  @if (eventoForm.get('titulo')?.errors?.['required']) {
+                    <div>El título es requerido</div>
+                  }
+                  @if (eventoForm.get('titulo')?.errors?.['minlength']) {
+                    <div>El título debe tener al menos 3 caracteres</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea 
+                class="form-control" 
+                id="descripcion" 
+                rows="3" 
+                formControlName="descripcion"
+                [class.is-invalid]="eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched">
+              </textarea>
+              @if (eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched) {
+                <div class="invalid-feedback">
+                  @if (eventoForm.get('descripcion')?.errors?.['required']) {
+                    <div>La descripción es requerida</div>
+                  }
+                  @if (eventoForm.get('descripcion')?.errors?.['minlength']) {
+                    <div>La descripción debe tener al menos 10 caracteres</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="fecha" class="form-label">Fecha</label>
+              <input 
+                type="datetime-local" 
+                class="form-control" 
+                id="fecha" 
+                formControlName="fecha"
+                [class.is-invalid]="eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched">
+              @if (eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched) {
+                <div class="invalid-feedback">
+                  @if (eventoForm.get('fecha')?.errors?.['required']) {
+                    <div>La fecha es requerida</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="ubicacion" class="form-label">Ubicación</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="ubicacion" 
+                formControlName="ubicacion"
+                [class.is-invalid]="eventoForm.get('ubicacion')?.invalid && eventoForm.get('ubicacion')?.touched">
+              @if (eventoForm.get('ubicacion')?.invalid && eventoForm.get('ubicacion')?.touched) {
+                <div class="invalid-feedback">
+                  @if (eventoForm.get('ubicacion')?.errors?.['required']) {
+                    <div>La ubicación es requerida</div>
+                  }
+                  @if (eventoForm.get('ubicacion')?.errors?.['minlength']) {
+                    <div>La ubicación debe tener al menos 3 caracteres</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="eventoForm.invalid">Crear Evento</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      @for (event of eventos; track event.id) {
         <div class="col">
           <app-event-card 
-            [event]="evento"
+            [event]="event"
             [showDelete]="isAdmin"
-            (delete)="onDeleteEvento(evento.id)">
+            (delete)="onDeleteEvento(event.id)">
           </app-event-card>
         </div>
       }
     </div>
   }
 
-  @if (showAddForm) {
-    <div class="card mt-4">
-      <div class="card-body">
-        <h5 class="card-title">Crear Nuevo Evento</h5>
-        <form [formGroup]="eventoForm" (ngSubmit)="onSubmit()">
-          <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
-            <input type="text" class="form-control" id="titulo" formControlName="titulo">
-            @if (eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched) {
-              <div class="invalid-feedback d-block">
-                El título es requerido y debe tener al menos 3 caracteres
-              </div>
-            }
-          </div>
-          <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripción</label>
-            <textarea class="form-control" id="descripcion" formControlName="descripcion" rows="3"></textarea>
-            @if (eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched) {
-              <div class="invalid-feedback d-block">
-                La descripción es requerida y debe tener al menos 10 caracteres
-              </div>
-            }
-          </div>
-          <div class="mb-3">
-            <label for="fecha" class="form-label">Fecha</label>
-            <input type="datetime-local" class="form-control" id="fecha" formControlName="fecha">
-            @if (eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched) {
-              <div class="invalid-feedback d-block">
-                La fecha es requerida
-              </div>
-            }
-          </div>
-          <div class="mb-3">
-            <label for="ubicacion" class="form-label">Ubicación</label>
-            <input type="text" class="form-control" id="ubicacion" formControlName="ubicacion">
-            @if (eventoForm.get('ubicacion')?.invalid && eventoForm.get('ubicacion')?.touched) {
-              <div class="invalid-feedback d-block">
-                La ubicación es requerida y debe tener al menos 3 caracteres
-              </div>
-            }
-          </div>
-          <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="eventoForm.invalid">Crear Evento</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  }
-
-  @if (showDeleteModal) {
-    <app-confirm-modal
-      title="Eliminar Evento"
-      message="¿Estás seguro de que quieres eliminar este evento?"
-      (confirm)="onConfirmDelete()"
-      (cancel)="onCancelDelete()">
-    </app-confirm-modal>
-  }
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Evento"
+    message="¿Estás seguro de que quieres eliminar este evento?"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-modal>
 </div>

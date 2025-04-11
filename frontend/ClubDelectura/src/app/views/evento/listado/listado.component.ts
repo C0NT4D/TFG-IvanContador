@@ -8,7 +8,6 @@ import { ErrorComponent } from '../../../components/error/error.component';
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
 import { EventoService } from '../../../services/evento.service';
 import { AuthService } from '../../../services/auth.service';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
   selector: 'app-listado',
@@ -23,7 +22,6 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     ErrorComponent,
     ConfirmModalComponent
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
 })

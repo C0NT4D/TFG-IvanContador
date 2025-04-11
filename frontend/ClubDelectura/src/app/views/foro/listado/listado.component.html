@@ -85,12 +85,11 @@
     </div>
   }
 
-  @if (showDeleteModal) {
-    <app-confirm-modal
-      title="Eliminar Foro"
-      message="¿Estás seguro de que quieres eliminar este foro?"
-      (confirm)="onConfirmDelete()"
-      (cancel)="onCancelDelete()">
-    </app-confirm-modal>
-  }
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Foro"
+    message="¿Estás seguro de que quieres eliminar este foro?"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-modal>
 </div>
