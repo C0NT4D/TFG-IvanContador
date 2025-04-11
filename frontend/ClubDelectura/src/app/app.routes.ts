@@ -1,40 +1,36 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './views/usuario/login/login.component';
 import { RegistroComponent } from './views/usuario/registro/registro.component';
-import { ListadoComponent as LibroListadoComponent } from './views/libro/listado/listado.component';
-import { DetalleComponent as LibroDetalleComponent } from './views/libro/detalle/detalle.component';
-import { NuevoComponent as LibroNuevoComponent } from './views/libro/nuevo/nuevo.component';
-import { ListadoComponent as ForoListadoComponent } from './views/foro/listado/listado.component';
-import { DetalleComponent as ForoDetalleComponent } from './views/foro/detalle/detalle.component';
-import { NuevoComponent as ForoNuevoComponent } from './views/foro/nuevo/nuevo.component';
-import { ListadoComponent as EventoListadoComponent } from './views/evento/listado/listado.component';
-import { DetalleComponent as EventoDetalleComponent } from './views/evento/detalle/detalle.component';
-import { NuevoComponent as EventoNuevoComponent } from './views/evento/nuevo/nuevo.component';
-import { ListadoComponent as RecomendacionListadoComponent } from './views/recomendacion/listado/listado.component';
-import { ListadoComponent as LecturaListadoComponent } from './views/lectura/listado/listado.component';
-import { DetalleComponent as LecturaDetalleComponent } from './views/lectura/detalle/detalle.component';
 import { PerfilComponent } from './views/usuario/perfil/perfil.component';
+import { ListadoComponent as ForoListadoComponent } from './views/foro/listado/listado.component';
+import { NuevoComponent as ForoNuevoComponent } from './views/foro/nuevo/nuevo.component';
+import { DetalleComponent as ForoDetalleComponent } from './views/foro/detalle/detalle.component';
+import { ListadoComponent as EventoListadoComponent } from './views/evento/listado/listado.component';
+import { NuevoComponent as EventoNuevoComponent } from './views/evento/nuevo/nuevo.component';
+import { DetalleComponent as EventoDetalleComponent } from './views/evento/detalle/detalle.component';
+import { ListadoComponent as LibroListadoComponent } from './views/libro/listado/listado.component';
+import { NuevoComponent as LibroNuevoComponent } from './views/libro/nuevo/nuevo.component';
+import { DetalleComponent as LibroDetalleComponent } from './views/libro/detalle/detalle.component';
+import { ListadoComponent as RecomendacionListadoComponent } from './views/recomendacion/listado/listado.component';
+import { ListadoComponent as UsuarioListadoComponent } from './views/usuario/listado/listado.component';
 import { DetalleComponent as UsuarioDetalleComponent } from './views/usuario/detalle/detalle.component';
 import { authGuard } from './guards/auth.guard';
-import { adminGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
-  { path: 'libros', component: LibroListadoComponent, canActivate: [authGuard] },
-  { path: 'libros/:id', component: LibroDetalleComponent, canActivate: [authGuard] },
-  { path: 'libros/nuevo', component: LibroNuevoComponent, canActivate: [authGuard] },
-  { path: 'foros', component: ForoListadoComponent, canActivate: [authGuard] },
-  { path: 'foros/:id', component: ForoDetalleComponent, canActivate: [authGuard] },
-  { path: 'foros/nuevo', component: ForoNuevoComponent, canActivate: [authGuard] },
-  { path: 'eventos', component: EventoListadoComponent, canActivate: [authGuard] },
-  { path: 'eventos/:id', component: EventoDetalleComponent, canActivate: [authGuard] },
-  { path: 'eventos/nuevo', component: EventoNuevoComponent, canActivate: [authGuard] },
-  { path: 'recomendaciones', component: RecomendacionListadoComponent, canActivate: [authGuard] },
-  { path: 'lecturas', component: LecturaListadoComponent, canActivate: [authGuard] },
-  { path: 'lecturas/:id', component: LecturaDetalleComponent, canActivate: [authGuard] },
-  { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
-  { path: 'usuarios', loadComponent: () => import('./views/usuario/listado/listado.component').then(m => m.ListadoComponent), canActivate: [adminGuard] },
-  { path: 'usuarios/:id', component: UsuarioDetalleComponent, canActivate: [adminGuard] }
+  { path: 'perfil', component: PerfilComponent },
+  { path: 'foro', component: ForoListadoComponent },
+  { path: 'foro/nuevo', component: ForoNuevoComponent },
+  { path: 'foro/:id', component: ForoDetalleComponent },
+  { path: 'evento', component: EventoListadoComponent },
+  { path: 'evento/nuevo', component: EventoNuevoComponent },
+  { path: 'evento/:id', component: EventoDetalleComponent },
+  { path: 'libro', component: LibroListadoComponent },
+  { path: 'libro/nuevo', component: LibroNuevoComponent },
+  { path: 'libro/:id', component: LibroDetalleComponent },
+  { path: 'recomendacion', component: RecomendacionListadoComponent },
+  { path: 'usuario', component: UsuarioListadoComponent },
+  { path: 'usuario/:id', component: UsuarioDetalleComponent }
 ];

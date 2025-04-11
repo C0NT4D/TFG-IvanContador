@@ -64,7 +64,7 @@ export class NuevoComponent implements OnInit {
               next: (foro) => {
                 this.loading = false;
                 if (foro) {
-                  this.router.navigate(['/foros']);
+                  this.router.navigate(['/foro']);
                 } else {
                   this.error = 'Error al crear el foro';
                 }
@@ -90,6 +90,6 @@ export class NuevoComponent implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/foros']);
+    this.router.navigate(['/foro']);
   }
 } 

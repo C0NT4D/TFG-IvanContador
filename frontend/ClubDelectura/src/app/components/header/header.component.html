@@ -8,16 +8,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link text-white" routerLink="/libros" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Libros</a>
+            <a class="nav-link text-white" routerLink="/libro" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Libros</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" routerLink="/foros" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Foros</a>
+            <a class="nav-link text-white" routerLink="/foro" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Foros</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" routerLink="/eventos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Eventos</a>
+            <a class="nav-link text-white" routerLink="/evento" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Eventos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" routerLink="/recomendaciones" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Recomendaciones</a>
+            <a class="nav-link text-white" routerLink="/recomendacion" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Recomendaciones</a>
           </li>
           @if (isLoggedIn) {
             <li class="nav-item">
@@ -26,7 +26,7 @@
           }
           @if (isAdmin) {
             <li class="nav-item">
-              <a class="nav-link text-white" routerLink="/usuarios" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Usuarios</a>
+              <a class="nav-link text-white" routerLink="/usuario" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Usuarios</a>
             </li>
           }
         </ul>

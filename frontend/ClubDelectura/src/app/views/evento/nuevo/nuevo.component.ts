@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventoService } from '../../../services/evento.service';
+import { AuthService } from '../../../services/auth.service';
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
 
@@ -29,6 +30,7 @@ export class NuevoComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private eventoService: EventoService,
+    private authService: AuthService,
     private router: Router
   ) {
     this.eventoForm = this.fb.group({
@@ -45,15 +47,24 @@ export class NuevoComponent implements OnInit {
 
   onSubmit(): void {
     if (this.eventoForm.valid) {
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        this.error = 'Debes estar autenticado para crear un evento';
+        return;
+      }
+
       this.loading = true;
       this.error = '';
       
       const eventoData = {
-        ...this.eventoForm.value,
+        titulo: this.eventoForm.get('titulo')?.value,
+        descripcion: this.eventoForm.get('descripcion')?.value,
+        fecha: this.eventoForm.get('fecha')?.value,
+        ubicacion: this.eventoForm.get('ubicacion')?.value,
         organizador: {
-          id: 1, // ID del organizador actual (esto debería venir de un servicio de autenticación)
-          nombre: 'Admin',
-          email: 'admin@example.com'
+          id: currentUser.id,
+          nombre: currentUser.nombre,
+          email: currentUser.email
         },
         inscripcions: []
       };
@@ -64,7 +75,7 @@ export class NuevoComponent implements OnInit {
           this.loading = false;
           // Redirigir al listado después de un breve retraso
           setTimeout(() => {
-            this.router.navigate(['/eventos']);
+            this.router.navigate(['/evento']);
           }, 1500);
         },
         error: (error) => {
@@ -78,6 +89,6 @@ export class NuevoComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/eventos']);
+    this.router.navigate(['/evento']);
   }
 }

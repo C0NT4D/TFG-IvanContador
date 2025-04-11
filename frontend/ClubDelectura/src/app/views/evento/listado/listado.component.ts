@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { EventoService } from '../../../services/evento.service';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventCardComponent } from '../../../components/event-card/event-card.component';
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
+import { EventoService } from '../../../services/evento.service';
 import { AuthService } from '../../../services/auth.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
-  selector: 'app-evento-listado',
+  selector: 'app-listado',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
     EventCardComponent,
     LoadingComponent,
     ErrorComponent,
@@ -28,14 +31,24 @@ export class ListadoComponent implements OnInit {
   eventos: any[] = [];
   loading = true;
   error: string | null = null;
+  isAdmin = false;
+  showAddForm = false;
   showDeleteModal = false;
   eventoToDelete: number | null = null;
-  isAdmin = false;
+  eventoForm: FormGroup;
 
   constructor(
     private eventoService: EventoService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+    this.eventoForm = this.fb.group({
+      titulo: ['', [Validators.required, Validators.minLength(3)]],
+      descripcion: ['', [Validators.required, Validators.minLength(10)]],
+      fecha: ['', [Validators.required]],
+      ubicacion: ['', [Validators.required, Validators.minLength(3)]]
+    });
+  }
 
   ngOnInit(): void {
     this.loadEventos();
@@ -44,44 +57,85 @@ export class ListadoComponent implements OnInit {
 
   private loadEventos(): void {
     this.loading = true;
+    this.error = null;
     this.eventoService.getEventos().subscribe({
       next: (eventos) => {
         this.eventos = eventos;
         this.loading = false;
       },
-      error: (error) => {
+      error: (err) => {
         this.error = 'Error al cargar los eventos';
         this.loading = false;
+        console.error('Error loading events:', err);
       }
     });
   }
 
-  private checkAdminStatus() {
-    this.isAdmin = this.authService.isAdmin();
+  private checkAdminStatus(): void {
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.rol === 'admin';
   }
 
-  onDeleteEvento(id: number): void {
-    this.eventoToDelete = id;
+  openAddEvent(): void {
+    this.showAddForm = true;
+  }
+
+  onCancel(): void {
+    this.showAddForm = false;
+    this.eventoForm.reset();
+  }
+
+  onSubmit(): void {
+    if (this.eventoForm.valid) {
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        this.error = 'Debes estar autenticado para crear un evento';
+        return;
+      }
+
+      const eventoData = {
+        titulo: this.eventoForm.get('titulo')?.value,
+        descripcion: this.eventoForm.get('descripcion')?.value,
+        fecha: this.eventoForm.get('fecha')?.value,
+        ubicacion: this.eventoForm.get('ubicacion')?.value,
+        organizador: {
+          id: currentUser.id,
+          nombre: currentUser.nombre,
+          email: currentUser.email
+        },
+        inscripcions: []
+      };
+
+      this.eventoService.createEvento(eventoData).subscribe({
+        next: (evento) => {
+          this.loadEventos();
+          this.showAddForm = false;
+          this.eventoForm.reset();
+        },
+        error: (err) => {
+          this.error = 'Error al crear el evento';
+          console.error('Error creating event:', err);
+        }
+      });
+    }
+  }
+
+  onDeleteEvento(eventoId: number): void {
+    this.eventoToDelete = eventoId;
     this.showDeleteModal = true;
   }
 
   onConfirmDelete(): void {
     if (this.eventoToDelete) {
-      this.loading = true;
       this.eventoService.deleteEvento(this.eventoToDelete).subscribe({
-        next: (success) => {
-          if (success) {
-            this.eventos = this.eventos.filter(evento => evento.id !== this.eventoToDelete);
-          } else {
-            this.error = 'No se pudo eliminar el evento';
-          }
-          this.loading = false;
+        next: () => {
+          this.eventos = this.eventos.filter(e => e.id !== this.eventoToDelete);
           this.showDeleteModal = false;
           this.eventoToDelete = null;
         },
-        error: (error) => {
+        error: (err) => {
           this.error = 'Error al eliminar el evento';
-          this.loading = false;
+          console.error('Error deleting event:', err);
           this.showDeleteModal = false;
           this.eventoToDelete = null;
         }

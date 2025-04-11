@@ -1,0 +1,18 @@
+.form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.invalid-feedback {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.alert {
+  margin-bottom: 1.5rem;
+}
