@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LibroService } from '../../../services/libro.service';
 import { Libro, Lectura, Recomendacion } from '../../../models/libro.model';
 import { Usuario } from '../../../models/usuario.model';
+import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-detalle',
@@ -19,7 +20,8 @@ export class DetalleComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private bookService: LibroService
+    private bookService: LibroService,
+    private authService: AuthService 
   ) {}
 
   ngOnInit(): void {
@@ -46,36 +48,33 @@ export class DetalleComponent implements OnInit {
   }
 
   addReading(): void {
-    if (!this.book) return;
-    
+    const currentUser = this.authService.getCurrentUser(); // Obtener usuario actual
+    if (!this.book || !currentUser) { // Comprobar libro Y usuario
+        if(!currentUser) {
+            this.error = 'Debes iniciar sesión para empezar a leer.';
+        }
+        return;
+    }
+
+    // Crear objeto Lectura completo con id temporal y usuario actual
     const newReading: Lectura = {
-      id: this.book.lecturas.length + 1,
+      id: 0, // ID temporal, el servicio debería asignarlo
       libro: this.book,
-      usuario: {
-        id: 1,
-        nombre: 'Usuario Actual',
-        email: 'usuario@ejemplo.com',
-        contrasena: '',
-        rol: 'USER',
-        fechaRegistro: new Date(),
-        lecturas: [],
-        foros: [],
-        mensajes: [],
-        eventos: [],
-        inscripcions: [],
-        recomendacions: []
-      },
+      usuario: currentUser, // Usar el usuario actual
       fechaInicio: new Date(),
-      fechaFin: new Date(), // Inicialmente igual a fechaInicio
+      fechaFin: undefined, // Válido porque fechaFin es opcional en el modelo
       estadoLectura: 'EN_PROGRESS'
     };
 
+    // Llamar al servicio con el objeto Lectura completo
     this.bookService.addReading(this.book.id, newReading).subscribe({
-      next: () => {
+      next: (createdReading) => { // Parámetro puede ser útil
         this.loadBook(this.book!.id);
+        this.error = '';
       },
-      error: (err) => {
-        this.error = 'Error al añadir la lectura';
+      error: (err: Error | any) => {
+        console.error('Error al añadir la lectura:', err);
+        this.error = err?.message || 'Error al registrar la lectura.';
       }
     });
   }

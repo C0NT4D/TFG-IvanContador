@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { Inscripcion } from '../models/inscripcion.model';
+import { Evento } from '../models/evento.model';
+import { Usuario } from '../models/usuario.model';
 import { EventoService } from './evento.service';
 import { UsuarioService } from './usuario.service';
 
@@ -64,14 +67,28 @@ export class InscripcionService {
     return of(this.inscripcions.find(inscripcion => inscripcion.id === id));
   }
 
-  createInscripcion(inscripcion: Omit<Inscripcion, 'id' | 'fechaInscripcion'>): Observable<Inscripcion> {
-    const newInscripcion = {
-      ...inscripcion,
-      id: this.inscripcions.length + 1,
-      fechaInscripcion: new Date()
-    };
-    this.inscripcions.push(newInscripcion);
-    return of(newInscripcion);
+  createInscripcion(inscripcionData: { evento: Evento, usuario: { id: number } }): Observable<Inscripcion> {
+    const evento = inscripcionData.evento;
+    const usuarioId = inscripcionData.usuario.id;
+
+    return this.usuarioService.getUsuario(usuarioId).pipe(
+      switchMap(usuarioCompleto => {
+        if (!usuarioCompleto) {
+          return throwError(() => new Error('Usuario no encontrado para la inscripción.'));
+        }
+
+        const newInscripcion: Inscripcion = {
+          evento: evento,
+          usuario: usuarioCompleto,
+          id: this.inscripcions.length > 0 ? Math.max(...this.inscripcions.map(i => i.id)) + 1 : 1,
+          fechaInscripcion: new Date()
+        };
+
+        this.inscripcions.push(newInscripcion);
+        console.log('Inscripción creada (mock):', newInscripcion);
+        return of(newInscripcion);
+      })
+    );
   }
 
   deleteInscripcion(id: number): Observable<boolean> {
