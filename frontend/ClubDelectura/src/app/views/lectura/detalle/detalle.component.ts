@@ -4,8 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LecturaService } from '../../../services/lectura.service';
 import { Lectura } from '../../../models/lectura.model';
-import { LoadingComponent } from '../../../components/loading/loading.component';
-import { ErrorComponent } from '../../../components/error/error.component';
+import { AuthService } from '../../../services/auth.service';
+import { Usuario } from '../../../models/usuario.model';
 
 @Component({
   selector: 'app-lectura-detalle',
@@ -14,8 +14,6 @@ import { ErrorComponent } from '../../../components/error/error.component';
     CommonModule,
     RouterLink,
     FormsModule,
-    LoadingComponent,
-    ErrorComponent
   ],
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css']
@@ -24,12 +22,11 @@ export class DetalleComponent implements OnInit {
   lectura?: Lectura;
   loading = true;
   error = '';
-  showDeleteModal = false;
-  lecturaIdToDelete: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private lecturaService: LecturaService,
+    private authService: AuthService,
     private router: Router,
     private location: Location
   ) {}
@@ -94,29 +91,5 @@ export class DetalleComponent implements OnInit {
         this.error = 'Error al actualizar el estado de la lectura.';
       }
     });
-  }
-
-  onDeleteLectura(): void {
-    if (this.lectura) {
-       this.lecturaIdToDelete = this.lectura.id;
-       this.showDeleteModal = true;
-    }
-  }
-
-  confirmDelete(): void {
-    if (this.lecturaIdToDelete) {
-      this.lecturaService.deleteLectura(this.lecturaIdToDelete).subscribe({
-        next: () => {
-           console.log('Lectura eliminada');
-           this.router.navigate(['/lectura']);
-        },
-        error: (err) => {
-          console.error('Error deleting lectura:', err);
-          this.error = 'Error al eliminar la lectura.';
-        }
-      });
-    } else {
-        this.onDeleteLectura();
-    }
   }
 }
