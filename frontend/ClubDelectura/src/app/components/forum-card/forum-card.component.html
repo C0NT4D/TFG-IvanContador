@@ -3,7 +3,7 @@
     <h5 class="card-title">{{ forum.titulo }}</h5>
     <p class="card-text text-muted">{{ forum.descripcion }}</p>
     <div class="d-flex justify-content-between align-items-center">
-      <a [routerLink]="['/foros', forum.id]" class="btn btn-primary">
+      <a [routerLink]="['/foro', forum.id]" class="btn btn-primary">
         Ver Discusiones
       </a>
       @if (showDelete) {

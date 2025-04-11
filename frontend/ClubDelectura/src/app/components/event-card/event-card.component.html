@@ -4,7 +4,7 @@
     <p class="card-text text-muted">{{ event.descripcion }}</p>
     <div class="d-flex justify-content-between align-items-center">
       @if (showDetails) {
-        <a [routerLink]="['/eventos', event.id]" class="btn btn-primary">
+        <a [routerLink]="['/evento', event.id]" class="btn btn-primary">
           Ver Detalles
         </a>
       }
