@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Libro } from '../../models/libro.model';
@@ -12,4 +12,10 @@ import { Libro } from '../../models/libro.model';
 })
 export class BookCardComponent {
   @Input() libro!: Libro;
+  @Input() showDelete: boolean = false;
+  @Output() delete = new EventEmitter<number>();
+
+  onDelete(): void {
+    this.delete.emit(this.libro.id);
+  }
 } 

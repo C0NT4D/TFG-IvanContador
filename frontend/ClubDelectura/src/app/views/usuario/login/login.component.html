@@ -1,31 +1,60 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="text-center">Iniciar Sesión</h3>
-        </div>
-        <div class="card-body">
-          @if (error) {
-            <div class="alert alert-danger">{{ error }}</div>
-          }
-          <form (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email" required>
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" required>
-            </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-            </div>
-          </form>
-          <div class="text-center mt-3">
-            <p>¿No tienes cuenta? <a routerLink="/registro" class="btn btn-link">Regístrate aquí</a></p>
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+  <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+    <div class="card shadow-lg border-0 rounded-3">
+      <div class="card-body p-4 p-sm-5">
+        <h2 class="card-title text-center mb-4 fw-bold">Iniciar Sesión</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+          
+          <!-- Campo Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" id="email" class="form-control form-control-lg"
+                   placeholder="tu@email.com" formControlName="email"
+                   [class.is-invalid]="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)">
+            @if (loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)) {
+              <div class="invalid-feedback">
+                @if (loginForm.get('email')?.errors?.['required']){ Correo electrónico requerido. }
+                @if (loginForm.get('email')?.errors?.['email']){ Formato de correo inválido. }
+              </div>
+            }
           </div>
-        </div>
+
+          <!-- Campo Contraseña -->
+          <div class="mb-4">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" id="password" class="form-control form-control-lg"
+                   placeholder="Contraseña" formControlName="password"
+                   [class.is-invalid]="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)">
+             @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)) {
+              <div class="invalid-feedback">
+                @if (loginForm.get('password')?.errors?.['required']){ Contraseña requerida. }
+              </div>
+            }
+          </div>
+
+          <!-- Mensaje de Error General -->
+          @if (errorMessage) {
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+               <i class="bi bi-exclamation-triangle-fill me-2"></i>
+               <div>{{ errorMessage }}</div>
+            </div>
+          }
+
+          <!-- Botón de Envío -->
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary btn-lg" [disabled]="loginForm.invalid">
+              Entrar
+            </button>
+          </div>
+
+          <!-- Enlace a Registro -->
+          <div class="text-center">
+            <small class="text-muted">¿No tienes cuenta? 
+              <a routerLink="/registro" class="fw-bold">Regístrate aquí</a>
+            </small>
+          </div>
+
+        </form>
       </div>
     </div>
   </div>

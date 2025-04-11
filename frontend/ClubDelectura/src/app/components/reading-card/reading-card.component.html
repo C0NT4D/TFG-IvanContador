@@ -11,7 +11,7 @@
         {{lectura.estadoLectura === 'EN_PROGRESS' ? 'En progreso' :
           lectura.estadoLectura === 'COMPLETED' ? 'Completado' : 'Abandonado'}}
       </span>
-      <a [routerLink]="['/lecturas', lectura.id]" class="btn btn-link text-primary text-decoration-none p-0">
+      <a [routerLink]="['/lectura', lectura.id]" class="btn btn-link text-primary text-decoration-none p-0">
         Ver detalles
       </a>
     </div>

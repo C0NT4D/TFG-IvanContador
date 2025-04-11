@@ -1,39 +1,53 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
-  error: string | null = null;
+  loginForm: FormGroup;
+  errorMessage: string | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) {}
-
-  onSubmit() {
-    this.error = null;
-    this.authService.login(this.email, this.password).subscribe({
-      next: (success) => {
-        if (success) {
-          this.router.navigate(['/perfil']);
-        } else {
-          this.error = 'Credenciales inválidas';
-        }
-      },
-      error: () => {
-        this.error = 'Error al iniciar sesión';
-      }
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     });
+  }
+
+  onSubmit(): void {
+    this.errorMessage = null;
+    if (this.loginForm.valid) {
+      const email = this.loginForm.value.email;
+      const password = this.loginForm.value.password;
+      
+      this.authService.login(email, password).subscribe({
+        next: (response) => {
+          console.log('Login successful', response);
+          this.router.navigate(['/libro']);
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
+          this.errorMessage = error?.error?.message || error?.message || 'Error al iniciar sesión. Verifica tus credenciales.';
+        }
+      });
+    } else {
+      this.loginForm.markAllAsTouched();
+    }
   }
 }

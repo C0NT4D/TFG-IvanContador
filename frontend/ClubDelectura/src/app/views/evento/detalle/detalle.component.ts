@@ -1,22 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EventoService } from '../../../services/evento.service';
 import { InscripcionService } from '../../../services/inscripcion.service';
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
-import { InscriptionCardComponent } from '../../../components/inscription-card/inscription-card.component';
 
 @Component({
   selector: 'app-evento-detalle',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     FormsModule,
     LoadingComponent,
-    ErrorComponent,
-    InscriptionCardComponent
+    ErrorComponent
   ],
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css']
@@ -25,26 +24,22 @@ export class DetalleComponent implements OnInit {
   evento: any = null;
   inscripciones: any[] = [];
   loading = true;
-  error: string | null = null;
+  error = '';
   currentUserId = 1; // TODO: Get from auth service
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private eventoService: EventoService,
     private inscripcionService: InscripcionService
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadEvento(parseInt(id));
-    }
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadEvento(id);
   }
 
   private loadEvento(id: number): void {
     this.loading = true;
-    this.error = null;
     this.eventoService.getEvento(id).subscribe({
       next: (evento) => {
         if (evento) {

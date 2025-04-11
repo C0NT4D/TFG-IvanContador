@@ -11,6 +11,8 @@ import { DetalleComponent as EventoDetalleComponent } from './views/evento/detal
 import { ListadoComponent as LibroListadoComponent } from './views/libro/listado/listado.component';
 import { NuevoComponent as LibroNuevoComponent } from './views/libro/nuevo/nuevo.component';
 import { DetalleComponent as LibroDetalleComponent } from './views/libro/detalle/detalle.component';
+import { ListadoComponent as LecturaListadoComponent } from './views/lectura/listado/listado.component';
+import { DetalleComponent as LecturaDetalleComponent } from './views/lectura/detalle/detalle.component';
 import { ListadoComponent as RecomendacionListadoComponent } from './views/recomendacion/listado/listado.component';
 import { ListadoComponent as UsuarioListadoComponent } from './views/usuario/listado/listado.component';
 import { DetalleComponent as UsuarioDetalleComponent } from './views/usuario/detalle/detalle.component';
@@ -30,6 +32,8 @@ export const routes: Routes = [
   { path: 'libro', component: LibroListadoComponent },
   { path: 'libro/nuevo', component: LibroNuevoComponent },
   { path: 'libro/:id', component: LibroDetalleComponent },
+  { path: 'lectura', component: LecturaListadoComponent },
+  { path: 'lectura/:id', component: LecturaDetalleComponent },
   { path: 'recomendacion', component: RecomendacionListadoComponent },
   { path: 'usuario', component: UsuarioListadoComponent },
   { path: 'usuario/:id', component: UsuarioDetalleComponent }

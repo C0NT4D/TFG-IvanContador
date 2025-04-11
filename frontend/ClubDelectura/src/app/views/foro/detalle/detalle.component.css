@@ -74,3 +74,29 @@
     background-color: #ccc;
     cursor: not-allowed;
   }
+  .text-muted span {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .text-muted span:last-child {
+    margin-bottom: 0;
+  }
+  .card-title h1 {
+    margin-bottom: 1rem;
+  }
+  .list-group {
+    margin-bottom: 1rem;
+  }
+  .form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  /* Estilos específicos que complementan a Bootstrap */
+
+  .forum-messages-list .list-group-item {
+    /* Eliminar padding y bordes si app-forum-message maneja su propio estilo interno */
+    /* background-color: transparent; */ 
+  }
+
+  /* Puedes añadir más estilos personalizados aquí si es necesario */

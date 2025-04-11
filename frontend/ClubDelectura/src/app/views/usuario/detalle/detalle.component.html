@@ -1,66 +1,89 @@
-<div class="usuario-detail-container">
+<div class="container mt-4">
   @if (loading) {
-    <app-loading></app-loading>
+    <div class="d-flex justify-content-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando detalles del usuario...</span>
+      </div>
+    </div>
   }
 
-  @if (error) {
-    <app-error [message]="error"></app-error>
+  @if (error && !loading) {
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
   }
 
-  @if (!loading && !error && usuario) {
-    <div class="usuario-content">
-      <div class="usuario-header">
-        <h1>{{ usuario.nombre }}</h1>
-        <div class="usuario-meta">
-          <div class="meta-item">
-            <span class="label">Email:</span>
-            <span class="value">{{ usuario.email }}</span>
+  @if (usuario && !loading && !error) {
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h1 class="h4 mb-0">Detalles del Usuario</h1>
+        <a routerLink="/usuario" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left me-1"></i> Volver al Listado
+        </a>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 text-center mb-3 mb-md-0">
+            <!-- Placeholder for Avatar -->
+            <i class="bi bi-person-circle" style="font-size: 5rem; color: #6c757d;"></i>
+            <h2 class="h5 mt-2 mb-1">{{ usuario.nombre }}</h2>
+            <p class="text-muted mb-2">{{ usuario.email }}</p>
+            <span class="badge rounded-pill" 
+                  [ngClass]="usuario.rol === 'admin' ? 'bg-danger' : 'bg-secondary'">
+              {{ usuario.rol | titlecase }}
+            </span>
           </div>
-          <div class="meta-item">
-            <span class="label">Rol:</span>
-            <span class="value">{{ usuario.rol }}</span>
-          </div>
-          <div class="meta-item">
-            <span class="label">Fecha de registro:</span>
-            <span class="value">{{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</span>
+          <div class="col-md-8 border-start-md ps-md-4">
+            <h3 class="h6 text-muted mb-3">Información</h3>
+            <p><span class="fw-bold">ID:</span> {{ usuario.id }}</p>
+            <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
+            
+            <h3 class="h6 text-muted mt-4 mb-3">Actividad Reciente</h3>
+            <!-- Sección de Lecturas -->
+            <h5>Lecturas</h5>
+            @if (usuario.lecturas && usuario.lecturas.length > 0) {
+              <ul class="list-group list-group-flush mb-3">
+                @for(lectura of usuario.lecturas; track lectura.id) {
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a [routerLink]="['/libro', lectura.libro.id]" class="text-decoration-none">{{ lectura.libro.titulo }}</a>
+                    <span class="badge rounded-pill" [ngClass]="{
+                      'bg-success-subtle text-success-emphasis': lectura.estadoLectura === 'COMPLETED',
+                      'bg-warning-subtle text-warning-emphasis': lectura.estadoLectura === 'EN_PROGRESS',
+                      'bg-secondary': lectura.estadoLectura === 'PENDING'
+                    }">
+                      {{ lectura.estadoLectura | titlecase }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="text-muted fst-italic">Sin lecturas registradas.</p>
+            }
+
+            <!-- Sección de Foros -->
+            <h5>Foros Creados</h5>
+             @if (usuario.foros && usuario.foros.length > 0) {
+              <ul class="list-group list-group-flush mb-3">
+                @for(foro of usuario.foros; track foro.id) {
+                  <li class="list-group-item">
+                     <a [routerLink]="['/foro', foro.id]" class="text-decoration-none">{{ foro.titulo }}</a>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="text-muted fst-italic">Sin foros creados.</p>
+            }
+            
+            <!-- Sección de Eventos (si aplica) -->
+            <!-- <h5>Eventos Creados/Inscritos</h5> ... -->
+
           </div>
         </div>
       </div>
-
-      <div class="usuario-stats">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Lecturas</h3>
-            <p class="stat-value">{{ usuario.lecturas.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Foros</h3>
-            <p class="stat-value">{{ usuario.foros.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Eventos</h3>
-            <p class="stat-value">{{ usuario.eventos.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Mensajes</h3>
-            <p class="stat-value">{{ usuario.mensajes.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Inscripciones</h3>
-            <p class="stat-value">{{ usuario.inscripcions.length }}</p>
-          </div>
-          <div class="stat-card">
-            <h3>Recomendaciones</h3>
-            <p class="stat-value">{{ usuario.recomendacions.length }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="usuario-actions">
-        <button class="btn btn-danger" (click)="openDeleteModal()">
-          Eliminar Usuario
-        </button>
-      </div>
+    </div>
+  } @else if (!loading && !error) {
+     <div class="alert alert-warning" role="alert">
+      Usuario no encontrado.
     </div>
   }
 </div>

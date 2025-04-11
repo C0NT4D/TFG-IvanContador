@@ -1,10 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UsuarioService } from '@app/services/usuario.service';
-import { LoadingComponent } from '@app/components/loading/loading.component';
-import { ErrorComponent } from '@app/components/error/error.component';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+
+// Definición del validador de coincidencia de contraseñas
+export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const password = control.get('password');
+  const confirmPassword = control.get('confirmPassword');
+
+  // Si los controles aún no existen o no tienen valor, no validar
+  if (!password || !confirmPassword || !password.value || !confirmPassword.value) {
+    return null;
+  }
+
+  // Devuelve un error si las contraseñas no coinciden
+  return password.value === confirmPassword.value ? null : { passwordMismatch: true };
+};
 
 @Component({
   selector: 'app-usuario-nuevo',
@@ -12,62 +24,58 @@ import { ErrorComponent } from '@app/components/error/error.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    LoadingComponent,
-    ErrorComponent
+    RouterModule
   ],
   templateUrl: './nuevo.component.html',
   styleUrls: ['./nuevo.component.css']
 })
-export class NuevoComponent {
-  usuarioForm: FormGroup;
+export class NuevoComponent implements OnInit {
+  registerForm: FormGroup;
+  errorMessage: string | null = null;
   loading = false;
-  error: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private usuarioService: UsuarioService,
+    private authService: AuthService,
     private router: Router
   ) {
-    this.usuarioForm = this.fb.group({
-      nombre: ['', [Validators.required]],
+    this.registerForm = this.fb.group({
+      nombre: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      contrasena: ['', [Validators.required, Validators.minLength(6)]],
-      rol: ['ROLE_USER', [Validators.required]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, {
+      validators: passwordMatchValidator
     });
   }
 
+  ngOnInit(): void {}
+
   onSubmit(): void {
-    if (this.usuarioForm.valid) {
-      this.loading = true;
-      this.error = null;
+    this.errorMessage = null;
+    this.loading = true;
 
-      const userData = {
-        nombre: this.usuarioForm.value.nombre,
-        email: this.usuarioForm.value.email,
-        contrasena: this.usuarioForm.value.contrasena,
-        rol: this.usuarioForm.value.rol
-      };
-
-      this.usuarioService.createUsuario(userData).subscribe({
-        next: (usuario) => {
+    if (this.registerForm.valid) {
+      const { nombre, email, password } = this.registerForm.value;
+      
+      this.authService.register({ nombre, email, password }).subscribe({
+        next: () => {
           this.loading = false;
-          if (usuario) {
-            this.router.navigate(['/usuarios']);
-          } else {
-            this.error = 'Error al crear el usuario';
-          }
+          this.router.navigate(['/login']);
         },
         error: (error) => {
           this.loading = false;
-          this.error = 'Error al crear el usuario';
+          console.error('Registration failed:', error);
+          this.errorMessage = error?.error?.message || error?.message || 'Error durante el registro. Inténtalo de nuevo.';
         }
       });
     } else {
-      this.error = 'Por favor, complete todos los campos correctamente';
+      this.loading = false;
+      this.registerForm.markAllAsTouched();
     }
   }
 
   cancelar(): void {
-    this.router.navigate(['/usuarios']);
+    this.router.navigate(['/login']);
   }
 } 

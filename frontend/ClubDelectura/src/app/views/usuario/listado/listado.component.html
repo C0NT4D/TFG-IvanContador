@@ -1,29 +1,43 @@
-<div class="container py-4">
+<div class="container mt-4">
   @if (!isAdmin) {
     <div class="alert alert-danger" role="alert">
-      No tienes permisos para acceder a esta página.
+      <i class="bi bi-exclamation-octagon-fill me-2"></i>
+      No tienes permisos para acceder a esta sección.
     </div>
   } @else {
+    <!-- Título de la sección -->
+    <h1 class="h3 mb-4">Gestión de Usuarios</h1>
+
+    <!-- Estado de Carga -->
     @if (loading) {
-      <app-loading></app-loading>
-    }
-
-    @if (error) {
-      <app-error [message]="error"></app-error>
-    }
-
-    @if (!loading && !error) {
-      <div class="row">
-        <div class="col-12">
-          <h1 class="mb-4">Usuarios</h1>
-          <div class="row row-cols-1 row-cols-md-3 g-4">
-            @for (usuario of usuarios; track usuario.id) {
-              <div class="col">
-                <app-user-card [usuario]="usuario"></app-user-card>
-              </div>
-            }
-          </div>
+      <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando usuarios...</span>
         </div>
+      </div>
+    }
+
+    <!-- Estado de Error -->
+    @if (error && !loading) {
+      <div class="alert alert-warning" role="alert">
+         <i class="bi bi-exclamation-triangle-fill me-2"></i>
+         {{ error }}
+      </div>
+    }
+
+    <!-- Listado de Usuarios -->
+    @if (!loading && !error && usuarios.length > 0) {
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @for (usuario of usuarios; track usuario.id) {
+          <div class="col">
+            <!-- El componente user-card ya está estilizado con Bootstrap -->
+            <app-user-card [usuario]="usuario"></app-user-card> 
+          </div>
+        }
+      </div>
+    } @else if (!loading && !error && usuarios.length === 0) {
+       <div class="alert alert-info" role="alert">
+        No se encontraron usuarios.
       </div>
     }
   }

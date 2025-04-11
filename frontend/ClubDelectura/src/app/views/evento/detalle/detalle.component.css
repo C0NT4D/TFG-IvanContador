@@ -1,26 +1,24 @@
-.evento-header {
-  border-bottom: 1px solid #dee2e6;
-  padding-bottom: 1rem;
+.text-muted span {
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-.card-text {
-  white-space: pre-line;
-  line-height: 1.6;
+.text-muted span:last-child {
+  margin-bottom: 0;
 }
 
-.evento-actions {
-  border-top: 1px solid #dee2e6;
-  padding-top: 1rem;
-}
-
-.empty-inscriptions {
-  text-align: center;
-  padding: 2rem;
-  color: #6c757d;
-}
-
-.empty-inscriptions i {
-  font-size: 3rem;
+.card-title h1 {
   margin-bottom: 1rem;
-  color: #dee2e6;
+}
+
+.list-group-item {
+  padding: 1rem;
+}
+
+.list-group-item .fw-bold {
+  font-size: 1.1rem;
+}
+
+.list-group-item .text-muted {
+  font-size: 0.9rem;
 }

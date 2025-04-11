@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RecomendacionService } from '@app/services/recomendacion.service';
 import { AuthService } from '@app/services/auth.service';
-import { RecommendationCardComponent } from '@app/components/recommendation-card/recommendation-card.component';
-import { LoadingComponent } from '@app/components/loading/loading.component';
-import { ErrorComponent } from '@app/components/error/error.component';
 import { ConfirmModalComponent } from '@app/components/confirm-modal/confirm-modal.component';
-import { RecomendacionFormComponent } from '@app/components/recomendacion-form/recomendacion-form.component';
 import { Recomendacion } from '@app/models/recomendacion.model';
+import { LibroService } from '@app/services/libro.service';
+import { Libro } from '@app/models/libro.model';
+import { Usuario } from '@app/models/usuario.model';
 
 @Component({
   selector: 'app-listado',
@@ -17,45 +16,54 @@ import { Recomendacion } from '@app/models/recomendacion.model';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
     ReactiveFormsModule,
-    RecommendationCardComponent,
-    LoadingComponent,
-    ErrorComponent,
-    ConfirmModalComponent,
-    RecomendacionFormComponent
+    ConfirmModalComponent
   ],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
 })
 export class ListadoComponent implements OnInit {
   recomendaciones: Recomendacion[] = [];
+  recomendacionForm: FormGroup;
+  librosDisponibles: Libro[] = [];
   loading = true;
   error: string | null = null;
-  showDeleteModal = false;
   showAddForm = false;
-  recomendacionToDelete: number | null = null;
   isAdmin = false;
+  currentUserId: number | null = null;
+  showDeleteModal = false;
+  recomendacionToDelete: number | null = null;
 
   constructor(
+    private fb: FormBuilder,
     private recomendacionService: RecomendacionService,
+    private libroService: LibroService,
     private authService: AuthService
-  ) {}
+  ) {
+    this.recomendacionForm = this.fb.group({
+      libroId: ['', Validators.required],
+      comentario: ['', [Validators.required, Validators.minLength(10)]]
+    });
+  }
 
   ngOnInit(): void {
     this.loadRecomendaciones();
-    this.checkAdminStatus();
+    this.loadLibrosDisponibles();
+    this.isAdmin = this.authService.isAdmin();
+    const currentUser = this.authService.getCurrentUser();
+    this.currentUserId = currentUser?.id ?? null;
   }
 
   private loadRecomendaciones(): void {
     this.loading = true;
     this.error = null;
     this.recomendacionService.getRecomendaciones().subscribe({
-      next: (recomendaciones) => {
+      next: (recomendaciones: Recomendacion[]) => {
         this.recomendaciones = recomendaciones;
+        console.log('Recomendaciones cargadas:', this.recomendaciones);
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: Error) => {
         this.error = 'Error al cargar las recomendaciones';
         this.loading = false;
         console.error('Error loading recommendations:', err);
@@ -63,34 +71,64 @@ export class ListadoComponent implements OnInit {
     });
   }
 
-  private checkAdminStatus(): void {
-    const user = this.authService.getCurrentUser();
-    this.isAdmin = user?.rol === 'admin';
+  private loadLibrosDisponibles(): void {
+    this.libroService.getBooks().subscribe({
+      next: (libros: Libro[]) => {
+        this.librosDisponibles = libros;
+      },
+      error: (err: Error) => {
+        console.error('Error al cargar los libros para el formulario:', err);
+      }
+    });
   }
 
   openAddRecomendacion(): void {
     this.showAddForm = true;
   }
 
-  onSubmitRecomendacion(recomendacionData: Omit<Recomendacion, 'id'>): void {
-    this.loading = true;
-    this.error = null;
-
-    this.recomendacionService.createRecomendacion(recomendacionData).subscribe({
-      next: (recomendacion) => {
-        this.loadRecomendaciones();
-        this.showAddForm = false;
-      },
-      error: (err) => {
-        this.error = 'Error al crear la recomendación';
-        this.loading = false;
-        console.error('Error creating recommendation:', err);
-      }
-    });
+  onCancel(): void {
+    this.showAddForm = false;
+    this.recomendacionForm.reset();
   }
 
-  onCancelRecomendacion(): void {
-    this.showAddForm = false;
+  onSubmit(): void {
+    if (this.recomendacionForm.invalid) {
+      this.recomendacionForm.markAllAsTouched();
+      return;
+    }
+    
+    const currentUser: Usuario | null = this.authService.getCurrentUser();
+    const selectedLibroId = Number(this.recomendacionForm.value.libroId);
+    const selectedLibro: Libro | undefined = this.librosDisponibles.find(libro => libro.id === selectedLibroId);
+
+    if (!currentUser) {
+      this.error = "No se pudo identificar al usuario.";
+      return;
+    }
+    if (!selectedLibro) {
+      this.error = "Libro seleccionado no encontrado.";
+      this.recomendacionForm.get('libroId')?.setValue('');
+      return;
+    }
+
+    const recomendacionParaEnviar: Omit<Recomendacion, 'id'> = {
+      comentario: this.recomendacionForm.value.comentario,
+      fecha: new Date(),
+      usuario: currentUser,
+      libro: selectedLibro
+    };
+
+    this.recomendacionService.createRecomendacion(recomendacionParaEnviar).subscribe({
+      next: () => {
+        this.loadRecomendaciones();
+        this.showAddForm = false;
+        this.recomendacionForm.reset();
+      },
+      error: (err: Error) => {
+        console.error('Error al crear la recomendación:', err);
+        this.error = 'Error al guardar la recomendación.';
+      }
+    });
   }
 
   onDeleteRecomendacion(id: number): void {
@@ -98,25 +136,24 @@ export class ListadoComponent implements OnInit {
     this.showDeleteModal = true;
   }
 
-  onConfirmDelete(): void {
-    if (this.recomendacionToDelete) {
-      this.recomendacionService.deleteRecomendacion(this.recomendacionToDelete).subscribe({
+  confirmDelete(): void {
+    if (this.recomendacionToDelete !== null) {
+      const idToDelete = this.recomendacionToDelete;
+      this.recomendacionService.deleteRecomendacion(idToDelete).subscribe({
         next: () => {
-          this.recomendaciones = this.recomendaciones.filter(r => r.id !== this.recomendacionToDelete);
-          this.showDeleteModal = false;
-          this.recomendacionToDelete = null;
+          this.recomendaciones = this.recomendaciones.filter(r => r.id !== idToDelete);
+          this.cancelDelete();
         },
-        error: (err) => {
-          this.error = 'Error al eliminar la recomendación';
-          console.error('Error deleting recommendation:', err);
-          this.showDeleteModal = false;
-          this.recomendacionToDelete = null;
+        error: (err: Error) => {
+          console.error('Error al eliminar la recomendación:', err);
+          this.error = 'Error al eliminar la recomendación.';
+          this.cancelDelete();
         }
       });
     }
   }
 
-  onCancelDelete(): void {
+  cancelDelete(): void {
     this.showDeleteModal = false;
     this.recomendacionToDelete = null;
   }

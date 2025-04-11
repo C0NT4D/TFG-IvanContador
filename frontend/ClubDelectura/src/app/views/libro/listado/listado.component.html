@@ -9,31 +9,83 @@
 
   @if (!loading && !error) {
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>Catálogo de Libros</h1>
+      <h1>Libros</h1>
       @if (isAdmin) {
-        <button class="btn btn-primary" routerLink="/libro/nuevo">
-          <i class="bi bi-plus-circle me-1"></i> Añadir Libro
+        <button class="btn btn-primary" (click)="openAddBook()">
+          <i class="bi bi-plus-circle me-1"></i> Nuevo Libro
         </button>
       }
     </div>
-    
-    <!-- Filtro por género -->
-    <div class="mb-4">
-      <select class="form-select" (change)="filterByGenre($any($event.target).value)">
-        <option value="">Todos los géneros</option>
-        @for (genero of generos; track genero) {
-          <option [value]="genero">{{ genero }}</option>
-        }
-      </select>
-    </div>
 
-    <!-- Grid de libros -->
+    @if (showAddForm) {
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h3 class="card-title mb-4">Crear Nuevo Libro</h3>
+          <form [formGroup]="libroForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="titulo" class="form-label">Título</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="titulo" 
+                formControlName="titulo"
+                [class.is-invalid]="libroForm.get('titulo')?.invalid && libroForm.get('titulo')?.touched">
+              @if (libroForm.get('titulo')?.invalid && libroForm.get('titulo')?.touched) {
+                <div class="invalid-feedback">
+                  @if (libroForm.get('titulo')?.errors?.['required']) {
+                    <div>El título es requerido</div>
+                  }
+                  @if (libroForm.get('titulo')?.errors?.['minlength']) {
+                    <div>El título debe tener al menos 3 caracteres</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="autor" class="form-label">Autor</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="autor" 
+                formControlName="autor"
+                [class.is-invalid]="libroForm.get('autor')?.invalid && libroForm.get('autor')?.touched">
+              @if (libroForm.get('autor')?.invalid && libroForm.get('autor')?.touched) {
+                <div class="invalid-feedback">
+                  @if (libroForm.get('autor')?.errors?.['required']) {
+                    <div>El autor es requerido</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="libroForm.invalid">Crear Libro</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
       @for (libro of libros; track libro.id) {
         <div class="col">
-          <app-book-card [libro]="libro"></app-book-card>
+          <app-book-card
+            [libro]="libro"
+            [showDelete]="isAdmin"
+            (delete)="onDeleteLibro(libro.id)"
+          ></app-book-card>
         </div>
       }
     </div>
   }
+
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Eliminar Libro"
+    message="¿Estás seguro de que quieres eliminar este libro?"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirm-modal>
 </div>

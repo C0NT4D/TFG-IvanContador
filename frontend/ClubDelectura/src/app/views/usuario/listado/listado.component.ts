@@ -4,8 +4,6 @@ import { RouterModule, Router } from '@angular/router';
 import { UsuarioService } from '@app/services/usuario.service';
 import { Usuario } from '@app/models/usuario.model';
 import { UserCardComponent } from '@app/components/user-card/user-card.component';
-import { LoadingComponent } from '@app/components/loading/loading.component';
-import { ErrorComponent } from '@app/components/error/error.component';
 import { AuthService } from '@app/services/auth.service';
 
 @Component({
@@ -14,9 +12,7 @@ import { AuthService } from '@app/services/auth.service';
   imports: [
     CommonModule,
     RouterModule,
-    UserCardComponent,
-    LoadingComponent,
-    ErrorComponent
+    UserCardComponent
   ],
   templateUrl: './listado.component.html',
   styleUrls: ['./listado.component.css']
@@ -34,16 +30,12 @@ export class ListadoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkAdminStatus();
+    this.isAdmin = this.authService.isAdmin();
     if (this.isAdmin) {
       this.loadUsuarios();
     } else {
       this.router.navigate(['/']);
     }
-  }
-
-  checkAdminStatus() {
-    this.isAdmin = this.authService.isAdmin();
   }
 
   loadUsuarios(): void {
@@ -57,6 +49,7 @@ export class ListadoComponent implements OnInit {
       error: (error) => {
         this.error = 'Error al cargar los usuarios';
         this.loading = false;
+        console.error('Error fetching users:', error);
       }
     });
   }

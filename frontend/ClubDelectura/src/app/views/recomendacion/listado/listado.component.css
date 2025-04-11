@@ -116,3 +116,34 @@
   max-height: 90vh;
   overflow-y: auto;
 }
+
+/* Estilos específicos que complementan a Bootstrap */
+
+.card.h-100 {
+  /* Asegura que todas las tarjetas en una fila tengan la misma altura */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; /* Sobrescribir sombra base si es necesario */
+}
+
+.blockquote-footer cite {
+  /* Puedes ajustar el estilo de la cita si es necesario */
+}
+
+/* Estilos para el formulario si necesitas personalización adicional */
+.form-select.is-invalid {
+  /* Ajustes específicos para el select inválido si es necesario */
+}
+
+.recommendation-book-link {
+  text-decoration: none;
+}
+
+.recommendation-book-link:hover {
+  text-decoration: underline;
+}
+
+/* Puedes añadir más estilos personalizados aquí */

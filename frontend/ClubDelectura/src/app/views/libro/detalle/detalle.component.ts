@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LibroService } from '../../../services/libro.service';
 import { Libro, Lectura, Recomendacion } from '../../../models/libro.model';
 import { Usuario } from '../../../models/usuario.model';
@@ -10,7 +10,7 @@ import { Usuario } from '../../../models/usuario.model';
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, RouterLink]
 })
 export class DetalleComponent implements OnInit {
   book?: Libro;

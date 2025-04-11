@@ -228,3 +228,16 @@
     width: 100%;
   }
 }
+
+/* Estilos específicos que complementan a Bootstrap */
+
+/* Si necesitas ajustar algún elemento específico */
+.border-start-md {
+  /* Estilo personalizado si el borde por defecto de Bootstrap no es suficiente */
+}
+
+.form-select-sm.w-auto {
+  /* Ajustes adicionales para el select si son necesarios */
+}
+
+/* Puedes añadir más estilos personalizados aquí */

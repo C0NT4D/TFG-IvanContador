@@ -79,6 +79,41 @@ export class AuthService {
       }
     });
   }
+    // Nuevo método de registro
+    register(userData: { nombre: string; email: string; password: string }): Observable<Usuario> {
+      return new Observable<Usuario>(observer => {
+        // Verificar si el email ya existe
+        const existingUser = this.testUsers.find(u => u.email === userData.email);
+        if (existingUser) {
+          observer.error(new Error('El correo electrónico ya está registrado.'));
+          return;
+        }
+  
+        // Crear nuevo usuario
+        const newUser: Usuario = {
+          id: this.testUsers.length > 0 ? Math.max(...this.testUsers.map(u => u.id)) + 1 : 1, // Generar nuevo ID
+          nombre: userData.nombre,
+          email: userData.email,
+          contrasena: userData.password, // En una app real, ¡esto se hashearía!
+          rol: 'user', // Por defecto, rol 'user'
+          fechaRegistro: new Date().toISOString(),
+          // Inicializar arrays vacíos
+          lecturas: [],
+          foros: [],
+          mensajes: [],
+          eventos: [],
+          inscripcions: [],
+          recomendacions: []
+        };
+  
+        this.testUsers.push(newUser);
+        console.log('Usuario registrado (mock):', newUser);
+        console.log('Usuarios totales (mock):', this.testUsers);
+  
+        observer.next(newUser); // Devolver el nuevo usuario
+        observer.complete();
+      });
+    }
 
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;

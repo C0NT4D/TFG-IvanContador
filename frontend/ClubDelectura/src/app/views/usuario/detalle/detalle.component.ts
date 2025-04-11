@@ -1,20 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { RouterModule, ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../../services/usuario.service';
-import { LoadingComponent } from '../../../components/loading/loading.component';
-import { ErrorComponent } from '../../../components/error/error.component';
+import { Usuario } from '../../../models/usuario.model';
 
 @Component({
   selector: 'app-usuario-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, LoadingComponent, ErrorComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    TitleCasePipe,
+    RouterModule,
+    FormsModule,
+  ],
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css']
 })
 export class DetalleComponent implements OnInit {
-  usuario: any = null;
+  usuario: Usuario | null = null;
   loading = true;
   error: string | null = null;
   showDeleteModal = false;
@@ -26,22 +31,31 @@ export class DetalleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!isNaN(id)) {
-      this.loadUsuario(id);
-    }
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadUsuario(Number(id));
+      } else {
+        this.error = 'No se proporcionó un ID de usuario.';
+        this.loading = false;
+      }
+    });
   }
 
   loadUsuario(id: number): void {
     this.loading = true;
     this.error = null;
     this.usuarioService.getUsuario(id).subscribe({
-      next: (data) => {
-        this.usuario = data;
+      next: (usuario: Usuario | undefined) => {
+        this.usuario = usuario ?? null;
+        if (!usuario) {
+          this.error = 'Usuario no encontrado.';
+        }
         this.loading = false;
       },
-      error: (error) => {
-        this.error = 'Error al cargar los datos del usuario';
+      error: (err: Error) => {
+        console.error('Error al cargar el usuario:', err);
+        this.error = 'Error al cargar los detalles del usuario.';
         this.loading = false;
       }
     });
@@ -63,11 +77,12 @@ export class DetalleComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.closeDeleteModal();
-          this.router.navigate(['/usuarios']);
+          this.router.navigate(['/usuario']);
         },
-        error: (error) => {
+        error: (error: Error) => {
           this.error = 'Error al eliminar el usuario';
           this.loading = false;
+          console.error('Error deleting user:', error);
         }
       });
     }

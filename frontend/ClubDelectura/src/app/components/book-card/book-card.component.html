@@ -2,13 +2,16 @@
   <div class="card-body">
     <h5 class="card-title">{{ libro.titulo }}</h5>
     <h6 class="card-subtitle mb-2 text-muted">{{ libro.autor }}</h6>
-    <p class="card-text text-muted">{{ libro.sinopsis }}</p>
+    <p class="card-text">{{ libro.sinopsis }}</p>
     <div class="d-flex justify-content-between align-items-center">
       <span class="badge bg-primary">{{ libro.genero }}</span>
       <span class="text-muted">{{ libro.anioPublicacion }}</span>
     </div>
+    @if (showDelete) {
+      <button class="btn btn-danger mt-2" (click)="onDelete()">Eliminar</button>
+    }
   </div>
-  <div class="card-footer bg-transparent border-top">
-    <a [routerLink]="['/libros', libro.id]" class="btn btn-primary w-100">Ver detalles</a>
+  <div class="card-footer">
+    <a [routerLink]="['/libro', libro.id]" class="btn btn-primary w-100">Ver detalles</a>
   </div>
 </div> 

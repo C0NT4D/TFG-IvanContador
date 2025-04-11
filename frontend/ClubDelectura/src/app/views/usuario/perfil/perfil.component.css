@@ -159,3 +159,28 @@
   font-weight: bold;
   margin: 0;
 }
+
+/* Estilos específicos que complementan a Bootstrap */
+
+.badge.rounded-pill {
+  /* Ajustes adicionales para los badges si es necesario */
+}
+
+.list-group-flush .list-group-item {
+  /* Personalización de los items de lista si es necesario */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Estilos para el icono de persona */
+.bi-person-circle {
+  /* font-size: 4rem; */
+}
+
+/* Estilos para el formulario de edición si son necesarios */
+input[readonly].form-control {
+  background-color: var(--bs-secondary-bg);
+  cursor: not-allowed;
+}
+
+/* Puedes añadir más estilos personalizados aquí */

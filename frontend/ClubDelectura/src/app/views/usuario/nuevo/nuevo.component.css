@@ -1,98 +1,15 @@
-.usuario-nuevo-container {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
+/* Estilos específicos que complementan a Bootstrap si son necesarios */
 
-.usuario-nuevo-content {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-}
+/* 
+.card {
+  max-width: 500px; 
+} 
+*/
 
-.usuario-nuevo-header {
-  margin-bottom: 2rem;
-}
-
-.usuario-nuevo-header h1 {
-  color: #333;
-  margin: 0;
-}
-
-.usuario-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.form-input {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-}
-
-.error-message {
-  color: #dc2626;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.save-button {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  flex: 1;
-}
-
-.save-button:hover:not(:disabled) {
-  background-color: #357abd;
-}
-
-.save-button:disabled {
-  background-color: #cbd5e0;
-  cursor: not-allowed;
-}
-
-.cancel-button {
-  background-color: #e2e8f0;
-  color: #4a5568;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  flex: 1;
-}
-
-.cancel-button:hover {
-  background-color: #cbd5e0;
+.invalid-feedback.d-block {
+  /* Asegura que el mensaje de error a nivel de formulario (contraseñas no coinciden) se muestre */
+  width: 100%; 
+  margin-top: .25rem; 
+  font-size: .875em; 
+  color: var(--bs-form-invalid-color);
 } 

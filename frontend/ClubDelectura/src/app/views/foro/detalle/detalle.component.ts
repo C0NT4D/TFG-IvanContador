@@ -4,16 +4,21 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ForoService } from '../../../services/foro.service';
 import { MensajeService } from '../../../services/mensaje.service';
+import { AuthService } from '../../../services/auth.service';
 import { Foro } from '../../../models/foro.model';
 import { Mensaje } from '../../../models/mensaje.model';
+import { Usuario } from '../../../models/usuario.model';
 import { ForumMessageComponent } from '../../../components/forum-message/forum-message.component';
-import { LoadingComponent } from '../../../components/loading/loading.component';
-import { ErrorComponent } from '../../../components/error/error.component';
 
 @Component({
   selector: 'app-forum-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ForumMessageComponent, LoadingComponent, ErrorComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ForumMessageComponent
+  ],
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css']
 })
@@ -23,68 +28,75 @@ export class DetalleComponent implements OnInit {
   newMessage = '';
   loading = true;
   error = '';
-  currentUserId = 1; // TODO: Get from auth service
+  currentUserId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private foroService: ForoService,
-    private mensajeService: MensajeService
+    private mensajeService: MensajeService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadForum(id);
+    const currentUser = this.authService.getCurrentUser();
+    this.currentUserId = currentUser?.id ?? null;
+    
+    this.route.params.subscribe(params => {
+        const id = Number(params['id']);
+        if (id) {
+           this.loadForum(id);
+        } else {
+            this.error = 'ID de foro no válido.';
+            this.loading = false;
+        }
+    });
   }
 
   private loadForum(id: number): void {
     this.loading = true;
+    this.error = '';
     this.foroService.getForo(id).subscribe({
       next: (forum) => {
         if (forum) {
           this.forum = forum;
-          this.messages = forum.mensajes;
+          this.messages = forum.mensajes || [];
           this.loading = false;
         } else {
-          this.error = 'Forum not found';
+          this.error = 'Foro no encontrado';
           this.loading = false;
         }
       },
       error: (error: Error) => {
-        this.error = 'Error loading forum';
+        this.error = 'Error al cargar el foro';
         this.loading = false;
+        console.error("Error loading forum details:", error);
       }
     });
   }
 
   sendMessage(): void {
-    if (!this.forum || !this.newMessage.trim()) return;
+    const currentUser = this.authService.getCurrentUser();
+    if (!this.forum || !currentUser || !this.newMessage.trim()) {
+        if (!currentUser) {
+            this.error = "No se pudo identificar al usuario para enviar el mensaje.";
+        }
+        return;
+    }
 
-    const message: Omit<Mensaje, 'id' | 'fechaEnvio'> = {
+    const nuevoMensaje: Omit<Mensaje, 'id' | 'fechaEnvio'> = {
+      contenido: this.newMessage.trim(),
       foro: this.forum,
-      usuario: {
-        id: this.currentUserId,
-        nombre: 'Current User', // TODO: Get from auth service
-        email: 'user@example.com',
-        contrasena: '',
-        rol: 'ROLE_USER',
-        fechaRegistro: new Date(),
-        lecturas: [],
-        foros: [],
-        mensajes: [],
-        eventos: [],
-        inscripcions: [],
-        recomendacions: []
-      },
-      contenido: this.newMessage.trim()
+      usuario: currentUser
     };
 
-    this.mensajeService.createMensaje(message).subscribe({
-      next: (createdMessage) => {
+    this.mensajeService.createMensaje(nuevoMensaje).subscribe({
+      next: (createdMessage: Mensaje) => {
         this.messages.push(createdMessage);
         this.newMessage = '';
       },
       error: (error: Error) => {
-        this.error = 'Error sending message';
+        this.error = 'Error al enviar el mensaje';
+        console.error("Error sending message:", error);
       }
     });
   }

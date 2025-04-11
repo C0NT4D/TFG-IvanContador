@@ -1,81 +1,79 @@
-<div class="book-detail-container">
+<div class="container mt-4">
   @if (loading) {
-    <div class="loading">
-      Cargando detalles del libro...
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
     </div>
   }
 
   @if (error) {
-    <div class="error">
+    <div class="alert alert-danger" role="alert">
       {{ error }}
     </div>
   }
 
   @if (book && !loading) {
-    <div class="book-detail">
-      <div class="book-header">
-        <h1>{{ book.titulo }}</h1>
-        <h2>por {{ book.autor }}</h2>
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h1 class="card-title h3 mb-0">{{ book.titulo }}</h1>
+        <h2 class="card-subtitle h5 mt-1">por {{ book.autor }}</h2>
       </div>
-
-      <div class="book-info">
-        <div class="info-item">
-          <span class="label">Género:</span>
-          <span class="value">{{ book.genero }}</span>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <span class="fw-bold">Género:</span> {{ book.genero }}
+          </div>
+          <div class="col-md-6">
+            <span class="fw-bold">Año de publicación:</span> {{ book.anioPublicacion }}
+          </div>
         </div>
-        <div class="info-item">
-          <span class="label">Año de publicación:</span>
-          <span class="value">{{ book.anioPublicacion }}</span>
+
+        <div class="mb-4">
+          <h3 class="h5">Sinopsis</h3>
+          <p class="text-muted">{{ book.sinopsis }}</p>
         </div>
-      </div>
 
-      <div class="book-synopsis">
-        <h3>Sinopsis</h3>
-        <p>{{ book.sinopsis }}</p>
-      </div>
+        <div class="mb-4">
+          <button (click)="addReading()" class="btn btn-success">
+            <i class="bi bi-book-half me-1"></i> Empezar a leer
+          </button>
+          <!-- Botón Añadir Recomendación eliminado -->
+        </div>
 
-      <div class="book-actions">
-        <button (click)="addReading()" class="btn btn-primary">
-          Empezar a leer
-        </button>
-      </div>
-
-      <div class="book-readings">
-        <h3>Lecturas actuales</h3>
-        @if (book.lecturas.length > 0) {
-          <ul class="readings-list">
-            @for (reading of book.lecturas; track reading.id) {
-              <li>
-                <span class="user">{{ reading.usuario.nombre }}</span>
-                <span class="date">Iniciado: {{ reading.fechaInicio | date }}</span>
-                <span class="status" [ngClass]="reading.estadoLectura.toLowerCase()">
-                  {{ reading.estadoLectura }}
-                </span>
-              </li>
+        <div class="row">
+          <div class="col-lg-12">
+            <h3 class="h5">Lecturas actuales</h3>
+            @if (book.lecturas && book.lecturas.length > 0) {
+              <ul class="list-group list-group-flush">
+                @for (reading of book.lecturas; track reading.id) {
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="fw-bold me-2">{{ reading.usuario.nombre }}</span>
+                      <small class="text-muted">Iniciado: {{ reading.fechaInicio | date:'shortDate' }}</small>
+                    </div>
+                    <span class="badge rounded-pill"
+                          [ngClass]="{
+                            'bg-success': reading.estadoLectura === 'COMPLETED',
+                            'bg-warning text-dark': reading.estadoLectura === 'EN_PROGRESS',
+                            'bg-secondary': reading.estadoLectura === 'PENDING'
+                          }">
+                      {{ reading.estadoLectura | titlecase }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="text-muted fst-italic">Nadie está leyendo este libro actualmente.</p>
             }
-          </ul>
-        } @else {
-          <p>Nadie está leyendo este libro actualmente.</p>
-        }
-      </div>
+          </div>
+        </div>
 
-      <div class="book-recommendations">
-        <h3>Recomendaciones</h3>
-        @if (book.recomendacions.length > 0) {
-          <ul class="recommendations-list">
-            @for (rec of book.recomendacions; track rec.id) {
-              <li>
-                <div class="recommendation-header">
-                  <span class="user">{{ rec.usuario.nombre }}</span>
-                  <span class="date">{{ rec.fecha | date }}</span>
-                </div>
-                <p class="comment">{{ rec.comentario }}</p>
-              </li>
-            }
-          </ul>
-        } @else {
-          <p>No hay recomendaciones todavía.</p>
-        }
+      </div>
+      <div class="card-footer text-muted">
+        <a routerLink="/libro" class="btn btn-secondary">
+          <i class="bi bi-arrow-left me-1"></i> Volver al listado
+        </a>
       </div>
     </div>
   }

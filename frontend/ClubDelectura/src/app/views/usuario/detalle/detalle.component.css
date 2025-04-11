@@ -159,4 +159,26 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-} 
+}
+
+/* Estilos específicos que complementan a Bootstrap */
+
+.border-start-md {
+  /* Bootstrap 5 tiene clases como border-md-start,
+     pero si necesitas un estilo específico para el borde, puedes añadirlo aquí */
+}
+
+.badge.rounded-pill {
+  /* Ajustes adicionales para los badges si es necesario */
+}
+
+.list-group-flush .list-group-item {
+  /* Personalización de los items de lista si es necesario */
+}
+
+/* Estilos para el icono de persona si quieres un tamaño diferente */
+.bi-person-circle {
+  /* font-size: 6rem; */ 
+}
+
+/* Puedes añadir más estilos personalizados aquí */ 
