@@ -11,7 +11,7 @@
     <div class="row">
       <!-- Columna Información y Actividad -->
       <div class="col-lg-7 col-xl-8 mb-4 mb-lg-0">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm mb-4">
           <div class="card-header bg-light">
             Información del Perfil
           </div>
@@ -29,32 +29,6 @@
                 </div>
              </div>
              <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
-            
-             <hr>
-
-             <h3 class="h6 text-muted mt-4 mb-3">Mi Actividad</h3>
-            <!-- Sección de Lecturas -->
-            <h5>Mis Lecturas</h5>
-            @if (usuario.lecturas && usuario.lecturas.length > 0) {
-              <ul class="list-group list-group-flush mb-3">
-                @for(lectura of usuario.lecturas; track lectura.id) {
-                  <li class="list-group-item d-flex justify-content-between align-items-center p-1">
-                    <a [routerLink]="['/libro', lectura.libro.id]" class="text-decoration-none">{{ lectura.libro.titulo }}</a>
-                    <span class="badge rounded-pill" [ngClass]="{
-                      'bg-success-subtle text-success-emphasis': lectura.estadoLectura === 'COMPLETED',
-                      'bg-warning-subtle text-warning-emphasis': lectura.estadoLectura === 'EN_PROGRESS',
-                      'bg-secondary': lectura.estadoLectura === 'PENDING'
-                    }">
-                      {{ lectura.estadoLectura | titlecase }}
-                    </span>
-                  </li>
-                }
-              </ul>
-            } @else {
-              <p class="text-muted fst-italic">Aún no has registrado lecturas.</p>
-            }
-             <!-- Puedes añadir más secciones de actividad aquí (Foros, Eventos...) -->
-
           </div>
         </div>
       </div>

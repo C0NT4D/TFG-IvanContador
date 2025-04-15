@@ -1,4 +1,5 @@
 import { Usuario } from './usuario.model';
+import { Lectura } from './lectura.model';
 
 export interface Libro {
   id: number;
@@ -9,15 +10,6 @@ export interface Libro {
   sinopsis: string;
   lecturas: Lectura[];
   recomendacions: Recomendacion[];
-}
-
-export interface Lectura {
-  id: number;
-  usuario: Usuario;
-  libro: Libro;
-  estadoLectura: 'PENDING' | 'EN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
-  fechaInicio: Date;
-  fechaFin?: Date;
 }
 
 export interface Recomendacion {

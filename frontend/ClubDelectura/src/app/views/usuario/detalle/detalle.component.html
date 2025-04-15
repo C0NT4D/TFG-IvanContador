@@ -38,8 +38,9 @@
             <p><span class="fw-bold">ID:</span> {{ usuario.id }}</p>
             <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
             
+            <!-- Eliminar toda esta sección de Actividad Reciente -->
+            <!--
             <h3 class="h6 text-muted mt-4 mb-3">Actividad Reciente</h3>
-            <!-- Sección de Lecturas -->
             <h5>Lecturas</h5>
             @if (usuario.lecturas && usuario.lecturas.length > 0) {
               <ul class="list-group list-group-flush mb-3">
@@ -60,7 +61,6 @@
               <p class="text-muted fst-italic">Sin lecturas registradas.</p>
             }
 
-            <!-- Sección de Foros -->
             <h5>Foros Creados</h5>
              @if (usuario.foros && usuario.foros.length > 0) {
               <ul class="list-group list-group-flush mb-3">
@@ -73,10 +73,7 @@
             } @else {
               <p class="text-muted fst-italic">Sin foros creados.</p>
             }
-            
-            <!-- Sección de Eventos (si aplica) -->
-            <!-- <h5>Eventos Creados/Inscritos</h5> ... -->
-
+            -->
           </div>
         </div>
       </div>

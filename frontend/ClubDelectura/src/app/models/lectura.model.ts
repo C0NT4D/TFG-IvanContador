@@ -5,7 +5,7 @@ export interface Lectura {
   id: number;
   usuario: Usuario;
   libro: Libro;
-  estadoLectura: string;
+  estadoLectura: 'PENDING' | 'EN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
   fechaInicio: Date;
-  fechaFin: Date | null;
+  fechaFin?: Date | null;
 } 

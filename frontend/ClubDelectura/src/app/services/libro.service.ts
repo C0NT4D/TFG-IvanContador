@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Libro, Lectura, Recomendacion } from '../models/libro.model';
+import { Libro, Recomendacion } from '../models/libro.model';
 import { Usuario } from '../models/usuario.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,7 @@ export class LibroService {
     }
   ];
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   // Get all books
   getBooks(): Observable<Libro[]> {
@@ -92,7 +93,8 @@ export class LibroService {
     return of(false);
   }
 
-  // Methods for readings
+  // Methods for readings - MOVED TO LecturaService
+  /*
   getReadings(bookId: number): Observable<Lectura[]> {
     const book = this.books.find(b => b.id === bookId);
     return of(book ? book.lecturas : []);
@@ -107,6 +109,7 @@ export class LibroService {
     }
     throw new Error('Book not found');
   }
+  */
 
   // Methods for recommendations
   getRecommendations(bookId: number): Observable<Recomendacion[]> {

@@ -1,41 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject, throwError } from 'rxjs';
+import { map, tap, find } from 'rxjs/operators';
 import { Lectura } from '../models/lectura.model';
 import { Usuario } from '../models/usuario.model';
 import { Libro } from '../models/libro.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LecturaService {
-  private lecturas: Lectura[] = [
-    {
-      id: 1,
-      usuario: {
-        id: 1,
-        nombre: 'Juan Pérez',
-        email: 'juan@example.com',
-        contrasena: '123456',
-        rol: 'usuario',
-        fechaRegistro: new Date('2024-01-01')
-      } as Usuario,
-      libro: {
-        id: 1,
-        titulo: 'El Quijote',
-        autor: 'Miguel de Cervantes',
-        genero: 'Novela',
-        anioPublicacion: 1605,
-        sinopsis: 'La historia de un hidalgo que pierde la cordura...',
-        lecturas: [],
-        recomendacions: []
-      } as Libro,
-      estadoLectura: 'EN_PROGRESS',
-      fechaInicio: new Date('2024-03-01'),
-      fechaFin: null
-    }
-  ];
+  private lecturas: Lectura[] = [];
+  private nextId = 1;
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   getLecturas(): Observable<Lectura[]> {
     return of(this.lecturas);
@@ -49,12 +27,24 @@ export class LecturaService {
     throw new Error('Lectura no encontrada');
   }
 
-  createLectura(lectura: Omit<Lectura, 'id'>): Observable<Lectura> {
+  createLectura(lecturaData: Omit<Lectura, 'id'>): Observable<Lectura> {
     const newLectura: Lectura = {
-      ...lectura,
-      id: this.lecturas.length + 1
+      ...lecturaData,
+      id: this.nextId++,
+      fechaInicio: typeof lecturaData.fechaInicio === 'string' ? new Date(lecturaData.fechaInicio) : lecturaData.fechaInicio,
+      fechaFin: lecturaData.fechaFin ? (typeof lecturaData.fechaFin === 'string' ? new Date(lecturaData.fechaFin) : lecturaData.fechaFin) : null
     };
+
+    const existe = this.lecturas.some(
+      l => l.usuario.id === newLectura.usuario.id && l.libro.id === newLectura.libro.id
+    );
+    if (existe) {
+      return throwError(() => new Error('Ya tienes una lectura registrada para este libro.'));
+    }
+
     this.lecturas.push(newLectura);
+    console.log('Lectura creada (mock):', newLectura);
+    (this.authService as any).addLecturaToCurrentUser(newLectura);
     return of(newLectura);
   }
 
@@ -77,7 +67,8 @@ export class LecturaService {
   }
 
   getLecturasByUsuario(usuarioId: number): Observable<Lectura[]> {
-    return of(this.lecturas.filter(l => l.usuario.id === usuarioId));
+    const userLecturas = this.lecturas.filter(l => l.usuario.id === usuarioId);
+    return of(userLecturas);
   }
 
   getLecturasByUsuarioAndStatus(usuarioId: number, status: string): Observable<Lectura[]> {
@@ -85,5 +76,10 @@ export class LecturaService {
       lectura.usuario.id === usuarioId && 
       lectura.estadoLectura === status
     ));
+  }
+
+  getLecturaByUsuarioAndLibro(usuarioId: number, libroId: number): Observable<Lectura | undefined> {
+    const lectura = this.lecturas.find(l => l.usuario.id === usuarioId && l.libro.id === libroId);
+    return of(lectura);
   }
 } 

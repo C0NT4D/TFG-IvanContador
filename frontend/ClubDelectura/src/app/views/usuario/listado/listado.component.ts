@@ -32,7 +32,7 @@ export class ListadoComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     if (this.isAdmin) {
-      this.loadUsuarios();
+    this.loadUsuarios();
     } else {
       this.router.navigate(['/']);
     }
