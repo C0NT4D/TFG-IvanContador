@@ -19,6 +19,7 @@ import { DetalleComponent as UsuarioDetalleComponent } from './views/usuario/det
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { loginGuard } from './guards/login.guard';
+import { ContactoComponent } from './views/contacto/contacto.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/libro', pathMatch: 'full' },
@@ -38,5 +39,7 @@ export const routes: Routes = [
   { path: 'lectura/:id', component: LecturaDetalleComponent, canActivate: [authGuard] },
   { path: 'recomendacion', component: RecomendacionListadoComponent, canActivate: [authGuard] },
   { path: 'usuario', component: UsuarioListadoComponent, canActivate: [authGuard, adminGuard] },
-  { path: 'usuario/:id', component: UsuarioDetalleComponent, canActivate: [authGuard, adminGuard] }
+  { path: 'usuario/:id', component: UsuarioDetalleComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'contacto', component: ContactoComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: '' }
 ];
