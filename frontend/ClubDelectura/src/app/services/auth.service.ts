@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Usuario } from '@app/models/usuario.model';
+import { Mensaje } from '@app/models/mensaje.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AuthService {
       email: 'admin@club.com',
       contrasena: 'admin123',
       rol: 'admin',
-      fechaRegistro: new Date().toISOString(),
+      fechaRegistro: new Date(),
       lecturas: [],
       foros: [],
       mensajes: [],
@@ -32,7 +33,7 @@ export class AuthService {
       email: 'usuario@club.com',
       contrasena: 'usuario123',
       rol: 'user',
-      fechaRegistro: new Date().toISOString(),
+      fechaRegistro: new Date(),
       lecturas: [],
       foros: [],
       mensajes: [],
@@ -43,10 +44,26 @@ export class AuthService {
   ];
 
   constructor(private router: Router) {
-    // Cargar usuario del localStorage al iniciar
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      this.currentUserSubject.next(JSON.parse(savedUser));
+    // Cargar usuario del localStorage al iniciar con try-catch
+    try {
+      const savedUser = localStorage.getItem('currentUser');
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        // Podríamos añadir una validación extra aquí si fuera necesario
+        if (parsedUser && parsedUser.id) { 
+           this.currentUserSubject.next(parsedUser);
+           console.log('AuthService: Usuario cargado desde localStorage', this.currentUserSubject.value);
+        } else {
+          console.warn('AuthService: Datos inválidos en localStorage para currentUser.');
+          localStorage.removeItem('currentUser'); // Limpiar si es inválido
+        }
+      } else {
+          console.log('AuthService: No hay usuario en localStorage.');
+      }
+    } catch (error) {
+       console.error('AuthService: Error al parsear usuario desde localStorage', error);
+       localStorage.removeItem('currentUser'); // Limpiar si hay error
+       this.currentUserSubject.next(null); // Asegurar estado nulo si falla
     }
   }
 
@@ -96,7 +113,7 @@ export class AuthService {
           email: userData.email,
           contrasena: userData.password, // En una app real, ¡esto se hashearía!
           rol: 'user', // Por defecto, rol 'user'
-          fechaRegistro: new Date().toISOString(),
+          fechaRegistro: new Date(),
           // Inicializar arrays vacíos
           lecturas: [],
           foros: [],
@@ -132,5 +149,29 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getCurrentUser()?.rol === 'admin';
+  }
+
+  // --- Añadir método para mensajes ---
+  addMensajeToCurrentUser(mensaje: Mensaje): void { // Asegúrate de importar Mensaje
+    const currentUser = this.getCurrentUser();
+    if (currentUser) {
+      const userIndex = this.testUsers.findIndex(u => u.id === currentUser.id);
+      if (userIndex > -1) {
+        const updatedUser = { ...this.testUsers[userIndex] };
+        if (!updatedUser.mensajes) updatedUser.mensajes = [];
+        if (!updatedUser.mensajes.some(m => m.id === mensaje.id)) {
+          updatedUser.mensajes.push(mensaje);
+          this.testUsers[userIndex] = updatedUser;
+          this.setCurrentUser(updatedUser);
+          console.log(`Mensaje ID ${mensaje.id} añadido al usuario mock ID ${currentUser.id}`);
+        } else {
+          console.warn(`El mensaje ID ${mensaje.id} ya existe para el usuario mock ID ${currentUser.id}`);
+        }
+      } else {
+        console.error('Usuario actual no encontrado en testUsers para añadir mensaje.');
+      }
+    } else {
+      console.error('No hay usuario actual para añadir el mensaje.');
+    }
   }
 } 

@@ -8,6 +8,9 @@ import { ErrorComponent } from '../../../components/error/error.component';
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
 import { EventoService } from '../../../services/evento.service';
 import { AuthService } from '../../../services/auth.service';
+import { Evento } from '../../../models/evento.model';
+import { Inscripcion } from '../../../models/inscripcion.model';
+import { Usuario } from '../../../models/usuario.model';
 
 @Component({
   selector: 'app-listado',
@@ -91,16 +94,12 @@ export class ListadoComponent implements OnInit {
         return;
       }
 
-      const eventoData = {
+      const eventoData: Omit<Evento, 'id' | 'inscripcions'> & { inscripcions?: Inscripcion[] } = {
         titulo: this.eventoForm.get('titulo')?.value,
         descripcion: this.eventoForm.get('descripcion')?.value,
-        fecha: this.eventoForm.get('fecha')?.value,
+        fecha: new Date(this.eventoForm.get('fecha')?.value),
         ubicacion: this.eventoForm.get('ubicacion')?.value,
-        organizador: {
-          id: currentUser.id,
-          nombre: currentUser.nombre,
-          email: currentUser.email
-        },
+        organizador: currentUser,
         inscripcions: []
       };
 

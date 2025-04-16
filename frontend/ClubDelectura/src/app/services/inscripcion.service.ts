@@ -33,9 +33,9 @@ export class InscripcionService {
           eventos: [],
           inscripcions: [],
           recomendacions: []
-        },
+        } as Usuario,
         inscripcions: []
-      },
+      } as Evento,
       usuario: {
         id: 2,
         nombre: 'Usuario',
@@ -49,7 +49,7 @@ export class InscripcionService {
         eventos: [],
         inscripcions: [],
         recomendacions: []
-      },
+      } as Usuario,
       fechaInscripcion: new Date()
     }
   ];

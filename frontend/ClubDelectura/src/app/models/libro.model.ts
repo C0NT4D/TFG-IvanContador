@@ -1,5 +1,6 @@
 import { Usuario } from './usuario.model';
 import { Lectura } from './lectura.model';
+import { Recomendacion } from './recomendacion.model';
 
 export interface Libro {
   id: number;
@@ -12,10 +13,9 @@ export interface Libro {
   recomendacions: Recomendacion[];
 }
 
-export interface Recomendacion {
-  id: number;
-  usuario: Usuario;
-  libro: Libro;
-  comentario: string;
-  fecha: Date;
-} 
+// Eliminar CUALQUIER definición local de Lectura o Recomendacion aquí
+
+// La definición de Recomendacion debe estar en recomendacion.model.ts
+/*
+export interface Recomendacion { ... }
+*/ 

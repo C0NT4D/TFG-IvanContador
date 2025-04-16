@@ -6,6 +6,8 @@ import { EventoService } from '../../../services/evento.service';
 import { AuthService } from '../../../services/auth.service';
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
+import { Evento } from '../../../models/evento.model';
+import { Inscripcion } from '../../../models/inscripcion.model';
 
 @Component({
   selector: 'app-evento-nuevo',
@@ -56,16 +58,12 @@ export class NuevoComponent implements OnInit {
       this.loading = true;
       this.error = '';
       
-      const eventoData = {
+      const eventoData: Omit<Evento, 'id' | 'inscripcions'> & { inscripcions?: Inscripcion[] } = {
         titulo: this.eventoForm.get('titulo')?.value,
         descripcion: this.eventoForm.get('descripcion')?.value,
-        fecha: this.eventoForm.get('fecha')?.value,
+        fecha: new Date(this.eventoForm.get('fecha')?.value),
         ubicacion: this.eventoForm.get('ubicacion')?.value,
-        organizador: {
-          id: currentUser.id,
-          nombre: currentUser.nombre,
-          email: currentUser.email
-        },
+        organizador: currentUser,
         inscripcions: []
       };
 

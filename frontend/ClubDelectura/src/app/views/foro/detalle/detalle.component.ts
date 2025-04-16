@@ -76,6 +76,10 @@ export class DetalleComponent implements OnInit {
 
   sendMessage(): void {
     const currentUser = this.authService.getCurrentUser();
+    console.log('ForoDetalle: Intentando enviar mensaje. Usuario actual:', currentUser); // LOG
+    console.log('ForoDetalle: Forum:', this.forum); // LOG
+    console.log('ForoDetalle: New Message:', this.newMessage.trim()); // LOG
+
     if (!this.forum || !currentUser || !this.newMessage.trim()) {
         if (!currentUser) {
             this.error = "No se pudo identificar al usuario para enviar el mensaje.";
@@ -91,6 +95,7 @@ export class DetalleComponent implements OnInit {
 
     this.mensajeService.createMensaje(nuevoMensaje).subscribe({
       next: (createdMessage: Mensaje) => {
+        this.authService.addMensajeToCurrentUser(createdMessage);
         this.messages.push(createdMessage);
         this.newMessage = '';
       },

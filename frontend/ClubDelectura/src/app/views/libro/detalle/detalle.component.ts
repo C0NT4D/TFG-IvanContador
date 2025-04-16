@@ -3,19 +3,21 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LibroService } from '../../../services/libro.service';
 import { LecturaService } from '../../../services/lectura.service'; // Importar LecturaService
-import { Libro, Recomendacion } from '../../../models/libro.model'; // Lectura no se importa de aquí
+import { Libro } from '../../../models/libro.model';
+import { Recomendacion } from '../../../models/recomendacion.model'; // Importar desde recomendacion.model
 import { Lectura } from '../../../models/lectura.model'; // Importar Lectura de su propio modelo
 import { Usuario } from '../../../models/usuario.model';
 import { AuthService } from '@app/services/auth.service';
-import { Observable, of } from 'rxjs'; // Importar Observable y of
-import { map, catchError } from 'rxjs/operators'; // Importar map y catchError
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-detalle',
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterLink] // Asegúrate de añadir AsyncPipe si usas | async en plantilla
+  // ¡Importante añadir AsyncPipe aquí si no está ya en CommonModule!
+  imports: [CommonModule, RouterLink]
 })
 export class DetalleComponent implements OnInit {
   book?: Libro;
@@ -23,7 +25,7 @@ export class DetalleComponent implements OnInit {
   error = '';
   isUserLoggedIn = false;
   currentUserId: number | null = null;
-  userHasReading$: Observable<boolean> = of(false); // Observable para controlar el botón
+  userHasReading$: Observable<boolean> = of(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -36,12 +38,13 @@ export class DetalleComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     this.isUserLoggedIn = !!currentUser;
     this.currentUserId = currentUser?.id ?? null;
+    console.log('LibroDetalle: ngOnInit - Usuario actual:', currentUser); // LOG
+    console.log('LibroDetalle: ngOnInit - isUserLoggedIn:', this.isUserLoggedIn, 'currentUserId:', this.currentUserId); // LOG
 
     this.route.params.subscribe(params => {
       const id = Number(params['id']);
       if (id && !isNaN(id)) {
         this.loadBook(id);
-        // Solo comprobar estado de lectura si el usuario está logueado y tenemos ID de libro
         if (this.isUserLoggedIn) {
           this.checkUserReadingStatus(id);
         }
@@ -68,67 +71,65 @@ export class DetalleComponent implements OnInit {
     });
   }
 
-  // Comprueba si el usuario actual tiene una lectura para este libro
   checkUserReadingStatus(bookId: number): void {
     if (this.currentUserId) {
       this.userHasReading$ = this.lecturaService.getLecturaByUsuarioAndLibro(
         this.currentUserId,
         bookId
       ).pipe(
-        map(lectura => !!lectura), // Devuelve true si existe lectura, false si no
-        catchError(err => { // Manejar error si el servicio falla
+        map(lectura => !!lectura),
+        catchError(err => {
           console.error('Error checking reading status:', err);
-          return of(false); // Asumir que no tiene lectura si hay error
+          return of(false);
         })
       );
     } else {
-      this.userHasReading$ = of(false); // No logueado, no tiene lectura
+      this.userHasReading$ = of(false);
     }
   }
 
-  // Inicia una nueva lectura para el libro actual
   startReading(): void {
-    // Comprobaciones iniciales
+    // LOGs al inicio del método
+    const userCheck = this.authService.getCurrentUser();
+    console.log('LibroDetalle: Intentando iniciar lectura. Usuario actual (check directo):', userCheck);
+    console.log('LibroDetalle: Propiedades al inicio de startReading - isUserLoggedIn:', this.isUserLoggedIn, 'currentUserId:', this.currentUserId);
+
+    // Comprobaciones iniciales usando las propiedades de la clase
     if (!this.book || !this.isUserLoggedIn || !this.currentUserId) {
         this.error = 'Debes iniciar sesión para empezar a leer.';
+        console.error('Error startReading: Comprobación inicial fallida.', { book: !!this.book, isUserLoggedIn: this.isUserLoggedIn, currentUserId: this.currentUserId });
         return;
     }
-    // Re-obtener usuario por seguridad
+    // Re-obtener usuario por seguridad (y para el objeto Lectura)
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
         this.error = 'Error al obtener datos de usuario.';
+        console.error('Error startReading: Falló el segundo check de currentUser.');
         return;
     }
 
-    this.error = ''; // Limpiar errores previos
+    this.error = '';
 
-    // Crear los datos para la nueva lectura
     const newReadingData: Omit<Lectura, 'id'> = {
       libro: this.book,
       usuario: currentUser,
       fechaInicio: new Date(),
       estadoLectura: 'EN_PROGRESS',
-      fechaFin: null // Asignar null explícitamente
+      fechaFin: null
     };
 
-    // Llamar al servicio para crear la lectura
     this.lecturaService.createLectura(newReadingData).subscribe({
       next: (createdReading) => {
         console.log('Lectura iniciada:', createdReading);
-        // Actualizar el estado para ocultar el botón inmediatamente
         this.userHasReading$ = of(true);
-        // Opcional: Podríamos querer actualizar la lista de lecturas mostrada en la página si la hubiera
-        // this.loadBook(this.book!.id);
       },
       error: (err: Error | any) => {
         console.error('Error al iniciar la lectura:', err);
-        // Mostrar el mensaje de error específico si existe (ej. "Ya tienes una lectura...")
         this.error = err?.message || 'Error desconocido al registrar la lectura.';
       }
     });
   }
 
-  // Mantener el método addRecommendation por si se reutiliza
   addRecommendation(): void {
     console.warn('addRecommendation called, but button might be hidden.');
     // ... (código existente o lógica futura)

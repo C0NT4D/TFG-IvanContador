@@ -11,7 +11,6 @@ import { Usuario } from '@app/models/usuario.model';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     TitleCasePipe,
   ],
   templateUrl: './perfil.component.html',
