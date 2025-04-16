@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { LoadingComponent } from '../../components/loading/loading.component'; // Asumiendo ruta
-import { ErrorComponent } from '../../components/error/error.component'; // Asumiendo ruta
+
 
 @Component({
   selector: 'app-contacto',
@@ -12,8 +11,7 @@ import { ErrorComponent } from '../../components/error/error.component'; // Asum
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    LoadingComponent,
-    ErrorComponent
+
   ],
   templateUrl: './contacto.component.html',
   styleUrls: ['./contacto.component.css']
