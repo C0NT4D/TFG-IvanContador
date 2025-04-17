@@ -32,7 +32,7 @@ class Foro
     /**
      * @var Collection<int, Mensaje>
      */
-    #[ORM\OneToMany(targetEntity: Mensaje::class, mappedBy: 'foro')]
+    #[ORM\OneToMany(targetEntity: Mensaje::class, mappedBy: 'foro', cascade: ["remove"])]
     private Collection $mensajes;
 
     public function __construct()

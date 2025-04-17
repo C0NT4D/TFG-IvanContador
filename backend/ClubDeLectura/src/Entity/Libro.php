@@ -34,13 +34,13 @@ class Libro
     /**
      * @var Collection<int, Lectura>
      */
-    #[ORM\OneToMany(targetEntity: Lectura::class, mappedBy: 'libro')]
+    #[ORM\OneToMany(targetEntity: Lectura::class, mappedBy: 'libro', cascade: ["remove"])]
     private Collection $lecturas;
 
     /**
      * @var Collection<int, Recomendacion>
      */
-    #[ORM\OneToMany(targetEntity: Recomendacion::class, mappedBy: 'libro')]
+    #[ORM\OneToMany(targetEntity: Recomendacion::class, mappedBy: 'libro', cascade: ["remove"])]
     private Collection $recomendacions;
 
     public function __construct()
