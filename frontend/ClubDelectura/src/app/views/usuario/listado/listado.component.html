@@ -31,7 +31,7 @@
         @for (usuario of usuarios; track usuario.id) {
           <div class="col">
             <!-- El componente user-card ya está estilizado con Bootstrap -->
-            <app-user-card [usuario]="usuario"></app-user-card> 
+            <app-user-card [usuario]="usuario" (deleteUser)="deleteUsuario($event)"></app-user-card> 
           </div>
         }
       </div>

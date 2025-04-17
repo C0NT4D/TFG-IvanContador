@@ -32,7 +32,7 @@ export class ListadoComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
     if (this.isAdmin) {
-    this.loadUsuarios();
+      this.loadUsuarios();
     } else {
       this.router.navigate(['/']);
     }
@@ -50,6 +50,21 @@ export class ListadoComponent implements OnInit {
         this.error = 'Error al cargar los usuarios';
         this.loading = false;
         console.error('Error fetching users:', error);
+      }
+    });
+  }
+
+  deleteUsuario(userId: number): void {
+    this.loading = true;
+    this.usuarioService.deleteUsuario(userId).subscribe({
+      next: () => {
+        this.usuarios = this.usuarios.filter(u => u.id !== userId);
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Error al eliminar el usuario';
+        this.loading = false;
+        console.error('Error deleting user:', error);
       }
     });
   }
