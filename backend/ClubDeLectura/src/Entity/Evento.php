@@ -36,7 +36,7 @@ class Evento
     /**
      * @var Collection<int, Inscripcion>
      */
-    #[ORM\OneToMany(targetEntity: Inscripcion::class, mappedBy: 'evento')]
+    #[ORM\OneToMany(targetEntity: Inscripcion::class, mappedBy: 'evento', cascade: ["remove"])]
     private Collection $inscripcions;
 
     public function __construct()
