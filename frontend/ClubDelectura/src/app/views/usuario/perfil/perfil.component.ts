@@ -78,11 +78,11 @@ export class PerfilComponent implements OnInit {
       
       const updatedName = this.perfilForm.get('nombre')?.value;
       
-      // Crear un objeto con los datos necesarios para actualizar
+      // Crear un objeto con solo los datos que queremos actualizar
+      // No incluimos la contraseña para evitar sobrescribirla en el backend
       const updateData = {
         nombre: updatedName,
         email: this.usuario.email,
-        contrasena: this.usuario.contrasena, // Mantener la contraseña actual
         rol: this.usuario.rol
       };
       

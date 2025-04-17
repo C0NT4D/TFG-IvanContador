@@ -95,10 +95,24 @@ final class UsuarioController extends AbstractController
             return $this->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        $usuario->setNombre($data['nombre']);
-        $usuario->setEmail($data['email']);
-        $usuario->setContrasena($data['contrasena']);
-        $usuario->setRol($data['rol']);
+        // Actualizar solo los campos que están presentes en la solicitud
+        if (isset($data['nombre'])) {
+            $usuario->setNombre($data['nombre']);
+        }
+        
+        if (isset($data['email'])) {
+            $usuario->setEmail($data['email']);
+        }
+        
+        // Solo actualizar la contraseña si se proporciona una nueva contraseña explícitamente
+        // Esto evita que se sobrescriba la contraseña cuando solo se actualiza el nombre
+        if (isset($data['contrasena']) && !empty($data['contrasena'])) {
+            $usuario->setContrasena($data['contrasena']);
+        }
+        
+        if (isset($data['rol'])) {
+            $usuario->setRol($data['rol']);
+        }
 
         // Hacemos flush para guardar los cambios
         $this->entityManager->flush();
