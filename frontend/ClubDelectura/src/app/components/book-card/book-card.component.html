@@ -8,7 +8,9 @@
       <span class="text-muted">{{ libro.anioPublicacion }}</span>
     </div>
     @if (showDelete) {
-      <button class="btn btn-danger mt-2" (click)="onDelete()">Eliminar</button>
+      <button class="btn btn-sm btn-outline-danger mt-2" (click)="onDelete()">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
     }
   </div>
   <div class="card-footer">

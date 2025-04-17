@@ -9,7 +9,20 @@
 
     <div class="d-flex justify-content-end gap-2">
       <a [routerLink]="['/usuario', usuario.id]" class="btn btn-primary btn-sm">Ver detalles</a>
-      <button class="btn btn-danger btn-sm" (click)="onDeleteClick($event)">Eliminar</button>
+      <button class="btn btn-sm btn-outline-danger" (click)="onDeleteClick($event)">
+        <i class="bi bi-trash"></i> Eliminar
+      </button>
     </div>
   </div>
-</div> 
+</div>
+
+<!-- Modal de confirmación -->
+@if (showDeleteModal) {
+  <app-confirm-modal
+    [isOpen]="showDeleteModal"
+    title="Confirmar Eliminación"
+    message="¿Estás seguro que deseas eliminar al usuario {{usuario.nombre}}? Esta acción no se puede deshacer."
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()">
+  </app-confirm-modal>
+} 

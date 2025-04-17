@@ -92,7 +92,9 @@
       <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
       <div class="modal-actions">
         <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancelar</button>
-        <button class="btn btn-danger" (click)="confirmDelete()">Eliminar</button>
+        <button class="btn btn-outline-danger" (click)="confirmDelete()">
+          <i class="bi bi-trash"></i> Eliminar
+        </button>
       </div>
     </div>
   </div>
