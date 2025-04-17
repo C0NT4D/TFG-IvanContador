@@ -28,7 +28,13 @@ export class EventoService {
   }
 
   createEvento(eventoData: Omit<Evento, 'id' | 'inscripcions'>): Observable<Evento> {
-    return this.http.post<Evento>(`${this.apiUrl}/evento`, eventoData).pipe(
+    return this.http.post<Evento>(`${this.apiUrl}/evento`, {
+      titulo: eventoData.titulo,
+      descripcion: eventoData.descripcion,
+      fecha: eventoData.fecha instanceof Date ? eventoData.fecha.toISOString() : eventoData.fecha,
+      ubicacion: eventoData.ubicacion,
+      organizador_id: eventoData.organizador.id
+    }).pipe(
       catchError(this.handleError)
     );
   }

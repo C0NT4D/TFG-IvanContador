@@ -4,8 +4,12 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EventoService } from '../../../services/evento.service';
 import { InscripcionService } from '../../../services/inscripcion.service';
+import { AuthService } from '../../../services/auth.service';
+import { UsuarioService } from '../../../services/usuario.service';
 import { LoadingComponent } from '../../../components/loading/loading.component';
 import { ErrorComponent } from '../../../components/error/error.component';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -25,15 +29,28 @@ export class DetalleComponent implements OnInit {
   inscripciones: any[] = [];
   loading = true;
   error = '';
-  currentUserId = 1; // TODO: Get from auth service
+  currentUserId: number | null = null;
+  currentUser: any = null;
 
   constructor(
     private route: ActivatedRoute,
     private eventoService: EventoService,
-    private inscripcionService: InscripcionService
+    private inscripcionService: InscripcionService,
+    private usuarioService: UsuarioService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    const currentUser = this.authService.getCurrentUser();
+    this.currentUserId = currentUser?.id || null;
+    this.currentUser = currentUser;
+    
+    if (!this.currentUserId) {
+      this.error = 'Debe iniciar sesión para ver los detalles del evento';
+      this.loading = false;
+      return;
+    }
+    
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadEvento(id);
   }
@@ -59,8 +76,49 @@ export class DetalleComponent implements OnInit {
   }
 
   private loadInscripciones(eventoId: number): void {
-    this.inscripcionService.getInscripcionsByEvento(eventoId).subscribe({
+    // Primero obtener todas las inscripciones
+    this.inscripcionService.getInscripcions().pipe(
+      // Filtrar las inscripciones del evento actual
+      map(inscripciones => inscripciones.filter(i => {
+        // Puede ser que tengamos evento.id o evento como ID
+        const inscripcionEventoId = typeof i.evento === 'object' ? i.evento.id : i.evento;
+        return inscripcionEventoId === eventoId;
+      })),
+      // Para cada inscripción, obtener los datos del usuario si solo tenemos el ID
+      switchMap(inscripciones => {
+        if (inscripciones.length === 0) return of([]);
+        
+        // Para cada inscripción, asegurarnos de tener los datos completos
+        const inscripcionesCompletas = inscripciones.map(inscripcion => {
+          // Si ya tenemos el usuario completo, devolver la inscripción tal cual
+          if (typeof inscripcion.usuario === 'object' && inscripcion.usuario.nombre) {
+            return of(inscripcion);
+          }
+
+          // Si solo tenemos el ID del usuario, obtener los datos completos
+          const usuarioId = typeof inscripcion.usuario === 'object' ? inscripcion.usuario.id : inscripcion.usuario;
+          return this.usuarioService.getUsuario(usuarioId).pipe(
+            map(usuario => {
+              return {
+                ...inscripcion,
+                usuario: usuario || { id: usuarioId, nombre: 'Usuario no encontrado' }
+              };
+            }),
+            catchError(() => {
+              return of({
+                ...inscripcion,
+                usuario: { id: usuarioId, nombre: 'Error al cargar usuario' }
+              });
+            })
+          );
+        });
+        
+        // Combinar todos los resultados
+        return forkJoin(inscripcionesCompletas);
+      })
+    ).subscribe({
       next: (inscripciones) => {
+        console.log('Inscripciones cargadas:', inscripciones);
         this.inscripciones = inscripciones;
       },
       error: (error) => {
@@ -70,7 +128,7 @@ export class DetalleComponent implements OnInit {
   }
 
   inscribirse(): void {
-    if (!this.evento) return;
+    if (!this.evento || !this.currentUserId) return;
 
     const inscripcion = {
       evento_id: this.evento.id,
@@ -78,19 +136,34 @@ export class DetalleComponent implements OnInit {
     };
 
     this.inscripcionService.createInscripcion(inscripcion).subscribe({
-      next: (inscripcion) => {
-        this.inscripciones.push(inscripcion);
+      next: (nuevaInscripcion) => {
+        // Asegurarnos que la inscripción tenga los datos del usuario
+        const inscripcionCompleta = {
+          ...nuevaInscripcion,
+          usuario: this.currentUser || { 
+            id: this.currentUserId, 
+            nombre: 'Usuario actual'
+          }
+        };
+        
+        console.log('Nueva inscripción:', inscripcionCompleta);
+        this.inscripciones.push(inscripcionCompleta);
       },
       error: (error) => {
         this.error = 'Error al inscribirse en el evento';
+        console.error('Error al inscribirse:', error);
       }
     });
   }
 
   cancelarInscripcion(): void {
-    if (!this.evento) return;
+    if (!this.evento || !this.currentUserId) return;
 
-    const inscripcion = this.inscripciones.find(i => i.usuario.id === this.currentUserId);
+    const inscripcion = this.inscripciones.find(i => {
+      const usuarioId = typeof i.usuario === 'object' ? i.usuario.id : i.usuario;
+      return usuarioId === this.currentUserId;
+    });
+    
     if (inscripcion) {
       this.inscripcionService.deleteInscripcion(inscripcion.id).subscribe({
         next: () => {
@@ -98,12 +171,18 @@ export class DetalleComponent implements OnInit {
         },
         error: (error) => {
           this.error = 'Error al cancelar la inscripción';
+          console.error('Error al cancelar inscripción:', error);
         }
       });
     }
   }
 
   isInscrito(): boolean {
-    return this.inscripciones.some(i => i.usuario.id === this.currentUserId);
+    if (!this.currentUserId) return false;
+    
+    return this.inscripciones.some(i => {
+      const usuarioId = typeof i.usuario === 'object' ? i.usuario.id : i.usuario;
+      return usuarioId === this.currentUserId;
+    });
   }
 }

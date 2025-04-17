@@ -52,14 +52,4 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
     }
   }
-
-  // Método de depuración para probar el login con credenciales hardcodeadas
-  loginMock(): void {
-    this.loginForm.setValue({
-      email: 'admin@club.com',
-      password: 'admin123'
-    });
-    
-    this.onSubmit();
-  }
 }

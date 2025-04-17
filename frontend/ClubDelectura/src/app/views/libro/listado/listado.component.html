@@ -59,6 +59,60 @@
               }
             </div>
 
+            <div class="mb-3">
+              <label for="genero" class="form-label">Género</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="genero" 
+                formControlName="genero"
+                [class.is-invalid]="libroForm.get('genero')?.invalid && libroForm.get('genero')?.touched">
+              @if (libroForm.get('genero')?.invalid && libroForm.get('genero')?.touched) {
+                <div class="invalid-feedback">
+                  @if (libroForm.get('genero')?.errors?.['required']) {
+                    <div>El género es requerido</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="anioPublicacion" class="form-label">Año de Publicación</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="anioPublicacion" 
+                formControlName="anioPublicacion"
+                [class.is-invalid]="libroForm.get('anioPublicacion')?.invalid && libroForm.get('anioPublicacion')?.touched">
+              @if (libroForm.get('anioPublicacion')?.invalid && libroForm.get('anioPublicacion')?.touched) {
+                <div class="invalid-feedback">
+                  @if (libroForm.get('anioPublicacion')?.errors?.['required']) {
+                    <div>El año de publicación es requerido</div>
+                  }
+                  @if (libroForm.get('anioPublicacion')?.errors?.['pattern']) {
+                    <div>El año debe tener 4 dígitos</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="sinopsis" class="form-label">Sinopsis</label>
+              <textarea 
+                class="form-control" 
+                id="sinopsis" 
+                rows="3"
+                formControlName="sinopsis"
+                [class.is-invalid]="libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched"></textarea>
+              @if (libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched) {
+                <div class="invalid-feedback">
+                  @if (libroForm.get('sinopsis')?.errors?.['required']) {
+                    <div>La sinopsis es requerida</div>
+                  }
+                </div>
+              }
+            </div>
+
             <div class="d-flex justify-content-end gap-2">
               <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancelar</button>
               <button type="submit" class="btn btn-primary" [disabled]="libroForm.invalid">Crear Libro</button>

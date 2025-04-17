@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, throwError, forkJoin } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Inscripcion } from '../models/inscripcion.model';
 import { Evento } from '../models/evento.model';
@@ -22,22 +22,36 @@ export class InscripcionService {
   ) { }
 
   getInscripcions(): Observable<Inscripcion[]> {
-    return this.http.get<Inscripcion[]>(`${this.apiUrl}/inscripciones`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/inscripciones`).pipe(
+      switchMap(inscripciones => {
+        if (inscripciones.length === 0) return of([]);
+        
+        // Crear un array de observables para obtener detalles de usuario y evento
+        const inscripcionesCompletas = inscripciones.map(inscripcion => this.completarInscripcion(inscripcion));
+        
+        // Combinar todos los observables en uno solo
+        return forkJoin(inscripcionesCompletas);
+      }),
       catchError(this.handleError)
     );
   }
 
   getInscripcion(id: number): Observable<Inscripcion | undefined> {
-    return this.http.get<Inscripcion>(`${this.apiUrl}/inscripcion/${id}`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/inscripcion/${id}`).pipe(
+      switchMap(inscripcion => this.completarInscripcion(inscripcion)),
       catchError(this.handleError)
     );
   }
 
   createInscripcion(inscripcionData: { evento_id: number, usuario_id: number }): Observable<Inscripcion> {
-    return this.http.post<Inscripcion>(`${this.apiUrl}/inscripcion`, {
+    return this.http.post<any>(`${this.apiUrl}/inscripcion`, {
       ...inscripcionData,
       fecha_inscripcion: new Date().toISOString()
     }).pipe(
+      switchMap(inscripcion => {
+        // Completar la inscripción con los datos del evento y usuario
+        return this.completarInscripcion(inscripcion);
+      }),
       catchError(this.handleError)
     );
   }
@@ -53,7 +67,7 @@ export class InscripcionService {
   }
 
   getInscripcionsByEvento(eventoId: number): Observable<Inscripcion[]> {
-    // Si no hay un endpoint específico, filtramos del getAll
+    // Obtener todas las inscripciones y filtrar
     return this.getInscripcions().pipe(
       map(inscripciones => inscripciones.filter(inscripcion => 
         inscripcion.evento.id === eventoId
@@ -63,7 +77,7 @@ export class InscripcionService {
   }
 
   getInscripcionsByUsuario(usuarioId: number): Observable<Inscripcion[]> {
-    // Si no hay un endpoint específico, filtramos del getAll
+    // Obtener todas las inscripciones y filtrar
     return this.getInscripcions().pipe(
       map(inscripciones => inscripciones.filter(inscripcion => 
         inscripcion.usuario.id === usuarioId
@@ -73,7 +87,7 @@ export class InscripcionService {
   }
 
   isUsuarioInscrito(eventoId: number, usuarioId: number): Observable<boolean> {
-    // Si no hay un endpoint específico, filtramos del getAll
+    // Obtener todas las inscripciones y comprobar
     return this.getInscripcions().pipe(
       map(inscripciones => inscripciones.some(inscripcion => 
         inscripcion.evento.id === eventoId && inscripcion.usuario.id === usuarioId
@@ -81,6 +95,36 @@ export class InscripcionService {
       catchError(error => {
         this.handleError(error);
         return of(false);
+      })
+    );
+  }
+
+  // Método para completar los datos de una inscripción (evento y usuario)
+  private completarInscripcion(inscripcion: any): Observable<Inscripcion> {
+    // Obtener detalles del evento
+    const evento$ = this.eventoService.getEvento(inscripcion.evento);
+    // Obtener detalles del usuario
+    const usuario$ = this.usuarioService.getUsuario(inscripcion.usuario);
+    
+    // Combinar ambos observables
+    return forkJoin([evento$, usuario$]).pipe(
+      map(([evento, usuario]) => {
+        return {
+          id: inscripcion.id,
+          evento: evento || { id: inscripcion.evento, titulo: 'Evento no encontrado' } as Evento,
+          usuario: usuario || { id: inscripcion.usuario, nombre: 'Usuario no encontrado' } as Usuario,
+          fechaInscripcion: new Date(inscripcion.fechaInscripcion)
+        } as Inscripcion;
+      }),
+      catchError(error => {
+        console.error('Error al completar datos de inscripción:', error);
+        // Devolver una inscripción con datos básicos si hay un error
+        return of({
+          id: inscripcion.id,
+          evento: { id: inscripcion.evento, titulo: 'Error al cargar evento' } as Evento,
+          usuario: { id: inscripcion.usuario, nombre: 'Error al cargar usuario' } as Usuario,
+          fechaInscripcion: new Date(inscripcion.fechaInscripcion)
+        } as Inscripcion);
       })
     );
   }

@@ -117,14 +117,14 @@ export class AuthService {
         email: 'usuario@club.com',
         contrasena: '',
         rol: 'user',
-        fechaRegistro: new Date(),
-        lecturas: [],
-        foros: [],
-        mensajes: [],
-        eventos: [],
-        inscripcions: [],
-        recomendacions: []
-      };
+          fechaRegistro: new Date(),
+          lecturas: [],
+          foros: [],
+          mensajes: [],
+          eventos: [],
+          inscripcions: [],
+          recomendacions: []
+        };
       this.setCurrentUser(user);
       this.router.navigate(['/perfil']);
       return of(user);
@@ -143,7 +143,7 @@ export class AuthService {
     }).pipe(
       catchError(this.handleError)
     );
-  }
+    }
 
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
@@ -169,10 +169,10 @@ export class AuthService {
     const currentUser = this.getCurrentUser();
     if (currentUser) {
       const updatedUser = { ...currentUser };
-      if (!updatedUser.mensajes) updatedUser.mensajes = [];
-      if (!updatedUser.mensajes.some(m => m.id === mensaje.id)) {
-        updatedUser.mensajes.push(mensaje);
-        this.setCurrentUser(updatedUser);
+        if (!updatedUser.mensajes) updatedUser.mensajes = [];
+        if (!updatedUser.mensajes.some(m => m.id === mensaje.id)) {
+          updatedUser.mensajes.push(mensaje);
+          this.setCurrentUser(updatedUser);
         console.log(`Mensaje ID ${mensaje.id} añadido al usuario ID ${currentUser.id}`);
       } else {
         console.warn(`El mensaje ID ${mensaje.id} ya existe para el usuario ID ${currentUser.id}`);

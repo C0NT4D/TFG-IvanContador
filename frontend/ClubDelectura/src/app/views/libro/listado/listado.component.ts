@@ -44,7 +44,10 @@ export class ListadoComponent implements OnInit {
   ) {
     this.libroForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
-      autor: ['', Validators.required]
+      autor: ['', Validators.required],
+      genero: ['', Validators.required],
+      anioPublicacion: ['', [Validators.required, Validators.pattern('^[0-9]{4}$')]],
+      sinopsis: ['', Validators.required]
     });
   }
 

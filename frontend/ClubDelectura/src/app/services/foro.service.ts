@@ -27,8 +27,10 @@ export class ForoService {
 
   createForo(foro: Omit<Foro, 'id' | 'fechaCreacion'>): Observable<Foro> {
     return this.http.post<Foro>(`${this.apiUrl}/foro`, {
-      ...foro,
-      fecha_creacion: new Date().toISOString()
+      titulo: foro.titulo,
+      descripcion: foro.descripcion,
+      fecha_creacion: new Date().toISOString(),
+      admin_id: foro.admin.id
     }).pipe(
       catchError(this.handleError)
     );
