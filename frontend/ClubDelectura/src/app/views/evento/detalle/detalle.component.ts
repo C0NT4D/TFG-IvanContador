@@ -73,10 +73,8 @@ export class DetalleComponent implements OnInit {
     if (!this.evento) return;
 
     const inscripcion = {
-      evento: this.evento,
-      usuario: {
-        id: this.currentUserId
-      } as any // TODO: Replace with proper type when auth service is implemented
+      evento_id: this.evento.id,
+      usuario_id: this.currentUserId
     };
 
     this.inscripcionService.createInscripcion(inscripcion).subscribe({

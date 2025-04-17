@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Evento } from '../models/evento.model';
 import { Usuario } from '../models/usuario.model'; 
 import { Inscripcion } from '../models/inscripcion.model';
@@ -9,91 +10,66 @@ import { Inscripcion } from '../models/inscripcion.model';
   providedIn: 'root'
 })
 export class EventoService {
-  private eventos: Evento[] = [
-    {
-      id: 1,
-      titulo: 'Club de Lectura Mensual',
-      descripcion: 'Reunión mensual para discutir el libro seleccionado',
-      fecha: new Date('2024-04-01T19:00:00'),
-      ubicacion: 'Biblioteca Municipal',
-      organizador: { 
-        id: 1,
-        nombre: 'Admin',
-        email: 'admin@example.com',
-        contrasena: 'admin123',
-        rol: 'admin',
-        fechaRegistro: new Date(),
-        lecturas: [], foros: [], mensajes: [], eventos: [], inscripcions: [], recomendacions: []
-      } as Usuario, 
-      inscripcions: []
-    } as Evento,
-    {
-      id: 2,
-      titulo: 'Taller de Escritura Creativa',
-      descripcion: 'Taller para desarrollar técnicas de escritura creativa',
-      fecha: new Date('2024-04-15T18:30:00'),
-      ubicacion: 'Centro Cultural',
-      organizador: { 
-         id: 1,
-        nombre: 'Admin',
-        email: 'admin@example.com',
-        contrasena: 'admin123',
-        rol: 'admin',
-        fechaRegistro: new Date(),
-        lecturas: [], foros: [], mensajes: [], eventos: [], inscripcions: [], recomendacions: []
-      } as Usuario, 
-      inscripcions: []
-    } as Evento
-  ];
+  // URL relativa para el proxy
+  private apiUrl = '/api';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getEventos(): Observable<Evento[]> {
-    return of(this.eventos);
+    return this.http.get<Evento[]>(`${this.apiUrl}/eventos`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   getEvento(id: number): Observable<Evento | undefined> {
-    const evento = this.eventos.find(evento => evento.id === id);
-    return of(evento);
+    return this.http.get<Evento>(`${this.apiUrl}/evento/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  createEvento(eventoData: Omit<Evento, 'id' | 'inscripcions'> & { inscripcions?: Inscripcion[] }): Observable<Evento> {
-    const newEvento: Evento = {
-      ...eventoData,
-      id: this.eventos.length > 0 ? Math.max(...this.eventos.map(e => e.id)) + 1 : 1,
-      fecha: typeof eventoData.fecha === 'string' ? new Date(eventoData.fecha) : eventoData.fecha,
-      inscripcions: eventoData.inscripcions ?? []
-    };
-    this.eventos.push(newEvento);
-    return of(newEvento);
+  createEvento(eventoData: Omit<Evento, 'id' | 'inscripcions'>): Observable<Evento> {
+    return this.http.post<Evento>(`${this.apiUrl}/evento`, eventoData).pipe(
+      catchError(this.handleError)
+    );
   }
 
   updateEvento(id: number, eventoUpdate: Partial<Omit<Evento, 'id'>>): Observable<Evento | undefined> {
-    const index = this.eventos.findIndex(e => e.id === id);
-    if (index !== -1) {
-      const updatedEvento = { 
-          ...this.eventos[index], 
-          ...eventoUpdate,
-          fecha: eventoUpdate.fecha !== undefined 
-                 ? (typeof eventoUpdate.fecha === 'string' ? new Date(eventoUpdate.fecha) : eventoUpdate.fecha) 
-                 : this.eventos[index].fecha
-      };
-      this.eventos[index] = updatedEvento;
-      return of(updatedEvento);
-    }
-    return of(undefined);
+    return this.http.put<Evento>(`${this.apiUrl}/evento/${id}`, eventoUpdate).pipe(
+      catchError(this.handleError)
+    );
   }
 
   deleteEvento(id: number): Observable<boolean> {
-    const index = this.eventos.findIndex(e => e.id === id);
-    if (index !== -1) {
-      this.eventos.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+    return this.http.delete(`${this.apiUrl}/evento/${id}`).pipe(
+      map(() => true),
+      catchError(error => {
+        this.handleError(error);
+        return of(false);
+      })
+    );
   }
 
   getEventosByOrganizador(organizadorId: number): Observable<Evento[]> {
-    return of(this.eventos.filter(evento => evento.organizador?.id === organizadorId));
+    // Si no hay un endpoint específico, filtramos del getAll
+    return this.getEventos().pipe(
+      map(eventos => eventos.filter(evento => evento.organizador?.id === organizadorId)),
+      catchError(this.handleError)
+    );
+  }
+  
+  // Manejador de errores genérico
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Error desconocido';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
+    }
+    
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 }

@@ -111,11 +111,10 @@ export class ListadoComponent implements OnInit {
       return;
     }
 
-    const recomendacionParaEnviar: Omit<Recomendacion, 'id'> = {
-      comentario: this.recomendacionForm.value.comentario,
-      fecha: new Date(),
-      usuario: currentUser,
-      libro: selectedLibro
+    const recomendacionParaEnviar = {
+      usuarioId: currentUser.id,
+      libroId: selectedLibro.id,
+      comentario: this.recomendacionForm.value.comentario
     };
 
     this.recomendacionService.createRecomendacion(recomendacionParaEnviar).subscribe({

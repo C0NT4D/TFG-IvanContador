@@ -36,6 +36,8 @@ export class LoginComponent {
       const email = this.loginForm.value.email;
       const password = this.loginForm.value.password;
       
+      console.log('Intentando login con:', { email, password });
+      
       this.authService.login(email, password).subscribe({
         next: (response) => {
           console.log('Login successful', response);
@@ -49,5 +51,15 @@ export class LoginComponent {
     } else {
       this.loginForm.markAllAsTouched();
     }
+  }
+
+  // Método de depuración para probar el login con credenciales hardcodeadas
+  loginMock(): void {
+    this.loginForm.setValue({
+      email: 'admin@club.com',
+      password: 'admin123'
+    });
+    
+    this.onSubmit();
   }
 }

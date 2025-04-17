@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Usuario } from '@app/models/usuario.model';
 import { Mensaje } from '@app/models/mensaje.model';
 
@@ -10,40 +12,9 @@ import { Mensaje } from '@app/models/mensaje.model';
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
+  private apiUrl = '/api';
 
-  // Usuarios de prueba
-  private testUsers: Usuario[] = [
-    {
-      id: 1,
-      nombre: 'Administrador',
-      email: 'admin@club.com',
-      contrasena: 'admin123',
-      rol: 'admin',
-      fechaRegistro: new Date(),
-      lecturas: [],
-      foros: [],
-      mensajes: [],
-      eventos: [],
-      inscripcions: [],
-      recomendacions: []
-    },
-    {
-      id: 2,
-      nombre: 'Usuario',
-      email: 'usuario@club.com',
-      contrasena: 'usuario123',
-      rol: 'user',
-      fechaRegistro: new Date(),
-      lecturas: [],
-      foros: [],
-      mensajes: [],
-      eventos: [],
-      inscripcions: [],
-      recomendacions: []
-    }
-  ];
-
-  constructor(private router: Router) {
+  constructor(private router: Router, private http: HttpClient) {
     // Cargar usuario del localStorage al iniciar con try-catch
     try {
       const savedUser = localStorage.getItem('currentUser');
@@ -68,69 +39,111 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<Usuario> {
-    return new Observable<Usuario>(observer => {
-      try {
-        const user = this.testUsers.find(u => u.email === email);
-        
-        if (!user) {
-          throw new Error('Usuario no encontrado');
+    // Llamada a la API real para autenticación
+    console.log('AuthService: Intentando login con:', { email, password });
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
+      map(response => {
+        console.log('AuthService: Respuesta del servidor:', response);
+        // Verificar si la respuesta contiene los datos necesarios para un usuario
+        if (response && response.id) {
+          const user: Usuario = {
+            id: response.id,
+            nombre: response.nombre,
+            email: response.email,
+            rol: response.rol,
+            contrasena: '', // No almacenamos la contraseña por seguridad
+            fechaRegistro: new Date(response.fechaRegistro),
+            lecturas: [],
+            foros: [],
+            mensajes: [],
+            eventos: [],
+            inscripcions: [],
+            recomendacions: []
+          };
+          console.log('AuthService: Usuario construido:', user);
+          // Guardar usuario en local y emitir evento
+          this.setCurrentUser(user);
+          return user;
+        } else {
+          // Si la respuesta no tiene el formato esperado, lanzar error
+          throw new Error('Formato de respuesta inválido desde el servidor');
         }
-
-        // En local, cualquier contraseña funciona
-        this.setCurrentUser(user);
-        
-        // Navegar después de que el usuario esté establecido
-        this.router.navigate(['/perfil']).then(success => {
-          if (success) {
-            observer.next(user);
-            observer.complete();
-          } else {
-            // Si falla la navegación, redirigir a la página principal
-            this.router.navigate(['/']);
-            observer.next(user);
-            observer.complete();
-          }
-        });
-      } catch (error) {
-        observer.error(error);
-      }
-    });
+      }),
+      tap(user => {
+        // Navegar después de procesar correctamente el usuario
+        console.log('AuthService: Navegando después de login exitoso');
+        this.router.navigate(['/libro']);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('AuthService: Error en login:', error);
+        if (error.status === 401) {
+          return throwError(() => new Error('Credenciales incorrectas'));
+        }
+        if (error.status === 0) {
+          return throwError(() => new Error('No se pudo conectar con el servidor. ¿Está el backend en ejecución?'));
+        }
+        return this.handleError(error);
+      })
+    );
   }
-    // Nuevo método de registro
-    register(userData: { nombre: string; email: string; password: string }): Observable<Usuario> {
-      return new Observable<Usuario>(observer => {
-        // Verificar si el email ya existe
-        const existingUser = this.testUsers.find(u => u.email === userData.email);
-        if (existingUser) {
-          observer.error(new Error('El correo electrónico ya está registrado.'));
-          return;
-        }
-  
-        // Crear nuevo usuario
-        const newUser: Usuario = {
-          id: this.testUsers.length > 0 ? Math.max(...this.testUsers.map(u => u.id)) + 1 : 1, // Generar nuevo ID
-          nombre: userData.nombre,
-          email: userData.email,
-          contrasena: userData.password, // En una app real, ¡esto se hashearía!
-          rol: 'user', // Por defecto, rol 'user'
-          fechaRegistro: new Date(),
-          // Inicializar arrays vacíos
-          lecturas: [],
-          foros: [],
-          mensajes: [],
-          eventos: [],
-          inscripcions: [],
-          recomendacions: []
-        };
-  
-        this.testUsers.push(newUser);
-        console.log('Usuario registrado (mock):', newUser);
-        console.log('Usuarios totales (mock):', this.testUsers);
-  
-        observer.next(newUser); // Devolver el nuevo usuario
-        observer.complete();
-      });
+
+  // Método para verificar las credenciales (para pruebas)
+  loginMock(email: string, password: string): Observable<Usuario> {
+    // Credenciales de prueba, eliminar en producción
+    if (email === 'admin@club.com' && password === 'admin123') {
+      const user: Usuario = {
+        id: 1,
+        nombre: 'Administrador',
+        email: 'admin@club.com',
+        contrasena: '',
+        rol: 'admin',
+        fechaRegistro: new Date(),
+        lecturas: [],
+        foros: [],
+        mensajes: [],
+        eventos: [],
+        inscripcions: [],
+        recomendacions: []
+      };
+      this.setCurrentUser(user);
+      this.router.navigate(['/perfil']);
+      return of(user);
     }
+    
+    if (email === 'usuario@club.com' && password === 'usuario123') {
+      const user: Usuario = {
+        id: 2,
+        nombre: 'Usuario',
+        email: 'usuario@club.com',
+        contrasena: '',
+        rol: 'user',
+        fechaRegistro: new Date(),
+        lecturas: [],
+        foros: [],
+        mensajes: [],
+        eventos: [],
+        inscripcions: [],
+        recomendacions: []
+      };
+      this.setCurrentUser(user);
+      this.router.navigate(['/perfil']);
+      return of(user);
+    }
+    
+    return throwError(() => new Error('Usuario no encontrado o contraseña incorrecta'));
+  }
+
+  register(userData: { nombre: string; email: string; password: string }): Observable<Usuario> {
+    // Llamada a la API real para registro
+    return this.http.post<Usuario>(`${this.apiUrl}/usuario`, {
+      nombre: userData.nombre,
+      email: userData.email,
+      contrasena: userData.password,
+      rol: 'user'
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
@@ -152,26 +165,36 @@ export class AuthService {
   }
 
   // --- Añadir método para mensajes ---
-  addMensajeToCurrentUser(mensaje: Mensaje): void { // Asegúrate de importar Mensaje
+  addMensajeToCurrentUser(mensaje: Mensaje): void {
     const currentUser = this.getCurrentUser();
     if (currentUser) {
-      const userIndex = this.testUsers.findIndex(u => u.id === currentUser.id);
-      if (userIndex > -1) {
-        const updatedUser = { ...this.testUsers[userIndex] };
-        if (!updatedUser.mensajes) updatedUser.mensajes = [];
-        if (!updatedUser.mensajes.some(m => m.id === mensaje.id)) {
-          updatedUser.mensajes.push(mensaje);
-          this.testUsers[userIndex] = updatedUser;
-          this.setCurrentUser(updatedUser);
-          console.log(`Mensaje ID ${mensaje.id} añadido al usuario mock ID ${currentUser.id}`);
-        } else {
-          console.warn(`El mensaje ID ${mensaje.id} ya existe para el usuario mock ID ${currentUser.id}`);
-        }
+      const updatedUser = { ...currentUser };
+      if (!updatedUser.mensajes) updatedUser.mensajes = [];
+      if (!updatedUser.mensajes.some(m => m.id === mensaje.id)) {
+        updatedUser.mensajes.push(mensaje);
+        this.setCurrentUser(updatedUser);
+        console.log(`Mensaje ID ${mensaje.id} añadido al usuario ID ${currentUser.id}`);
       } else {
-        console.error('Usuario actual no encontrado en testUsers para añadir mensaje.');
+        console.warn(`El mensaje ID ${mensaje.id} ya existe para el usuario ID ${currentUser.id}`);
       }
     } else {
       console.error('No hay usuario actual para añadir el mensaje.');
     }
+  }
+
+  // Método genérico para manejar errores de HttpClient
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Error desconocido';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
+    }
+    
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 } 

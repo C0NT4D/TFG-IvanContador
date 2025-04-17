@@ -1,94 +1,76 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Usuario } from '@app/models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  private usuarios: Usuario[] = [
-    {
-      id: 1,
-      nombre: 'Administrador',
-      email: 'admin@club.com',
-      contrasena: 'club123',
-      rol: 'ROLE_ADMIN',
-      fechaRegistro: new Date('2024-01-01'),
-      lecturas: [],
-      foros: [],
-      mensajes: [],
-      eventos: [],
-      inscripcions: [],
-      recomendacions: []
-    },
-    {
-      id: 2,
-      nombre: 'Usuario',
-      email: 'usuario@club.com',
-      contrasena: 'club123',
-      rol: 'ROLE_USER',
-      fechaRegistro: new Date('2024-01-02'),
-      lecturas: [],
-      foros: [],
-      mensajes: [],
-      eventos: [],
-      inscripcions: [],
-      recomendacions: []
-    }
-  ];
+  // URL relativa para el proxy
+  private apiUrl = '/api';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getUsuarios(): Observable<Usuario[]> {
-    return of(this.usuarios);
+    return this.http.get<Usuario[]>(`${this.apiUrl}/usuarios`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   getUsuario(id: number): Observable<Usuario | undefined> {
-    return of(this.usuarios.find(usuario => usuario.id === id));
+    return this.http.get<Usuario>(`${this.apiUrl}/usuario/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   createUsuario(userData: { nombre: string; email: string; contrasena: string }): Observable<Usuario> {
-    const newUsuario: Usuario = {
-      id: this.usuarios.length + 1,
-      nombre: userData.nombre,
-      email: userData.email,
-      contrasena: userData.contrasena,
-      rol: 'ROLE_USER',
-      fechaRegistro: new Date(),
-      lecturas: [],
-      foros: [],
-      mensajes: [],
-      eventos: [],
-      inscripcions: [],
-      recomendacions: []
-    };
-    
-    this.usuarios.push(newUsuario);
-    return of(newUsuario);
+    return this.http.post<Usuario>(`${this.apiUrl}/usuario`, {
+      ...userData,
+      rol: 'user'
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   updateUsuario(id: number, usuario: Partial<Usuario>): Observable<Usuario> {
-    const index = this.usuarios.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('Usuario no encontrado');
-    }
-    this.usuarios[index] = { ...this.usuarios[index], ...usuario };
-    return of(this.usuarios[index]);
+    return this.http.put<Usuario>(`${this.apiUrl}/usuario/${id}`, usuario).pipe(
+      catchError(this.handleError)
+    );
   }
 
   deleteUsuario(id: number): Observable<void> {
-    const index = this.usuarios.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('Usuario no encontrado');
-    }
-    this.usuarios.splice(index, 1);
-    return of(void 0);
+    return this.http.delete<void>(`${this.apiUrl}/usuario/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   login(email: string, contrasena: string): Observable<Usuario | null> {
-    const usuario = this.usuarios.find(
-      u => u.email === email && u.contrasena === contrasena
+    return this.http.post<Usuario>(`${this.apiUrl}/login`, { 
+      email, 
+      password: contrasena 
+    }).pipe(
+      catchError(error => {
+        console.error('Error de login:', error);
+        return of(null);
+      })
     );
-    return of(usuario || null);
+  }
+
+  // Manejador de errores genérico
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Error desconocido';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
+    }
+    
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 } 

@@ -92,10 +92,10 @@ export class DetalleComponent implements OnInit {
         return;
     }
 
-    const nuevoMensaje: Omit<Mensaje, 'id' | 'fechaEnvio'> = {
-      contenido: this.newMessage.trim(),
-      foro: this.forum,
-      usuario: currentUser
+    const nuevoMensaje = {
+      foroId: this.forum.id,
+      usuarioId: currentUser.id,
+      contenido: this.newMessage.trim()
     };
     console.log('ForoDetalle: Datos del mensaje a enviar:', nuevoMensaje); // LOG
 

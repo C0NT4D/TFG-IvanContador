@@ -127,4 +127,39 @@ final class UsuarioController extends AbstractController
 
         return $this->json(['message' => 'Usuario eliminado con éxito']);
     }
+
+    #[Route('/api/login', name: 'app_login', methods: ['POST'])]
+    public function login(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        if (!isset($data['email']) || !isset($data['password'])) {
+            return $this->json(['message' => 'Email y contraseña son requeridos'], 400);
+        }
+        
+        $email = $data['email'];
+        $password = $data['password'];
+        
+        // Buscar usuario por email
+        $usuario = $this->usuarioRepository->findOneBy(['email' => $email]);
+        
+        if (!$usuario) {
+            return $this->json(['message' => 'Usuario no encontrado'], 401);
+        }
+        
+        // En un sistema real, verificaríamos la contraseña con password_verify
+        // Pero para simplificar, comparamos directamente (INSEGURO para producción)
+        if ($usuario->getContrasena() !== $password) {
+            return $this->json(['message' => 'Contraseña incorrecta'], 401);
+        }
+        
+        // Usuario autenticado correctamente
+        return $this->json([
+            'id' => $usuario->getId(),
+            'nombre' => $usuario->getNombre(),
+            'email' => $usuario->getEmail(),
+            'rol' => $usuario->getRol(),
+            'fechaRegistro' => $usuario->getFechaRegistro()->format('Y-m-d H:i:s'),
+        ]);
+    }
 }

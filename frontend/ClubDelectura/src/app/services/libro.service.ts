@@ -1,112 +1,109 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Libro } from '../models/libro.model';
 import { Recomendacion } from '../models/recomendacion.model';
-import { Usuario } from '../models/usuario.model';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LibroService {
-  private books: Libro[] = [
-    {
-      id: 1,
-      titulo: 'El Quijote',
-      autor: 'Miguel de Cervantes',
-      genero: 'Clásico',
-      anioPublicacion: 1605,
-      sinopsis: 'La historia de un hidalgo que enloquece leyendo libros de caballerías...',
-      lecturas: [],
-      recomendacions: []
-    },
-    {
-      id: 2,
-      titulo: 'Cien años de soledad',
-      autor: 'Gabriel García Márquez',
-      genero: 'Realismo mágico',
-      anioPublicacion: 1967,
-      sinopsis: 'La historia de la familia Buendía a lo largo de siete generaciones...',
-      lecturas: [],
-      recomendacions: []
-    },
-    {
-      id: 3,
-      titulo: '1984',
-      autor: 'George Orwell',
-      genero: 'Ciencia ficción',
-      anioPublicacion: 1949,
-      sinopsis: 'Una distopía que describe una sociedad totalitaria...',
-      lecturas: [],
-      recomendacions: []
-    }
-  ];
+  // URL relativa para el proxy
+  private apiUrl = '/api';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   // Get all books
   getBooks(): Observable<Libro[]> {
-    return of(this.books);
+    return this.http.get<Libro[]>(`${this.apiUrl}/libros`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   // Get a book by ID
   getBook(id: number): Observable<Libro | undefined> {
-    return of(this.books.find(book => book.id === id));
+    return this.http.get<Libro>(`${this.apiUrl}/libro/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Get books by genre
+  // Get books by genre (esta funcionalidad necesitaría ajustar el backend si no existe)
   getBooksByGenre(genre: string): Observable<Libro[]> {
-    return of(this.books.filter(book => book.genero === genre));
+    // Si no existe endpoint específico, filtramos del getAll
+    return this.getBooks().pipe(
+      map(books => books.filter(book => book.genero === genre)),
+      catchError(this.handleError)
+    );
   }
 
   // Get unique genres
   getGenres(): Observable<string[]> {
-    return of([...new Set(this.books.map(book => book.genero))]);
+    // Si no existe endpoint específico, derivamos del getAll
+    return this.getBooks().pipe(
+      map(books => [...new Set(books.map(book => book.genero))]),
+      catchError(this.handleError)
+    );
   }
 
   // Create a new book
   createBook(book: Omit<Libro, 'id'>): Observable<Libro> {
-    const newBook = {
-      ...book,
-      id: this.books.length + 1
-    };
-    this.books.push(newBook);
-    return of(newBook);
+    return this.http.post<Libro>(`${this.apiUrl}/libro`, book).pipe(
+      catchError(this.handleError)
+    );
   }
 
   // Update an existing book
   updateBook(id: number, book: Partial<Libro>): Observable<Libro | undefined> {
-    const index = this.books.findIndex(b => b.id === id);
-    if (index !== -1) {
-      this.books[index] = { ...this.books[index], ...book };
-      return of(this.books[index]);
-    }
-    return of(undefined);
+    return this.http.put<Libro>(`${this.apiUrl}/libro/${id}`, book).pipe(
+      catchError(this.handleError)
+    );
   }
 
   // Delete a book
   deleteBook(id: number): Observable<boolean> {
-    const index = this.books.findIndex(b => b.id === id);
-    if (index !== -1) {
-      this.books.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+    return this.http.delete(`${this.apiUrl}/libro/${id}`).pipe(
+      map(() => true),
+      catchError(error => {
+        this.handleError(error);
+        return of(false);
+      })
+    );
   }
 
-  // Methods for recommendations
+  // Methods for recommendations (podría necesitar implementarse en el backend)
   getRecommendations(bookId: number): Observable<Recomendacion[]> {
-    const book = this.books.find(b => b.id === bookId);
-    return of(book ? book.recomendacions : []);
+    return this.http.get<Recomendacion[]>(`${this.apiUrl}/libro/${bookId}/recomendaciones`).pipe(
+      catchError(error => {
+        console.warn('El endpoint de recomendaciones por libro puede no existir:', error);
+        return of([]);
+      })
+    );
   }
 
   // Add a recommendation to a book
-  addRecommendation(bookId: number, recommendation: Recomendacion): Observable<Recomendacion> {
-    const book = this.books.find(b => b.id === bookId);
-    if (book) {
-      book.recomendacions.push(recommendation);
-      return of(recommendation);
+  addRecommendation(bookId: number, recommendation: Omit<Recomendacion, 'id'>): Observable<Recomendacion> {
+    return this.http.post<Recomendacion>(`${this.apiUrl}/recomendacion`, {
+      ...recommendation,
+      libroId: bookId
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Manejador de errores genérico
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Error desconocido';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
-    throw new Error('Book not found');
+    
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 } 

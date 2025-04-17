@@ -1,89 +1,81 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Recomendacion } from '../models/recomendacion.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecomendacionService {
-  private recomendaciones: Recomendacion[] = [
-    {
-      id: 1,
-      usuario: {
-        id: 1,
-        nombre: 'Juan Pérez',
-        email: 'juan@example.com',
-        contrasena: '123456',
-        rol: 'usuario',
-        fechaRegistro: new Date('2024-01-01'),
-        lecturas: [],
-        foros: [],
-        mensajes: [],
-        eventos: [],
-        recomendacions: [],
-        inscripcions: []
-      },
-      libro: {
-        id: 1,
-        titulo: 'El Quijote',
-        autor: 'Miguel de Cervantes',
-        genero: 'Novela',
-        anioPublicacion: 1605,
-        sinopsis: 'La historia de un hidalgo que pierde la cordura...',
-        lecturas: [],
-        recomendacions: []
-      },
-      comentario: '¡Un clásico imprescindible! La forma en que Cervantes juega con la realidad y la ficción es magistral.',
-      fecha: new Date('2024-03-15')
-    }
-  ];
+  // URL relativa para el proxy
+  private apiUrl = '/api';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getRecomendaciones(): Observable<Recomendacion[]> {
-    return of(this.recomendaciones);
+    return this.http.get<Recomendacion[]>(`${this.apiUrl}/recomendaciones`).pipe(
+      catchError(this.handleError)
+    );
   }
 
   getRecomendacion(id: number): Observable<Recomendacion> {
-    const recomendacion = this.recomendaciones.find(r => r.id === id);
-    if (recomendacion) {
-      return of(recomendacion);
-    }
-    throw new Error('Recomendación no encontrada');
+    return this.http.get<Recomendacion>(`${this.apiUrl}/recomendacion/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  createRecomendacion(recomendacion: Omit<Recomendacion, 'id'>): Observable<Recomendacion> {
-    const newRecomendacion: Recomendacion = {
-      ...recomendacion,
-      id: this.recomendaciones.length + 1
-    };
-    this.recomendaciones.push(newRecomendacion);
-    return of(newRecomendacion);
+  createRecomendacion(recomendacion: { usuarioId: number, libroId: number, comentario: string }): Observable<Recomendacion> {
+    return this.http.post<Recomendacion>(`${this.apiUrl}/recomendacion`, recomendacion).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  updateRecomendacion(id: number, recomendacion: Recomendacion): Observable<Recomendacion> {
-    const index = this.recomendaciones.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.recomendaciones[index] = { ...recomendacion };
-      return of(this.recomendaciones[index]);
-    }
-    throw new Error('Recomendación no encontrada');
+  updateRecomendacion(id: number, recomendacion: Partial<Recomendacion>): Observable<Recomendacion> {
+    return this.http.put<Recomendacion>(`${this.apiUrl}/recomendacion/${id}`, recomendacion).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  deleteRecomendacion(id: number): Observable<void> {
-    const index = this.recomendaciones.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.recomendaciones.splice(index, 1);
-      return of(void 0);
-    }
-    throw new Error('Recomendación no encontrada');
+  deleteRecomendacion(id: number): Observable<boolean> {
+    return this.http.delete(`${this.apiUrl}/recomendacion/${id}`).pipe(
+      map(() => true),
+      catchError(error => {
+        this.handleError(error);
+        return of(false);
+      })
+    );
   }
 
   getRecomendacionesByLibro(libroId: number): Observable<Recomendacion[]> {
-    return of(this.recomendaciones.filter(r => r.libro.id === libroId));
+    // Si no hay un endpoint específico, filtramos del getAll
+    return this.getRecomendaciones().pipe(
+      map(recomendaciones => recomendaciones.filter(r => r.libro.id === libroId)),
+      catchError(this.handleError)
+    );
   }
 
   getRecomendacionesByUsuario(usuarioId: number): Observable<Recomendacion[]> {
-    return of(this.recomendaciones.filter(r => r.usuario.id === usuarioId));
+    // Si no hay un endpoint específico, filtramos del getAll
+    return this.getRecomendaciones().pipe(
+      map(recomendaciones => recomendaciones.filter(r => r.usuario.id === usuarioId)),
+      catchError(this.handleError)
+    );
+  }
+  
+  // Manejador de errores genérico
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Error desconocido';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
+    }
+    
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 } 
