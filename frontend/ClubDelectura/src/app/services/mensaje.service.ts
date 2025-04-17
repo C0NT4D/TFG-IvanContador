@@ -3,8 +3,8 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Mensaje } from '../models/mensaje.model';
-import { ForoService } from './foro.service';
-import { UsuarioService } from './usuario.service';
+import { Foro } from '../models/foro.model';
+import { Usuario } from '../models/usuario.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +14,23 @@ export class MensajeService {
   private apiUrl = '/api';
 
   constructor(
-    private http: HttpClient,
-    private foroService: ForoService,
-    private usuarioService: UsuarioService
+    private http: HttpClient
   ) { }
 
   getMensajes(): Observable<Mensaje[]> {
-    return this.http.get<Mensaje[]>(`${this.apiUrl}/mensajes`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/mensajes`).pipe(
+      map(mensajes => {
+        return mensajes.map(mensaje => {
+          return this.procesarMensajeResponse(mensaje);
+        });
+      }),
       catchError(this.handleError)
     );
   }
 
   getMensaje(id: number): Observable<Mensaje | undefined> {
-    return this.http.get<Mensaje>(`${this.apiUrl}/mensaje/${id}`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/mensaje/${id}`).pipe(
+      map(mensaje => this.procesarMensajeResponse(mensaje)),
       catchError(this.handleError)
     );
   }
@@ -40,13 +44,22 @@ export class MensajeService {
   }
 
   createMensaje(mensaje: { foroId: number, usuarioId: number, contenido: string }): Observable<Mensaje> {
-    return this.http.post<Mensaje>(`${this.apiUrl}/mensaje`, mensaje).pipe(
+    return this.http.post<any>(`${this.apiUrl}/mensaje`, mensaje).pipe(
+      map(response => this.procesarMensajeResponse(response)),
       catchError(this.handleError)
     );
   }
 
   updateMensaje(id: number, mensaje: Partial<Mensaje>): Observable<Mensaje | undefined> {
-    return this.http.put<Mensaje>(`${this.apiUrl}/mensaje/${id}`, mensaje).pipe(
+    // Adaptar el objeto mensaje para el backend si es necesario
+    const backendData = {
+      foroId: mensaje.foro?.id,
+      usuarioId: mensaje.usuario?.id,
+      contenido: mensaje.contenido
+    };
+    
+    return this.http.put<any>(`${this.apiUrl}/mensaje/${id}`, backendData).pipe(
+      map(response => this.procesarMensajeResponse(response)),
       catchError(this.handleError)
     );
   }
@@ -67,6 +80,40 @@ export class MensajeService {
       map(mensajes => mensajes.filter(mensaje => mensaje.usuario.id === usuarioId)),
       catchError(this.handleError)
     );
+  }
+  
+  // Método privado para procesar la respuesta del backend
+  private procesarMensajeResponse(response: any): Mensaje {
+    return {
+      id: response.id,
+      foro: {
+        id: response.foro.id,
+        titulo: response.foro.titulo,
+        // Otros campos de Foro estarían incompletos, pero para este caso no es problema
+        descripcion: '',
+        fechaCreacion: new Date(),
+        admin: {} as Usuario,
+        mensajes: [],
+        temas: []
+      } as Foro,
+      usuario: {
+        id: response.usuario.id,
+        nombre: response.usuario.nombre,
+        // Otros campos de Usuario estarían incompletos, pero para este caso no es problema
+        email: '',
+        contrasena: '',
+        rol: '',
+        fechaRegistro: new Date(),
+        lecturas: [],
+        foros: [],
+        mensajes: [],
+        eventos: [],
+        inscripcions: [],
+        recomendacions: []
+      } as Usuario,
+      contenido: response.contenido,
+      fechaEnvio: new Date(response.fechaEnvio)
+    };
   }
   
   // Manejador de errores genérico

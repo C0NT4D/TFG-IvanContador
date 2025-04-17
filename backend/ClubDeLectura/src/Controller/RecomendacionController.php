@@ -41,8 +41,14 @@ final class RecomendacionController extends AbstractController
         foreach ($recomendaciones as $recomendacion) {
             $data[] = [
                 'id' => $recomendacion->getId(),
-                'usuario' => $recomendacion->getUsuario()->getNombre(),
-                'libro' => $recomendacion->getLibro()->getTitulo(),
+                'usuario' => [
+                    'id' => $recomendacion->getUsuario()->getId(),
+                    'nombre' => $recomendacion->getUsuario()->getNombre()
+                ],
+                'libro' => [
+                    'id' => $recomendacion->getLibro()->getId(),
+                    'titulo' => $recomendacion->getLibro()->getTitulo()
+                ],
                 'comentario' => $recomendacion->getComentario(),
                 'fecha' => $recomendacion->getFecha()->format('Y-m-d H:i:s'),
             ];
@@ -62,8 +68,14 @@ final class RecomendacionController extends AbstractController
 
         return $this->json([
             'id' => $recomendacion->getId(),
-            'usuario' => $recomendacion->getUsuario()->getNombre(),
-            'libro' => $recomendacion->getLibro()->getTitulo(),
+            'usuario' => [
+                'id' => $recomendacion->getUsuario()->getId(),
+                'nombre' => $recomendacion->getUsuario()->getNombre()
+            ],
+            'libro' => [
+                'id' => $recomendacion->getLibro()->getId(),
+                'titulo' => $recomendacion->getLibro()->getTitulo()
+            ],
             'comentario' => $recomendacion->getComentario(),
             'fecha' => $recomendacion->getFecha()->format('Y-m-d H:i:s'),
         ]);
@@ -93,8 +105,14 @@ final class RecomendacionController extends AbstractController
 
         return $this->json([
             'id' => $recomendacion->getId(),
-            'usuario' => $recomendacion->getUsuario()->getNombre(),
-            'libro' => $recomendacion->getLibro()->getTitulo(),
+            'usuario' => [
+                'id' => $recomendacion->getUsuario()->getId(),
+                'nombre' => $recomendacion->getUsuario()->getNombre()
+            ],
+            'libro' => [
+                'id' => $recomendacion->getLibro()->getId(),
+                'titulo' => $recomendacion->getLibro()->getTitulo()
+            ],
             'comentario' => $recomendacion->getComentario(),
             'fecha' => $recomendacion->getFecha()->format('Y-m-d H:i:s'),
         ], 201);
@@ -128,8 +146,14 @@ final class RecomendacionController extends AbstractController
 
         return $this->json([
             'id' => $recomendacion->getId(),
-            'usuario' => $recomendacion->getUsuario()->getNombre(),
-            'libro' => $recomendacion->getLibro()->getTitulo(),
+            'usuario' => [
+                'id' => $recomendacion->getUsuario()->getId(),
+                'nombre' => $recomendacion->getUsuario()->getNombre()
+            ],
+            'libro' => [
+                'id' => $recomendacion->getLibro()->getId(),
+                'titulo' => $recomendacion->getLibro()->getTitulo()
+            ],
             'comentario' => $recomendacion->getComentario(),
             'fecha' => $recomendacion->getFecha()->format('Y-m-d H:i:s'),
         ]);

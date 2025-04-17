@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 import { Usuario } from '@app/models/usuario.model';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-perfil',
@@ -22,11 +23,15 @@ export class PerfilComponent implements OnInit {
   isEditing = false;
   inscripciones: any[] = []; // TODO: Tipar correctamente con el modelo de Inscripcion
   perfilForm: FormGroup;
+  errorMessage: string | null = null;
+  successMessage: string | null = null;
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private http: HttpClient
   ) {
     this.perfilForm = this.fb.group({
       nombre: [''],
@@ -56,17 +61,61 @@ export class PerfilComponent implements OnInit {
 
   saveChanges() {
     if (this.editedUsuario) {
-      // TODO: Implementar la actualización del usuario
-      this.usuario = { ...this.editedUsuario };
+      // Actualizar el usuario con el servicio
+      const updatedUser = { ...this.usuario, ...this.editedUsuario };
+      this.authService.setCurrentUser(updatedUser);
+      this.usuario = updatedUser;
       this.isEditing = false;
     }
   }
 
   onSubmit(): void {
-    if (this.perfilForm.valid && this.perfilForm.dirty) {
-      console.log('Guardando cambios del perfil:', this.perfilForm.getRawValue());
+    this.errorMessage = null;
+    this.successMessage = null;
+    
+    if (this.perfilForm.valid && this.perfilForm.dirty && this.usuario) {
+      this.isLoading = true;
+      
+      const updatedName = this.perfilForm.get('nombre')?.value;
+      
+      // Crear un objeto con los datos necesarios para actualizar
+      const updateData = {
+        nombre: updatedName,
+        email: this.usuario.email,
+        contrasena: this.usuario.contrasena, // Mantener la contraseña actual
+        rol: this.usuario.rol
+      };
+      
+      // Llamar a la API para actualizar el usuario
+      this.http.put(`/api/usuario/${this.usuario.id}`, updateData)
+        .subscribe({
+          next: (response: any) => {
+            this.isLoading = false;
+            
+            // Actualizar el usuario en el almacenamiento local y en el servicio
+            const updatedUser = {
+              ...this.usuario!,
+              nombre: updatedName
+            };
+            
+            this.authService.setCurrentUser(updatedUser);
+            this.usuario = updatedUser;
+            
+            this.successMessage = 'Perfil actualizado correctamente';
+            this.perfilForm.markAsPristine(); // Marcar como no modificado después de guardar
+          },
+          error: (error) => {
+            this.isLoading = false;
+            this.errorMessage = error.message || 'Error al actualizar el perfil';
+            console.error('Error al actualizar el perfil:', error);
+          }
+        });
     } else {
-      console.log('Formulario no válido o sin cambios.');
+      if (!this.perfilForm.dirty) {
+        this.errorMessage = 'No hay cambios para guardar';
+      } else if (!this.perfilForm.valid) {
+        this.errorMessage = 'Por favor, completa correctamente todos los campos';
+      }
     }
   }
 

@@ -41,8 +41,14 @@ final class MensajeController extends AbstractController
         foreach ($mensajes as $mensaje) {
             $data[] = [
                 'id' => $mensaje->getId(),
-                'foro' => $mensaje->getForo()->getTitulo(),
-                'usuario' => $mensaje->getUsuario()->getNombre(),
+                'foro' => [
+                    'id' => $mensaje->getForo()->getId(),
+                    'titulo' => $mensaje->getForo()->getTitulo()
+                ],
+                'usuario' => [
+                    'id' => $mensaje->getUsuario()->getId(),
+                    'nombre' => $mensaje->getUsuario()->getNombre()
+                ],
                 'contenido' => $mensaje->getContenido(),
                 'fechaEnvio' => $mensaje->getFechaEnvio()->format('Y-m-d H:i:s'),
             ];
@@ -62,8 +68,14 @@ final class MensajeController extends AbstractController
 
         return $this->json([
             'id' => $mensaje->getId(),
-            'foro' => $mensaje->getForo()->getTitulo(),
-            'usuario' => $mensaje->getUsuario()->getNombre(),
+            'foro' => [
+                'id' => $mensaje->getForo()->getId(),
+                'titulo' => $mensaje->getForo()->getTitulo()
+            ],
+            'usuario' => [
+                'id' => $mensaje->getUsuario()->getId(),
+                'nombre' => $mensaje->getUsuario()->getNombre()
+            ],
             'contenido' => $mensaje->getContenido(),
             'fechaEnvio' => $mensaje->getFechaEnvio()->format('Y-m-d H:i:s'),
         ]);
@@ -93,8 +105,14 @@ final class MensajeController extends AbstractController
 
         return $this->json([
             'id' => $mensaje->getId(),
-            'foro' => $mensaje->getForo()->getTitulo(),
-            'usuario' => $mensaje->getUsuario()->getNombre(),
+            'foro' => [
+                'id' => $mensaje->getForo()->getId(),
+                'titulo' => $mensaje->getForo()->getTitulo()
+            ],
+            'usuario' => [
+                'id' => $mensaje->getUsuario()->getId(),
+                'nombre' => $mensaje->getUsuario()->getNombre()
+            ],
             'contenido' => $mensaje->getContenido(),
             'fechaEnvio' => $mensaje->getFechaEnvio()->format('Y-m-d H:i:s'),
         ], 201);
@@ -128,8 +146,14 @@ final class MensajeController extends AbstractController
 
         return $this->json([
             'id' => $mensaje->getId(),
-            'foro' => $mensaje->getForo()->getTitulo(),
-            'usuario' => $mensaje->getUsuario()->getNombre(),
+            'foro' => [
+                'id' => $mensaje->getForo()->getId(),
+                'titulo' => $mensaje->getForo()->getTitulo()
+            ],
+            'usuario' => [
+                'id' => $mensaje->getUsuario()->getId(),
+                'nombre' => $mensaje->getUsuario()->getNombre()
+            ],
             'contenido' => $mensaje->getContenido(),
             'fechaEnvio' => $mensaje->getFechaEnvio()->format('Y-m-d H:i:s'),
         ]);

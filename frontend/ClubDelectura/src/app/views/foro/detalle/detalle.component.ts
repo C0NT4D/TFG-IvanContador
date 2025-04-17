@@ -59,8 +59,7 @@ export class DetalleComponent implements OnInit {
       next: (forum) => {
         if (forum) {
           this.forum = forum;
-          this.messages = forum.mensajes || [];
-          this.loading = false;
+          this.loadMessages(id);
         } else {
           this.error = 'Foro no encontrado';
           this.loading = false;
@@ -70,6 +69,21 @@ export class DetalleComponent implements OnInit {
         this.error = 'Error al cargar el foro';
         this.loading = false;
         console.error("Error loading forum details:", error);
+      }
+    });
+  }
+
+  private loadMessages(foroId: number): void {
+    this.mensajeService.getMensajesByForo(foroId).subscribe({
+      next: (mensajes) => {
+        console.log('Mensajes cargados:', mensajes);
+        this.messages = mensajes;
+        this.loading = false;
+      },
+      error: (error: Error) => {
+        this.error = 'Error al cargar los mensajes del foro';
+        this.loading = false;
+        console.error("Error loading forum messages:", error);
       }
     });
   }
@@ -102,18 +116,43 @@ export class DetalleComponent implements OnInit {
     this.mensajeService.createMensaje(nuevoMensaje).subscribe({
       next: (createdMessage: Mensaje) => {
         console.log('ForoDetalle: Mensaje creado por el servicio:', createdMessage); // LOG
+        
+        if (!createdMessage.usuario || !createdMessage.usuario.nombre) {
+          createdMessage.usuario = {
+            id: currentUser.id,
+            nombre: currentUser.nombre,
+            email: currentUser.email,
+            contrasena: '',
+            rol: currentUser.rol,
+            fechaRegistro: currentUser.fechaRegistro,
+            lecturas: [],
+            foros: [],
+            mensajes: [],
+            eventos: [],
+            inscripcions: [],
+            recomendacions: []
+          };
+        }
+        
+        if (!createdMessage.foro || !createdMessage.foro.titulo) {
+          const currentForum = this.forum as Foro;
+          createdMessage.foro = currentForum;
+        }
+        
         try {
           this.authService.addMensajeToCurrentUser(createdMessage);
           console.log('ForoDetalle: Mensaje añadido al usuario en AuthService.'); // LOG
         } catch (authError) {
           console.error('ForoDetalle: Error llamando a addMensajeToCurrentUser', authError); // LOG
         }
+        
         try {
           this.messages.push(createdMessage);
           console.log('ForoDetalle: Mensaje añadido al array local this.messages.', this.messages); // LOG
         } catch (pushError) {
           console.error('ForoDetalle: Error haciendo push al array messages', pushError); // LOG
         }
+        
         this.newMessage = '';
       },
       error: (error: Error) => {

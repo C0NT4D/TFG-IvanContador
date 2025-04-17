@@ -40,6 +40,20 @@
             Editar Perfil
           </div>
           <div class="card-body">
+            @if (successMessage) {
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = null"></button>
+              </div>
+            }
+            
+            @if (errorMessage) {
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = null"></button>
+              </div>
+            }
+            
             <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
               <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
@@ -52,8 +66,14 @@
                 <small class="form-text text-muted">El email no se puede cambiar.</small>
               </div>
               <!-- Se podrían añadir campos para cambiar contraseña aquí -->
-              <button type="submit" class="btn btn-success w-100 mb-3" [disabled]="!perfilForm.dirty"> <!-- Deshabilitado si no hay cambios -->
-                 <i class="bi bi-check-lg me-1"></i> Guardar Cambios
+              <button type="submit" class="btn btn-success w-100 mb-3" 
+                      [disabled]="!perfilForm.dirty || isLoading">
+                @if (isLoading) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                  Guardando...
+                } @else {
+                  <i class="bi bi-check-lg me-1"></i> Guardar Cambios
+                }
               </button>
             </form>
              <hr>
