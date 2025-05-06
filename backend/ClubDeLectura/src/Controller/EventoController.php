@@ -17,7 +17,6 @@ final class EventoController extends AbstractController
     private $eventoRepository;
     private $entityManager;
 
-    // Inyectamos el EntityManagerInterface y el EventoRepository en el constructor
     public function __construct(EventoRepository $eventoRepository, EntityManagerInterface $entityManager)
     {
         $this->eventoRepository = $eventoRepository;
@@ -74,13 +73,11 @@ final class EventoController extends AbstractController
         $evento->setFecha(new \DateTime($data['fecha']));
         $evento->setUbicacion($data['ubicacion']);
         
-        // Asociamos el organizador
         $organizador = $this->entityManager->getRepository(Usuario::class)->find($data['organizador_id']);
         if ($organizador) {
             $evento->setOrganizador($organizador);
         }
 
-        // Persistimos el evento y hacemos flush
         $this->entityManager->persist($evento);
         $this->entityManager->flush();
 
@@ -110,13 +107,11 @@ final class EventoController extends AbstractController
         $evento->setFecha(new \DateTime($data['fecha']));
         $evento->setUbicacion($data['ubicacion']);
 
-        // Asociamos el organizador
         $organizador = $this->entityManager->getRepository(Usuario::class)->find($data['organizador_id']);
         if ($organizador) {
             $evento->setOrganizador($organizador);
         }
 
-        // Hacemos flush para guardar los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -138,7 +133,6 @@ final class EventoController extends AbstractController
             throw new NotFoundHttpException('Evento no encontrado');
         }
 
-        // Eliminar el evento de la base de datos
         $this->entityManager->remove($evento);
         $this->entityManager->flush();
 

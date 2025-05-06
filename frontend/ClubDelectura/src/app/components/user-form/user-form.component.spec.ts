@@ -47,7 +47,6 @@ describe('UserFormComponent', () => {
     expect(formControls).toContain('contrasena');
     expect(formControls).toContain('nombre');
     
-    // En modo login, el campo nombre no es requerido
     expect(component.userForm.get('nombre')?.hasValidator).toBeFalsy();
   });
 
@@ -60,7 +59,6 @@ describe('UserFormComponent', () => {
     expect(formControls).toContain('email');
     expect(formControls).toContain('contrasena');
     
-    // En modo registro, el campo nombre es requerido
     expect(component.userForm.get('nombre')?.hasValidator).toBeTruthy();
   });
 
@@ -77,10 +75,10 @@ describe('UserFormComponent', () => {
   it('should validate password length', () => {
     const passwordControl = component.userForm.get('contrasena');
     
-    passwordControl?.setValue('12345'); // Menos de 6 caracteres
+    passwordControl?.setValue('12345'); 
     expect(passwordControl?.valid).toBeFalsy();
     
-    passwordControl?.setValue('123456'); // 6 caracteres o más
+    passwordControl?.setValue('123456'); 
     expect(passwordControl?.valid).toBeTruthy();
   });
 

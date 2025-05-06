@@ -14,15 +14,7 @@ describe('EventCardComponent', () => {
     fixture = TestBed.createComponent(EventCardComponent);
     component = fixture.componentInstance;
     
-    // Mock event data
-    component.event = {
-      id: 1,
-      titulo: 'Test Event',
-      descripcion: 'Test Description',
-      fecha: new Date(),
-      ubicacion: 'Test Location',
-      inscripcions: []
-    };
+   
     
     fixture.detectChanges();
   });

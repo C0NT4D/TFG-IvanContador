@@ -23,7 +23,7 @@ export class NuevoComponent implements OnInit {
   foroForm: FormGroup;
   loading = false;
   error: string | null = null;
-  currentUserId = 1; // Por ahora hardcodeado, en una app real vendría de un servicio de autenticación
+  currentUserId = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -38,10 +38,6 @@ export class NuevoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // En una app real, aquí obtendríamos el ID del usuario actual
-    // this.authService.getCurrentUser().subscribe(user => {
-    //   this.currentUserId = user.id;
-    // });
   }
 
   onSubmit(): void {
@@ -49,7 +45,6 @@ export class NuevoComponent implements OnInit {
       this.loading = true;
       this.error = null;
 
-      // Obtener el usuario actual para asignarlo como admin
       this.usuarioService.getUsuario(this.currentUserId).subscribe({
         next: (usuario) => {
           if (usuario) {

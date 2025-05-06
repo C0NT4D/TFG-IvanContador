@@ -96,7 +96,7 @@ export class DetalleComponent implements OnInit {
 
     if (!this.forum || !currentUser || !this.newMessage.trim()) {
         console.error('ForoDetalle: Validación fallida al enviar mensaje', 
-          { forum: !!this.forum, user: !!currentUser, message: !!this.newMessage.trim() }); // LOG de validación
+          { forum: !!this.forum, user: !!currentUser, message: !!this.newMessage.trim() }); 
         if (!currentUser) {
             this.error = "No se pudo identificar al usuario para enviar el mensaje.";
         }
@@ -111,11 +111,11 @@ export class DetalleComponent implements OnInit {
       usuarioId: currentUser.id,
       contenido: this.newMessage.trim()
     };
-    console.log('ForoDetalle: Datos del mensaje a enviar:', nuevoMensaje); // LOG
+    console.log('ForoDetalle: Datos del mensaje a enviar:', nuevoMensaje);
 
     this.mensajeService.createMensaje(nuevoMensaje).subscribe({
       next: (createdMessage: Mensaje) => {
-        console.log('ForoDetalle: Mensaje creado por el servicio:', createdMessage); // LOG
+        console.log('ForoDetalle: Mensaje creado por el servicio:', createdMessage);
         
         if (!createdMessage.usuario || !createdMessage.usuario.nombre) {
           createdMessage.usuario = {
@@ -141,22 +141,22 @@ export class DetalleComponent implements OnInit {
         
         try {
           this.authService.addMensajeToCurrentUser(createdMessage);
-          console.log('ForoDetalle: Mensaje añadido al usuario en AuthService.'); // LOG
+          console.log('ForoDetalle: Mensaje añadido al usuario en AuthService.');
         } catch (authError) {
-          console.error('ForoDetalle: Error llamando a addMensajeToCurrentUser', authError); // LOG
+          console.error('ForoDetalle: Error llamando a addMensajeToCurrentUser', authError);
         }
         
         try {
           this.messages.push(createdMessage);
-          console.log('ForoDetalle: Mensaje añadido al array local this.messages.', this.messages); // LOG
+          console.log('ForoDetalle: Mensaje añadido al array local this.messages.', this.messages);
         } catch (pushError) {
-          console.error('ForoDetalle: Error haciendo push al array messages', pushError); // LOG
+          console.error('ForoDetalle: Error haciendo push al array messages', pushError);
         }
         
         this.newMessage = '';
       },
       error: (error: Error) => {
-        console.error("ForoDetalle: Error en la llamada a createMensaje:", error); // LOG
+        console.error("ForoDetalle: Error en la llamada a createMensaje:", error);
         this.error = 'Error al enviar el mensaje';
       }
     });

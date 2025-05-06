@@ -21,7 +21,7 @@ export class PerfilComponent implements OnInit {
   usuario: Usuario | null = null;
   editedUsuario: Usuario | null = null;
   isEditing = false;
-  inscripciones: any[] = []; // TODO: Tipar correctamente con el modelo de Inscripcion
+  inscripciones: any[] = []; 
   perfilForm: FormGroup;
   errorMessage: string | null = null;
   successMessage: string | null = null;
@@ -61,7 +61,6 @@ export class PerfilComponent implements OnInit {
 
   saveChanges() {
     if (this.editedUsuario) {
-      // Actualizar el usuario con el servicio
       const updatedUser = { ...this.usuario, ...this.editedUsuario };
       this.authService.setCurrentUser(updatedUser);
       this.usuario = updatedUser;
@@ -78,21 +77,17 @@ export class PerfilComponent implements OnInit {
       
       const updatedName = this.perfilForm.get('nombre')?.value;
       
-      // Crear un objeto con solo los datos que queremos actualizar
-      // No incluimos la contraseña para evitar sobrescribirla en el backend
       const updateData = {
         nombre: updatedName,
         email: this.usuario.email,
         rol: this.usuario.rol
       };
       
-      // Llamar a la API para actualizar el usuario
       this.http.put(`/api/usuario/${this.usuario.id}`, updateData)
         .subscribe({
           next: (response: any) => {
             this.isLoading = false;
             
-            // Actualizar el usuario en el almacenamiento local y en el servicio
             const updatedUser = {
               ...this.usuario!,
               nombre: updatedName
@@ -102,7 +97,7 @@ export class PerfilComponent implements OnInit {
             this.usuario = updatedUser;
             
             this.successMessage = 'Perfil actualizado correctamente';
-            this.perfilForm.markAsPristine(); // Marcar como no modificado después de guardar
+            this.perfilForm.markAsPristine(); 
           },
           error: (error) => {
             this.isLoading = false;

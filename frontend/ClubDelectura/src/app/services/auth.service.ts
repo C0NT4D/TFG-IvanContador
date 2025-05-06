@@ -15,43 +15,39 @@ export class AuthService {
   private apiUrl = '/api';
 
   constructor(private router: Router, private http: HttpClient) {
-    // Cargar usuario del localStorage al iniciar con try-catch
     try {
       const savedUser = localStorage.getItem('currentUser');
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
-        // Podríamos añadir una validación extra aquí si fuera necesario
         if (parsedUser && parsedUser.id) { 
            this.currentUserSubject.next(parsedUser);
            console.log('AuthService: Usuario cargado desde localStorage', this.currentUserSubject.value);
         } else {
           console.warn('AuthService: Datos inválidos en localStorage para currentUser.');
-          localStorage.removeItem('currentUser'); // Limpiar si es inválido
+          localStorage.removeItem('currentUser'); 
         }
       } else {
           console.log('AuthService: No hay usuario en localStorage.');
       }
     } catch (error) {
        console.error('AuthService: Error al parsear usuario desde localStorage', error);
-       localStorage.removeItem('currentUser'); // Limpiar si hay error
-       this.currentUserSubject.next(null); // Asegurar estado nulo si falla
+       localStorage.removeItem('currentUser'); 
+       this.currentUserSubject.next(null); 
     }
   }
 
   login(email: string, password: string): Observable<Usuario> {
-    // Llamada a la API real para autenticación
     console.log('AuthService: Intentando login con:', { email, password });
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
       map(response => {
         console.log('AuthService: Respuesta del servidor:', response);
-        // Verificar si la respuesta contiene los datos necesarios para un usuario
         if (response && response.id) {
           const user: Usuario = {
             id: response.id,
             nombre: response.nombre,
             email: response.email,
             rol: response.rol,
-            contrasena: '', // No almacenamos la contraseña por seguridad
+            contrasena: '', 
             fechaRegistro: new Date(response.fechaRegistro),
             lecturas: [],
             foros: [],
@@ -61,16 +57,13 @@ export class AuthService {
             recomendacions: []
           };
           console.log('AuthService: Usuario construido:', user);
-          // Guardar usuario en local y emitir evento
           this.setCurrentUser(user);
           return user;
         } else {
-          // Si la respuesta no tiene el formato esperado, lanzar error
           throw new Error('Formato de respuesta inválido desde el servidor');
         }
       }),
       tap(user => {
-        // Navegar después de procesar correctamente el usuario
         console.log('AuthService: Navegando después de login exitoso');
         this.router.navigate(['/libro']);
       }),
@@ -87,9 +80,7 @@ export class AuthService {
     );
   }
 
-  // Método para verificar las credenciales (para pruebas)
   loginMock(email: string, password: string): Observable<Usuario> {
-    // Credenciales de prueba, eliminar en producción
     if (email === 'admin@club.com' && password === 'admin123') {
       const user: Usuario = {
         id: 1,
@@ -134,7 +125,6 @@ export class AuthService {
   }
 
   register(userData: { nombre: string; email: string; password: string }): Observable<Usuario> {
-    // Llamada a la API real para registro
     return this.http.post<Usuario>(`${this.apiUrl}/usuario`, {
       nombre: userData.nombre,
       email: userData.email,
@@ -164,7 +154,6 @@ export class AuthService {
     return this.getCurrentUser()?.rol === 'admin';
   }
 
-  // --- Añadir método para mensajes ---
   addMensajeToCurrentUser(mensaje: Mensaje): void {
     const currentUser = this.getCurrentUser();
     if (currentUser) {
@@ -182,15 +171,12 @@ export class AuthService {
     }
   }
 
-  // Método genérico para manejar errores de HttpClient
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
     

@@ -18,7 +18,6 @@ export class RecomendacionService {
     private libroService: LibroService
   ) { }
 
-  // Obtener todas las recomendaciones
   getRecomendaciones(): Observable<Recomendacion[]> {
     return this.http.get<any[]>(`${this.apiUrl}/recomendaciones`)
       .pipe(
@@ -43,7 +42,6 @@ export class RecomendacionService {
       );
   }
 
-  // Obtener una recomendación por id
   getRecomendacion(id: number): Observable<Recomendacion> {
     return this.http.get<any>(`${this.apiUrl}/recomendacion/${id}`)
       .pipe(
@@ -66,7 +64,6 @@ export class RecomendacionService {
       );
   }
 
-  // Crear una recomendación
   createRecomendacion(recomendacion: { usuarioId: number, libroId: number, comentario: string }): Observable<Recomendacion> {
     return this.http.post<any>(`${this.apiUrl}/recomendacion`, recomendacion)
       .pipe(
@@ -89,7 +86,6 @@ export class RecomendacionService {
       );
   }
 
-  // Actualizar una recomendación
   updateRecomendacion(recomendacion: Recomendacion): Observable<Recomendacion> {
     const data = {
       usuarioId: recomendacion.usuario.id,
@@ -118,7 +114,6 @@ export class RecomendacionService {
       );
   }
 
-  // Eliminar una recomendación
   deleteRecomendacion(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/recomendacion/${id}`)
       .pipe(
@@ -129,10 +124,8 @@ export class RecomendacionService {
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ha ocurrido un error desconocido';
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.message}`;
     }
     console.error(errorMessage);

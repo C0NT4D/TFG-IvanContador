@@ -15,7 +15,6 @@ final class UsuarioController extends AbstractController
     private $usuarioRepository;
     private $entityManager;
 
-    // Inyectamos el UsuarioRepository y EntityManagerInterface en el constructor
     public function __construct(UsuarioRepository $usuarioRepository, EntityManagerInterface $entityManager)
     {
         $this->usuarioRepository = $usuarioRepository;
@@ -71,7 +70,6 @@ final class UsuarioController extends AbstractController
         $usuario->setRol($data['rol']);
         $usuario->setFechaRegistro(new \DateTimeImmutable());
 
-        // Persistimos el usuario y hacemos flush
         $this->entityManager->persist($usuario);
         $this->entityManager->flush();
 
@@ -95,7 +93,6 @@ final class UsuarioController extends AbstractController
             return $this->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        // Actualizar solo los campos que están presentes en la solicitud
         if (isset($data['nombre'])) {
             $usuario->setNombre($data['nombre']);
         }
@@ -104,8 +101,6 @@ final class UsuarioController extends AbstractController
             $usuario->setEmail($data['email']);
         }
         
-        // Solo actualizar la contraseña si se proporciona una nueva contraseña explícitamente
-        // Esto evita que se sobrescriba la contraseña cuando solo se actualiza el nombre
         if (isset($data['contrasena']) && !empty($data['contrasena'])) {
             $usuario->setContrasena($data['contrasena']);
         }
@@ -114,7 +109,6 @@ final class UsuarioController extends AbstractController
             $usuario->setRol($data['rol']);
         }
 
-        // Hacemos flush para guardar los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -135,7 +129,6 @@ final class UsuarioController extends AbstractController
             return $this->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        // Eliminar el usuario de la base de datos
         $this->entityManager->remove($usuario);
         $this->entityManager->flush();
 
@@ -154,20 +147,16 @@ final class UsuarioController extends AbstractController
         $email = $data['email'];
         $password = $data['password'];
         
-        // Buscar usuario por email
         $usuario = $this->usuarioRepository->findOneBy(['email' => $email]);
         
         if (!$usuario) {
             return $this->json(['message' => 'Usuario no encontrado'], 401);
         }
         
-        // En un sistema real, verificaríamos la contraseña con password_verify
-        // Pero para simplificar, comparamos directamente (INSEGURO para producción)
         if ($usuario->getContrasena() !== $password) {
             return $this->json(['message' => 'Contraseña incorrecta'], 401);
         }
         
-        // Usuario autenticado correctamente
         return $this->json([
             'id' => $usuario->getId(),
             'nombre' => $usuario->getNombre(),

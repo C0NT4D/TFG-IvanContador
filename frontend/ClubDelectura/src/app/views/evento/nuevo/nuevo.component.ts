@@ -44,7 +44,6 @@ export class NuevoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Inicialización adicional si es necesaria
   }
 
   onSubmit(): void {
@@ -71,7 +70,6 @@ export class NuevoComponent implements OnInit {
         next: (evento) => {
           this.success = true;
           this.loading = false;
-          // Redirigir al listado después de un breve retraso
           setTimeout(() => {
             this.router.navigate(['/evento']);
           }, 1500);

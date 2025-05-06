@@ -10,7 +10,6 @@ import { Inscripcion } from '../models/inscripcion.model';
   providedIn: 'root'
 })
 export class EventoService {
-  // URL relativa para el proxy
   private apiUrl = '/api';
 
   constructor(private http: HttpClient) { }
@@ -56,22 +55,18 @@ export class EventoService {
   }
 
   getEventosByOrganizador(organizadorId: number): Observable<Evento[]> {
-    // Si no hay un endpoint específico, filtramos del getAll
     return this.getEventos().pipe(
       map(eventos => eventos.filter(evento => evento.organizador?.id === organizadorId)),
       catchError(this.handleError)
     );
   }
   
-  // Manejador de errores genérico
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
     

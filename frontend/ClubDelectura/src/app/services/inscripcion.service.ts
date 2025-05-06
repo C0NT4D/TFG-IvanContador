@@ -12,7 +12,6 @@ import { UsuarioService } from './usuario.service';
   providedIn: 'root'
 })
 export class InscripcionService {
-  // URL relativa para el proxy
   private apiUrl = '/api';
 
   constructor(
@@ -26,10 +25,8 @@ export class InscripcionService {
       switchMap(inscripciones => {
         if (inscripciones.length === 0) return of([]);
         
-        // Crear un array de observables para obtener detalles de usuario y evento
         const inscripcionesCompletas = inscripciones.map(inscripcion => this.completarInscripcion(inscripcion));
         
-        // Combinar todos los observables en uno solo
         return forkJoin(inscripcionesCompletas);
       }),
       catchError(this.handleError)
@@ -49,7 +46,6 @@ export class InscripcionService {
       fecha_inscripcion: new Date().toISOString()
     }).pipe(
       switchMap(inscripcion => {
-        // Completar la inscripción con los datos del evento y usuario
         return this.completarInscripcion(inscripcion);
       }),
       catchError(this.handleError)
@@ -67,7 +63,6 @@ export class InscripcionService {
   }
 
   getInscripcionsByEvento(eventoId: number): Observable<Inscripcion[]> {
-    // Obtener todas las inscripciones y filtrar
     return this.getInscripcions().pipe(
       map(inscripciones => inscripciones.filter(inscripcion => 
         inscripcion.evento.id === eventoId
@@ -77,7 +72,6 @@ export class InscripcionService {
   }
 
   getInscripcionsByUsuario(usuarioId: number): Observable<Inscripcion[]> {
-    // Obtener todas las inscripciones y filtrar
     return this.getInscripcions().pipe(
       map(inscripciones => inscripciones.filter(inscripcion => 
         inscripcion.usuario.id === usuarioId
@@ -87,7 +81,6 @@ export class InscripcionService {
   }
 
   isUsuarioInscrito(eventoId: number, usuarioId: number): Observable<boolean> {
-    // Obtener todas las inscripciones y comprobar
     return this.getInscripcions().pipe(
       map(inscripciones => inscripciones.some(inscripcion => 
         inscripcion.evento.id === eventoId && inscripcion.usuario.id === usuarioId
@@ -99,14 +92,10 @@ export class InscripcionService {
     );
   }
 
-  // Método para completar los datos de una inscripción (evento y usuario)
   private completarInscripcion(inscripcion: any): Observable<Inscripcion> {
-    // Obtener detalles del evento
     const evento$ = this.eventoService.getEvento(inscripcion.evento);
-    // Obtener detalles del usuario
     const usuario$ = this.usuarioService.getUsuario(inscripcion.usuario);
     
-    // Combinar ambos observables
     return forkJoin([evento$, usuario$]).pipe(
       map(([evento, usuario]) => {
         return {
@@ -118,7 +107,6 @@ export class InscripcionService {
       }),
       catchError(error => {
         console.error('Error al completar datos de inscripción:', error);
-        // Devolver una inscripción con datos básicos si hay un error
         return of({
           id: inscripcion.id,
           evento: { id: inscripcion.evento, titulo: 'Error al cargar evento' } as Evento,
@@ -129,15 +117,12 @@ export class InscripcionService {
     );
   }
   
-  // Manejador de errores genérico
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
     

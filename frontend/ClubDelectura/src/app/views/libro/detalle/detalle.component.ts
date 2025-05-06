@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LibroService } from '../../../services/libro.service';
-import { LecturaService } from '../../../services/lectura.service'; // Importar LecturaService
+import { LecturaService } from '../../../services/lectura.service';
 import { Libro } from '../../../models/libro.model';
-import { Recomendacion } from '../../../models/recomendacion.model'; // Importar desde recomendacion.model
-import { Lectura } from '../../../models/lectura.model'; // Importar Lectura de su propio modelo
+import { Recomendacion } from '../../../models/recomendacion.model';
+import { Lectura } from '../../../models/lectura.model';
 import { Usuario } from '../../../models/usuario.model';
 import { AuthService } from '@app/services/auth.service';
 import { Observable, of } from 'rxjs';
@@ -16,7 +16,6 @@ import { map, catchError } from 'rxjs/operators';
   templateUrl: './detalle.component.html',
   styleUrls: ['./detalle.component.css'],
   standalone: true,
-  // ¡Importante añadir AsyncPipe aquí si no está ya en CommonModule!
   imports: [CommonModule, RouterLink]
 })
 export class DetalleComponent implements OnInit {
@@ -30,7 +29,7 @@ export class DetalleComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private bookService: LibroService,
-    private lecturaService: LecturaService, // Inyectar LecturaService
+    private lecturaService: LecturaService,
     private authService: AuthService
   ) {}
 
@@ -38,8 +37,8 @@ export class DetalleComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
     this.isUserLoggedIn = !!currentUser;
     this.currentUserId = currentUser?.id ?? null;
-    console.log('LibroDetalle: ngOnInit - Usuario actual:', currentUser); // LOG
-    console.log('LibroDetalle: ngOnInit - isUserLoggedIn:', this.isUserLoggedIn, 'currentUserId:', this.currentUserId); // LOG
+    console.log('LibroDetalle: ngOnInit - Usuario actual:', currentUser);
+    console.log('LibroDetalle: ngOnInit - isUserLoggedIn:', this.isUserLoggedIn, 'currentUserId:', this.currentUserId);
 
     this.route.params.subscribe(params => {
       const id = Number(params['id']);
@@ -89,18 +88,15 @@ export class DetalleComponent implements OnInit {
   }
 
   startReading(): void {
-    // LOGs al inicio del método
     const userCheck = this.authService.getCurrentUser();
     console.log('LibroDetalle: Intentando iniciar lectura. Usuario actual (check directo):', userCheck);
     console.log('LibroDetalle: Propiedades al inicio de startReading - isUserLoggedIn:', this.isUserLoggedIn, 'currentUserId:', this.currentUserId);
 
-    // Comprobaciones iniciales usando las propiedades de la clase
     if (!this.book || !this.isUserLoggedIn || !this.currentUserId) {
         this.error = 'Debes iniciar sesión para empezar a leer.';
         console.error('Error startReading: Comprobación inicial fallida.', { book: !!this.book, isUserLoggedIn: this.isUserLoggedIn, currentUserId: this.currentUserId });
         return;
     }
-    // Re-obtener usuario por seguridad (y para el objeto Lectura)
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
         this.error = 'Error al obtener datos de usuario.';
@@ -132,6 +128,5 @@ export class DetalleComponent implements OnInit {
 
   addRecommendation(): void {
     console.warn('addRecommendation called, but button might be hidden.');
-    // ... (código existente o lógica futura)
   }
 }

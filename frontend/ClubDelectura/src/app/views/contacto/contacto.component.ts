@@ -39,24 +39,17 @@ export class ContactoComponent implements OnInit {
     
     if (this.contactForm.valid) {
       this.loading = true;
-      // --- Simulación de envío --- 
       console.log('Datos del formulario de contacto:', this.contactForm.value);
-      // Simular una pequeña demora de red
+      
       setTimeout(() => {
         this.loading = false;
         this.success = true;
         this.contactForm.reset(); 
-        // Opcional: resetear marcadores de touched
-        // Object.keys(this.contactForm.controls).forEach(key => {
-        //   this.contactForm.get(key)?.markAsUntouched();
-        //   this.contactForm.get(key)?.markAsPristine();
-        // });
+     
       }, 1500); 
-      // --- Fin Simulación --- 
     } else {
       console.warn('Formulario inválido');
       this.error = 'Por favor, corrige los errores en el formulario.';
-      // Marcar todos los campos como touched para mostrar errores
       this.contactForm.markAllAsTouched(); 
     }
   }

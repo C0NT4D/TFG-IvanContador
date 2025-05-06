@@ -13,9 +13,5 @@ export interface Libro {
   recomendacions: Recomendacion[];
 }
 
-// Eliminar CUALQUIER definición local de Lectura o Recomendacion aquí
 
-// La definición de Recomendacion debe estar en recomendacion.model.ts
-/*
-export interface Recomendacion { ... }
-*/ 
+

@@ -76,26 +76,19 @@ export class DetalleComponent implements OnInit {
   }
 
   private loadInscripciones(eventoId: number): void {
-    // Primero obtener todas las inscripciones
     this.inscripcionService.getInscripcions().pipe(
-      // Filtrar las inscripciones del evento actual
       map(inscripciones => inscripciones.filter(i => {
-        // Puede ser que tengamos evento.id o evento como ID
         const inscripcionEventoId = typeof i.evento === 'object' ? i.evento.id : i.evento;
         return inscripcionEventoId === eventoId;
       })),
-      // Para cada inscripción, obtener los datos del usuario si solo tenemos el ID
       switchMap(inscripciones => {
         if (inscripciones.length === 0) return of([]);
         
-        // Para cada inscripción, asegurarnos de tener los datos completos
         const inscripcionesCompletas = inscripciones.map(inscripcion => {
-          // Si ya tenemos el usuario completo, devolver la inscripción tal cual
           if (typeof inscripcion.usuario === 'object' && inscripcion.usuario.nombre) {
             return of(inscripcion);
           }
 
-          // Si solo tenemos el ID del usuario, obtener los datos completos
           const usuarioId = typeof inscripcion.usuario === 'object' ? inscripcion.usuario.id : inscripcion.usuario;
           return this.usuarioService.getUsuario(usuarioId).pipe(
             map(usuario => {
@@ -113,7 +106,6 @@ export class DetalleComponent implements OnInit {
           );
         });
         
-        // Combinar todos los resultados
         return forkJoin(inscripcionesCompletas);
       })
     ).subscribe({
@@ -137,7 +129,6 @@ export class DetalleComponent implements OnInit {
 
     this.inscripcionService.createInscripcion(inscripcion).subscribe({
       next: (nuevaInscripcion) => {
-        // Asegurarnos que la inscripción tenga los datos del usuario
         const inscripcionCompleta = {
           ...nuevaInscripcion,
           usuario: this.currentUser || { 

@@ -4,17 +4,15 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn,
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 
-// Definición del validador de coincidencia de contraseñas
+
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
 
-  // Si los controles aún no existen o no tienen valor, no validar
   if (!password || !confirmPassword || !password.value || !confirmPassword.value) {
     return null;
   }
 
-  // Devuelve un error si las contraseñas no coinciden
   return password.value === confirmPassword.value ? null : { passwordMismatch: true };
 };
 

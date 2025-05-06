@@ -8,7 +8,6 @@ import { Usuario } from '@app/models/usuario.model';
   providedIn: 'root'
 })
 export class UsuarioService {
-  // URL relativa para el proxy
   private apiUrl = '/api';
 
   constructor(private http: HttpClient) { }
@@ -58,15 +57,12 @@ export class UsuarioService {
     );
   }
 
-  // Manejador de errores genérico
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
     

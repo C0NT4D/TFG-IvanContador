@@ -19,7 +19,6 @@ final class LecturaController extends AbstractController
     private $libroRepository;
     private $entityManager;
 
-    // Inyectamos los repositorios necesarios y el EntityManagerInterface
     public function __construct(
         LecturaRepository $lecturaRepository,
         UsuarioRepository $usuarioRepository,
@@ -90,7 +89,6 @@ final class LecturaController extends AbstractController
         $lectura->setFechaInicio(new \DateTimeImmutable($data['fechaInicio']));
         $lectura->setFechaFin($data['fechaFin'] ? new \DateTimeImmutable($data['fechaFin']) : null);
 
-        // Persistimos la lectura
         $this->entityManager->persist($lectura);
         $this->entityManager->flush();
 
@@ -128,7 +126,6 @@ final class LecturaController extends AbstractController
         $lectura->setFechaInicio(new \DateTimeImmutable($data['fechaInicio']));
         $lectura->setFechaFin($data['fechaFin'] ? new \DateTimeImmutable($data['fechaFin']) : null);
 
-        // Persistimos los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -150,7 +147,6 @@ final class LecturaController extends AbstractController
             return $this->json(['message' => 'Lectura no encontrada'], 404);
         }
 
-        // Eliminar la lectura
         $this->entityManager->remove($lectura);
         $this->entityManager->flush();
 

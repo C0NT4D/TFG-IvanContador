@@ -1,13 +1,7 @@
-/* Estilos específicos que complementan a Bootstrap si son necesarios */
 
-/* 
-.card {
-  max-width: 500px; 
-} 
-*/
+
 
 .invalid-feedback.d-block {
-  /* Asegura que el mensaje de error a nivel de formulario (contraseñas no coinciden) se muestre */
   width: 100%; 
   margin-top: .25rem; 
   font-size: .875em; 

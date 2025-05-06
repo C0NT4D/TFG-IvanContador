@@ -47,7 +47,6 @@ export class NuevoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Inicialización adicional si es necesaria
   }
 
   onSubmit(): void {
@@ -69,7 +68,6 @@ export class NuevoComponent implements OnInit {
         next: (libro: Libro) => {
           this.success = true;
           this.loading = false;
-          // Redirigir al listado después de un breve retraso
           setTimeout(() => {
             this.router.navigate(['/libros']);
           }, 1500);

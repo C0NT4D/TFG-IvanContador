@@ -18,7 +18,6 @@ final class InscripcionController extends AbstractController
     private $inscripcionRepository;
     private $entityManager;
 
-    // Inyectamos el EntityManagerInterface y el InscripcionRepository en el constructor
     public function __construct(InscripcionRepository $inscripcionRepository, EntityManagerInterface $entityManager)
     {
         $this->inscripcionRepository = $inscripcionRepository;
@@ -68,7 +67,6 @@ final class InscripcionController extends AbstractController
         $inscripcion = new Inscripcion();
         $inscripcion->setFechaInscripcion(new \DateTimeImmutable($data['fecha_inscripcion']));
 
-        // Asociamos el evento y el usuario
         $evento = $this->entityManager->getRepository(Evento::class)->find($data['evento_id']);
         $usuario = $this->entityManager->getRepository(Usuario::class)->find($data['usuario_id']);
         
@@ -79,7 +77,6 @@ final class InscripcionController extends AbstractController
             return $this->json(['message' => 'Evento o Usuario no encontrados'], 400);
         }
 
-        // Persistimos la inscripción y hacemos flush
         $this->entityManager->persist($inscripcion);
         $this->entityManager->flush();
 
@@ -104,7 +101,6 @@ final class InscripcionController extends AbstractController
 
         $inscripcion->setFechaInscripcion(new \DateTimeImmutable($data['fecha_inscripcion']));
 
-        // Asociamos el evento y el usuario
         $evento = $this->entityManager->getRepository(Evento::class)->find($data['evento_id']);
         $usuario = $this->entityManager->getRepository(Usuario::class)->find($data['usuario_id']);
         
@@ -115,7 +111,6 @@ final class InscripcionController extends AbstractController
             return $this->json(['message' => 'Evento o Usuario no encontrados'], 400);
         }
 
-        // Hacemos flush para guardar los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -135,7 +130,6 @@ final class InscripcionController extends AbstractController
             throw new NotFoundHttpException('Inscripción no encontrada');
         }
 
-        // Eliminar la inscripción de la base de datos
         $this->entityManager->remove($inscripcion);
         $this->entityManager->flush();
 

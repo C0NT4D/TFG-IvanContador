@@ -8,7 +8,6 @@ import { Foro } from '../models/foro.model';
   providedIn: 'root'
 })
 export class ForoService {
-  // URL relativa para el proxy
   private apiUrl = '/api';
 
   constructor(private http: HttpClient) { }
@@ -53,22 +52,18 @@ export class ForoService {
   }
 
   getForosByAdmin(adminId: number): Observable<Foro[]> {
-    // Si no hay un endpoint específico, filtramos del getAll
     return this.getForos().pipe(
       map(foros => foros.filter(foro => foro.admin.id === adminId)),
       catchError(this.handleError)
     );
   }
   
-  // Manejador de errores genérico
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
     

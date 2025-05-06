@@ -10,7 +10,6 @@ import { Usuario } from '../models/usuario.model';
   providedIn: 'root'
 })
 export class MensajeService {
-  // URL relativa para el proxy
   private apiUrl = '/api';
 
   constructor(
@@ -36,7 +35,6 @@ export class MensajeService {
   }
 
   getMensajesByForo(foroId: number): Observable<Mensaje[]> {
-    // Si no hay un endpoint específico, filtramos del getAll
     return this.getMensajes().pipe(
       map(mensajes => mensajes.filter(mensaje => mensaje.foro.id === foroId)),
       catchError(this.handleError)
@@ -51,7 +49,6 @@ export class MensajeService {
   }
 
   updateMensaje(id: number, mensaje: Partial<Mensaje>): Observable<Mensaje | undefined> {
-    // Adaptar el objeto mensaje para el backend si es necesario
     const backendData = {
       foroId: mensaje.foro?.id,
       usuarioId: mensaje.usuario?.id,
@@ -75,21 +72,18 @@ export class MensajeService {
   }
 
   getMensajesByUsuario(usuarioId: number): Observable<Mensaje[]> {
-    // Si no hay un endpoint específico, filtramos del getAll
     return this.getMensajes().pipe(
       map(mensajes => mensajes.filter(mensaje => mensaje.usuario.id === usuarioId)),
       catchError(this.handleError)
     );
   }
   
-  // Método privado para procesar la respuesta del backend
   private procesarMensajeResponse(response: any): Mensaje {
     return {
       id: response.id,
       foro: {
         id: response.foro.id,
         titulo: response.foro.titulo,
-        // Otros campos de Foro estarían incompletos, pero para este caso no es problema
         descripcion: '',
         fechaCreacion: new Date(),
         admin: {} as Usuario,
@@ -99,7 +93,6 @@ export class MensajeService {
       usuario: {
         id: response.usuario.id,
         nombre: response.usuario.nombre,
-        // Otros campos de Usuario estarían incompletos, pero para este caso no es problema
         email: '',
         contrasena: '',
         rol: '',
@@ -116,15 +109,12 @@ export class MensajeService {
     };
   }
   
-  // Manejador de errores genérico
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
     
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       errorMessage = `Código de error: ${error.status}, mensaje: ${error.error?.message || error.statusText}`;
     }
     

@@ -11,12 +11,10 @@ export const adminGuard: CanActivateFn = (route, state) => {
     take(1),
     map(user => {
       if (user && user.rol === 'admin') {
-        return true; // Usuario es admin, permitir acceso
+        return true; 
       } else {
-        // Usuario no es admin (o no está logueado), redirigir
         console.log('AdminGuard: Acceso denegado, redirigiendo...');
-        // Redirigir a una página principal o mostrar un error de acceso denegado
-        return router.createUrlTree(['/libro']); // Redirigir a libros por defecto
+        return router.createUrlTree(['/libro']); 
       }
     })
   );

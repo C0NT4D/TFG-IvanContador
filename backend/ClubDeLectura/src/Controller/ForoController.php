@@ -17,7 +17,6 @@ final class ForoController extends AbstractController
     private $foroRepository;
     private $entityManager;
 
-    // Inyectamos el EntityManagerInterface y el ForoRepository en el constructor
     public function __construct(ForoRepository $foroRepository, EntityManagerInterface $entityManager)
     {
         $this->foroRepository = $foroRepository;
@@ -71,13 +70,11 @@ final class ForoController extends AbstractController
         $foro->setDescripcion($data['descripcion']);
         $foro->setFechaCreacion(new \DateTimeImmutable($data['fecha_creacion']));
         
-        // Asociamos el administrador
         $admin = $this->entityManager->getRepository(Usuario::class)->find($data['admin_id']);
         if ($admin) {
             $foro->setAdmin($admin);
         }
 
-        // Persistimos el foro y hacemos flush
         $this->entityManager->persist($foro);
         $this->entityManager->flush();
 
@@ -105,13 +102,11 @@ final class ForoController extends AbstractController
         $foro->setDescripcion($data['descripcion']);
         $foro->setFechaCreacion(new \DateTimeImmutable($data['fecha_creacion']));
 
-        // Asociamos el administrador
         $admin = $this->entityManager->getRepository(Usuario::class)->find($data['admin_id']);
         if ($admin) {
             $foro->setAdmin($admin);
         }
 
-        // Hacemos flush para guardar los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -132,7 +127,6 @@ final class ForoController extends AbstractController
             throw new NotFoundHttpException('Foro no encontrado');
         }
 
-        // Eliminar el foro de la base de datos
         $this->entityManager->remove($foro);
         $this->entityManager->flush();
 

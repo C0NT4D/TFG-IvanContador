@@ -14,17 +14,8 @@ describe('ForumCardComponent', () => {
     fixture = TestBed.createComponent(ForumCardComponent);
     component = fixture.componentInstance;
     
-    // Mock forum data
-    component.forum = {
-      id: 1,
-      titulo: 'Test Forum',
-      descripcion: 'Test Description',
-      fechaCreacion: new Date(),
-      usuario: {
-        id: 1,
-        nombre: 'Test User'
-      }
-    };
+   
+    
     
     fixture.detectChanges();
   });

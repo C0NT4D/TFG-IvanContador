@@ -135,7 +135,6 @@ class Libro
     public function removeLectura(Lectura $lectura): static
     {
         if ($this->lecturas->removeElement($lectura)) {
-            // set the owning side to null (unless already changed)
             if ($lectura->getLibro() === $this) {
                 $lectura->setLibro(null);
             }
@@ -165,7 +164,6 @@ class Libro
     public function removeRecomendacion(Recomendacion $recomendacion): static
     {
         if ($this->recomendacions->removeElement($recomendacion)) {
-            // set the owning side to null (unless already changed)
             if ($recomendacion->getLibro() === $this) {
                 $recomendacion->setLibro(null);
             }

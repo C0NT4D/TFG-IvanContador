@@ -5,7 +5,6 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 import { Usuario } from '@app/models/usuario.model';
 
-// Definición del validador de coincidencia de contraseñas (si no está global)
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
@@ -51,16 +50,12 @@ export class RegistroComponent implements OnInit {
     this.errorMessage = null;
     if (this.registerForm.valid) {
       const { nombre, email, password } = this.registerForm.value;
-      // Asegúrate de que AuthService ahora tenga el método 'register'
       this.authService.register({ nombre, email, password }).subscribe({
         next: () => {
-          // Redirigir al login tras éxito
           this.router.navigate(['/login'], { queryParams: { registered: 'success' } });
         },
-        // Añadir tipo aquí
         error: (error: Error | any) => {
           console.error('Registration failed:', error);
-          // Intentar extraer el mensaje específico
           this.errorMessage = error?.message || error?.error?.message || 'Error durante el registro. Inténtalo de nuevo.';
         }
       });

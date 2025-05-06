@@ -19,7 +19,6 @@ final class MensajeController extends AbstractController
     private $usuarioRepository;
     private $entityManager;
 
-    // Inyectamos los repositorios necesarios y el EntityManagerInterface
     public function __construct(
         MensajeRepository $mensajeRepository,
         ForoRepository $foroRepository,
@@ -99,7 +98,6 @@ final class MensajeController extends AbstractController
         $mensaje->setContenido($data['contenido']);
         $mensaje->setFechaEnvio(new \DateTimeImmutable());
 
-        // Persistimos el mensaje
         $this->entityManager->persist($mensaje);
         $this->entityManager->flush();
 
@@ -141,7 +139,6 @@ final class MensajeController extends AbstractController
         $mensaje->setContenido($data['contenido']);
         $mensaje->setFechaEnvio(new \DateTimeImmutable());
 
-        // Persistimos los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -168,7 +165,6 @@ final class MensajeController extends AbstractController
             return $this->json(['message' => 'Mensaje no encontrado'], 404);
         }
 
-        // Eliminar el mensaje
         $this->entityManager->remove($mensaje);
         $this->entityManager->flush();
 

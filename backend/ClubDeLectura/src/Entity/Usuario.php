@@ -162,7 +162,6 @@ class Usuario
     public function removeLectura(Lectura $lectura): static
     {
         if ($this->lecturas->removeElement($lectura)) {
-            // set the owning side to null (unless already changed)
             if ($lectura->getUsuario() === $this) {
                 $lectura->setUsuario(null);
             }
@@ -192,7 +191,6 @@ class Usuario
     public function removeForo(Foro $foro): static
     {
         if ($this->foros->removeElement($foro)) {
-            // set the owning side to null (unless already changed)
             if ($foro->getAdmin() === $this) {
                 $foro->setAdmin(null);
             }
@@ -222,7 +220,6 @@ class Usuario
     public function removeMensaje(Mensaje $mensaje): static
     {
         if ($this->mensajes->removeElement($mensaje)) {
-            // set the owning side to null (unless already changed)
             if ($mensaje->getUsuario() === $this) {
                 $mensaje->setUsuario(null);
             }
@@ -252,7 +249,6 @@ class Usuario
     public function removeEvento(Evento $evento): static
     {
         if ($this->eventos->removeElement($evento)) {
-            // set the owning side to null (unless already changed)
             if ($evento->getOrganizador() === $this) {
                 $evento->setOrganizador(null);
             }
@@ -282,7 +278,6 @@ class Usuario
     public function removeInscripcion(Inscripcion $inscripcion): static
     {
         if ($this->inscripcions->removeElement($inscripcion)) {
-            // set the owning side to null (unless already changed)
             if ($inscripcion->getUsuario() === $this) {
                 $inscripcion->setUsuario(null);
             }
@@ -312,7 +307,6 @@ class Usuario
     public function removeRecomendacion(Recomendacion $recomendacion): static
     {
         if ($this->recomendacions->removeElement($recomendacion)) {
-            // set the owning side to null (unless already changed)
             if ($recomendacion->getUsuario() === $this) {
                 $recomendacion->setUsuario(null);
             }

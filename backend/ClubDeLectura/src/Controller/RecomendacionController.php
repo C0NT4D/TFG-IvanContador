@@ -19,7 +19,6 @@ final class RecomendacionController extends AbstractController
     private $usuarioRepository;
     private $entityManager;
 
-    // Inyectamos los repositorios necesarios y el EntityManagerInterface
     public function __construct(
         RecomendacionRepository $recomendacionRepository,
         LibroRepository $libroRepository,
@@ -99,7 +98,6 @@ final class RecomendacionController extends AbstractController
         $recomendacion->setComentario($data['comentario']);
         $recomendacion->setFecha(new \DateTimeImmutable());
 
-        // Persistimos la recomendación
         $this->entityManager->persist($recomendacion);
         $this->entityManager->flush();
 
@@ -141,7 +139,6 @@ final class RecomendacionController extends AbstractController
         $recomendacion->setComentario($data['comentario']);
         $recomendacion->setFecha(new \DateTimeImmutable());
 
-        // Persistimos los cambios
         $this->entityManager->flush();
 
         return $this->json([
@@ -168,7 +165,6 @@ final class RecomendacionController extends AbstractController
             return $this->json(['message' => 'Recomendación no encontrada'], 404);
         }
 
-        // Eliminar la recomendación
         $this->entityManager->remove($recomendacion);
         $this->entityManager->flush();
 

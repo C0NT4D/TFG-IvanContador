@@ -15,30 +15,9 @@ describe('ForumMessageComponent', () => {
     fixture = TestBed.createComponent(ForumMessageComponent);
     component = fixture.componentInstance;
     
-    // Mock message data
-    const mockForo: Foro = {
-      id: 1,
-      titulo: 'Test Forum',
-      descripcion: 'Test Description',
-      fechaCreacion: new Date(),
-      admin: {
-        id: 1,
-        nombre: 'Test Admin'
-      },
-      mensajes: []
-    };
+ 
 
-    component.message = {
-      id: 1,
-      contenido: 'Test Message',
-      fechaEnvio: new Date(),
-      usuario: {
-        id: 1,
-        nombre: 'Test User'
-      },
-      foro: mockForo
-    };
-    
+
     fixture.detectChanges();
   });
 

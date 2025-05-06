@@ -11,11 +11,10 @@ export const loginGuard: CanActivateFn = (route, state) => {
     take(1),
     map(user => {
       if (user) {
-        // Usuario ya logueado, redirigir fuera de login/registro
         console.log('LoginGuard: Usuario ya autenticado, redirigiendo a /libro');
-        return router.createUrlTree(['/libro']); // Redirigir a libros
+        return router.createUrlTree(['/libro']); 
       } else {
-        return true; // Usuario no logueado, permitir acceso a login/registro
+        return true; 
       }
     })
   );
