@@ -105,6 +105,7 @@ export class DetalleComponent implements OnInit {
     }
 
     this.error = '';
+    this.userHasReading$ = of(true);
 
     const newReadingData: Omit<Lectura, 'id'> = {
       libro: this.book,
@@ -117,11 +118,12 @@ export class DetalleComponent implements OnInit {
     this.lecturaService.createLectura(newReadingData).subscribe({
       next: (createdReading) => {
         console.log('Lectura iniciada:', createdReading);
-        this.userHasReading$ = of(true);
+        this.checkUserReadingStatus(this.book!.id);
       },
       error: (err: Error | any) => {
         console.error('Error al iniciar la lectura:', err);
         this.error = err?.message || 'Error desconocido al registrar la lectura.';
+        this.userHasReading$ = of(false);
       }
     });
   }
