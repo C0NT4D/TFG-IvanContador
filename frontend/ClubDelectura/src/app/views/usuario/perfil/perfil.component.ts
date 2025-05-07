@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 import { Usuario } from '@app/models/usuario.model';
 import { HttpClient } from '@angular/common/http';
+import { AvatarService } from '@app/services/avatar.service';
 
 @Component({
   selector: 'app-perfil',
@@ -46,7 +47,8 @@ export class PerfilComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private avatarService: AvatarService
   ) {
     this.perfilForm = this.fb.group({
       nombre: [''],
@@ -63,6 +65,7 @@ export class PerfilComponent implements OnInit {
         email: this.usuario.email
       });
       this.selectedAvatar = localStorage.getItem(`avatar_${this.usuario.id}`) || this.avatares[0];
+      this.avatarService.updateAvatar(this.selectedAvatar);
       this.cargarEstadisticas();
     }
   }
@@ -88,6 +91,7 @@ export class PerfilComponent implements OnInit {
     this.selectedAvatar = avatar;
     if (this.usuario) {
       localStorage.setItem(`avatar_${this.usuario.id}`, avatar);
+      this.avatarService.updateAvatar(avatar);
     }
     this.showAvatarSelector = false;
   }

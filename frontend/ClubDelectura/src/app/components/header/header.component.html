@@ -39,7 +39,12 @@
         <ul class="navbar-nav">
           @if (isLoggedIn) {
             <li class="nav-item">
-              <a class="nav-link" routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Mi Perfil</a>
+              <a class="nav-link" routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+                <img [src]="selectedAvatar" 
+                     class="rounded-circle" 
+                     style="width: 32px; height: 32px; object-fit: cover; border: 2px solid white;"
+                     alt="Avatar">
+              </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar Sesión</a>

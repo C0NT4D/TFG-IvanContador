@@ -37,4 +37,18 @@
   transform: scale(1.1);
 }
 
+.nav-link img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-link:hover img {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link.active img {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
 
