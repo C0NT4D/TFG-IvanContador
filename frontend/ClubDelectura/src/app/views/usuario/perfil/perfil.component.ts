@@ -26,6 +26,15 @@ export class PerfilComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isLoading = false;
+  selectedAvatar: string = '';
+  showAvatarSelector = false;
+
+  avatares = [
+    'assets/avatars/avatar1.png',
+    'assets/avatars/avatar2.png',
+    'assets/avatars/avatar3.png',
+    'assets/avatars/avatar4.png'
+  ];
 
   constructor(
     private authService: AuthService,
@@ -47,7 +56,20 @@ export class PerfilComponent implements OnInit {
         nombre: this.usuario.nombre,
         email: this.usuario.email
       });
+      this.selectedAvatar = localStorage.getItem(`avatar_${this.usuario.id}`) || this.avatares[0];
     }
+  }
+
+  toggleAvatarSelector() {
+    this.showAvatarSelector = !this.showAvatarSelector;
+  }
+
+  selectAvatar(avatar: string) {
+    this.selectedAvatar = avatar;
+    if (this.usuario) {
+      localStorage.setItem(`avatar_${this.usuario.id}`, avatar);
+    }
+    this.showAvatarSelector = false;
   }
 
   startEditing() {

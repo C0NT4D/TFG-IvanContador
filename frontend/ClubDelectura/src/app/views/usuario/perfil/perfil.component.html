@@ -17,8 +17,30 @@
           </div>
           <div class="card-body">
              <div class="d-flex align-items-center mb-4">
-                <!-- Avatar Placeholder -->
-                <i class="bi bi-person-circle me-3" style="font-size: 3rem; color: #6c757d;"></i>
+                <div class="position-relative me-3">
+                  <img [src]="selectedAvatar" 
+                       class="rounded-circle" 
+                       style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid #dee2e6;"
+                       (click)="toggleAvatarSelector()"
+                       alt="Avatar">
+                  
+                  <!-- Selector de avatares -->
+                  @if (showAvatarSelector) {
+                    <div class="avatar-selector position-absolute top-100 start-0 mt-2"
+                         style="z-index: 1000;">
+                      <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        @for (avatar of avatares; track avatar) {
+                          <img [src]="avatar" 
+                               class="rounded-circle" 
+                               style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
+                               (click)="selectAvatar(avatar)"
+                               [class.selected]="selectedAvatar === avatar"
+                               alt="Avatar option">
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
                 <div>
                   <h2 class="h5 mb-0">{{ usuario.nombre }}</h2>
                   <p class="text-muted mb-1">{{ usuario.email }}</p>
