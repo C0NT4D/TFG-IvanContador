@@ -26,40 +26,70 @@ final class EventoController extends AbstractController
     #[Route('/api/eventos', name: 'get_eventos', methods: ['GET'])]
     public function getEventos(): JsonResponse
     {
-        $eventos = $this->eventoRepository->findAll();
+        try {
+            $eventos = $this->eventoRepository->findAll();
 
-        $data = [];
-        foreach ($eventos as $evento) {
-            $data[] = [
-                'id' => $evento->getId(),
-                'titulo' => $evento->getTitulo(),
-                'descripcion' => $evento->getDescripcion(),
-                'fecha' => $evento->getFecha()->format('Y-m-d H:i:s'),
-                'ubicacion' => $evento->getUbicacion(),
-                'organizador' => $evento->getOrganizador() ? $evento->getOrganizador()->getId() : null,
-            ];
+            $data = [];
+            foreach ($eventos as $evento) {
+                try {
+                    $organizador = $evento->getOrganizador();
+                    $organizadorData = $organizador ? [
+                        'id' => $organizador->getId(),
+                        'nombre' => $organizador->getNombre()
+                    ] : ['id' => null, 'nombre' => 'Sin organizador'];
+                } catch (\Exception $e) {
+                    $organizadorData = ['id' => null, 'nombre' => 'Sin organizador'];
+                }
+
+                $data[] = [
+                    'id' => $evento->getId(),
+                    'titulo' => $evento->getTitulo(),
+                    'descripcion' => $evento->getDescripcion(),
+                    'fecha' => $evento->getFecha()->format('Y-m-d H:i:s'),
+                    'ubicacion' => $evento->getUbicacion(),
+                    'organizador' => $organizadorData
+                ];
+            }
+
+            return $this->json($data);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Error al cargar los eventos'], 500);
         }
-
-        return $this->json($data);
     }
 
     #[Route('/api/evento/{id}', name: 'get_evento', methods: ['GET'])]
     public function getEvento(int $id): JsonResponse
     {
-        $evento = $this->eventoRepository->find($id);
+        try {
+            $evento = $this->eventoRepository->find($id);
 
-        if (!$evento) {
-            throw new NotFoundHttpException('Evento no encontrado');
+            if (!$evento) {
+                throw new NotFoundHttpException('Evento no encontrado');
+            }
+
+            try {
+                $organizador = $evento->getOrganizador();
+                $organizadorData = $organizador ? [
+                    'id' => $organizador->getId(),
+                    'nombre' => $organizador->getNombre()
+                ] : ['id' => null, 'nombre' => 'Sin organizador'];
+            } catch (\Exception $e) {
+                $organizadorData = ['id' => null, 'nombre' => 'Sin organizador'];
+            }
+
+            return $this->json([
+                'id' => $evento->getId(),
+                'titulo' => $evento->getTitulo(),
+                'descripcion' => $evento->getDescripcion(),
+                'fecha' => $evento->getFecha()->format('Y-m-d H:i:s'),
+                'ubicacion' => $evento->getUbicacion(),
+                'organizador' => $organizadorData
+            ]);
+        } catch (NotFoundHttpException $e) {
+            return $this->json(['error' => $e->getMessage()], 404);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Error al cargar el evento'], 500);
         }
-
-        return $this->json([
-            'id' => $evento->getId(),
-            'titulo' => $evento->getTitulo(),
-            'descripcion' => $evento->getDescripcion(),
-            'fecha' => $evento->getFecha()->format('Y-m-d H:i:s'),
-            'ubicacion' => $evento->getUbicacion(),
-            'organizador' => $evento->getOrganizador() ? $evento->getOrganizador()->getId() : null,
-        ]);
     }
 
     #[Route('/api/evento', name: 'create_evento', methods: ['POST'])]

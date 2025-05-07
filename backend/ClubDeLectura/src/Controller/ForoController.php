@@ -26,38 +26,68 @@ final class ForoController extends AbstractController
     #[Route('/api/foros', name: 'get_foros', methods: ['GET'])]
     public function getForos(): JsonResponse
     {
-        $foros = $this->foroRepository->findAll();
+        try {
+            $foros = $this->foroRepository->findAll();
 
-        $data = [];
-        foreach ($foros as $foro) {
-            $data[] = [
-                'id' => $foro->getId(),
-                'titulo' => $foro->getTitulo(),
-                'descripcion' => $foro->getDescripcion(),
-                'fechaCreacion' => $foro->getFechaCreacion()->format('Y-m-d H:i:s'),
-                'admin' => $foro->getAdmin() ? $foro->getAdmin()->getId() : null,
-            ];
+            $data = [];
+            foreach ($foros as $foro) {
+                try {
+                    $admin = $foro->getAdmin();
+                    $adminData = $admin ? [
+                        'id' => $admin->getId(),
+                        'nombre' => $admin->getNombre()
+                    ] : ['id' => null, 'nombre' => 'Sin administrador'];
+                } catch (\Exception $e) {
+                    $adminData = ['id' => null, 'nombre' => 'Sin administrador'];
+                }
+
+                $data[] = [
+                    'id' => $foro->getId(),
+                    'titulo' => $foro->getTitulo(),
+                    'descripcion' => $foro->getDescripcion(),
+                    'fechaCreacion' => $foro->getFechaCreacion()->format('Y-m-d H:i:s'),
+                    'admin' => $adminData
+                ];
+            }
+
+            return $this->json($data);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Error al cargar los foros'], 500);
         }
-
-        return $this->json($data);
     }
 
     #[Route('/api/foro/{id}', name: 'get_foro', methods: ['GET'])]
     public function getForo(int $id): JsonResponse
     {
-        $foro = $this->foroRepository->find($id);
+        try {
+            $foro = $this->foroRepository->find($id);
 
-        if (!$foro) {
-            throw new NotFoundHttpException('Foro no encontrado');
+            if (!$foro) {
+                throw new NotFoundHttpException('Foro no encontrado');
+            }
+
+            try {
+                $admin = $foro->getAdmin();
+                $adminData = $admin ? [
+                    'id' => $admin->getId(),
+                    'nombre' => $admin->getNombre()
+                ] : ['id' => null, 'nombre' => 'Sin administrador'];
+            } catch (\Exception $e) {
+                $adminData = ['id' => null, 'nombre' => 'Sin administrador'];
+            }
+
+            return $this->json([
+                'id' => $foro->getId(),
+                'titulo' => $foro->getTitulo(),
+                'descripcion' => $foro->getDescripcion(),
+                'fechaCreacion' => $foro->getFechaCreacion()->format('Y-m-d H:i:s'),
+                'admin' => $adminData
+            ]);
+        } catch (NotFoundHttpException $e) {
+            return $this->json(['error' => $e->getMessage()], 404);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Error al cargar el foro'], 500);
         }
-
-        return $this->json([
-            'id' => $foro->getId(),
-            'titulo' => $foro->getTitulo(),
-            'descripcion' => $foro->getDescripcion(),
-            'fechaCreacion' => $foro->getFechaCreacion()->format('Y-m-d H:i:s'),
-            'admin' => $foro->getAdmin() ? $foro->getAdmin()->getId() : null,
-        ]);
     }
 
     #[Route('/api/foro', name: 'create_foro', methods: ['POST'])]

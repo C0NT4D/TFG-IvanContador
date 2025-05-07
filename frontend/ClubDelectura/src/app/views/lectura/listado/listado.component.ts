@@ -14,7 +14,6 @@ import { ErrorComponent } from '../../../components/error/error.component';
   imports: [
     CommonModule,
     RouterModule,
-    ReadingCardComponent,
     LoadingComponent,
     ErrorComponent
   ],
