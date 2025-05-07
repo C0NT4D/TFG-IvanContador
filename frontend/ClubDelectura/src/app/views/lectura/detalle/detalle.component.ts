@@ -57,8 +57,11 @@ export class DetalleComponent implements OnInit {
       },
       error: (err: Error) => {
         console.error('Error loading lectura:', err);
-        this.error = 'Error al cargar los detalles de la lectura.';
+        this.error = err.message || 'Error al cargar los detalles de la lectura.';
         this.loading = false;
+        if (err.message === 'No tienes permiso para ver esta lectura') {
+          this.router.navigate(['/lecturas']);
+        }
       }
     });
   }
@@ -69,22 +72,26 @@ export class DetalleComponent implements OnInit {
     const selectElement = event.target as HTMLSelectElement;
     const newStatus = selectElement.value as 'EN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
 
-    const updateData: Partial<Lectura> = {
-      estadoLectura: newStatus
-    };
-    if (newStatus === 'COMPLETED' && !this.lectura.fechaFin) {
-      updateData.fechaFin = new Date();
-    } else if (newStatus !== 'COMPLETED') {
-    }
-
     const lecturaCompletaParaActualizar: Lectura = {
       ...this.lectura,
-      ...updateData
+      usuario: {
+        ...this.lectura.usuario,
+        id: this.authService.getCurrentUser()?.id || 1
+      },
+      libro: {
+        ...this.lectura.libro,
+        id: typeof this.lectura.libro === 'string' ? 4 : this.lectura.libro.id
+      },
+      estadoLectura: newStatus,
+      fechaFin: newStatus === 'COMPLETED' || newStatus === 'ABANDONED' ? new Date() : null
     };
+
+    console.log('Actualizando lectura con datos:', lecturaCompletaParaActualizar);
 
     this.lecturaService.updateLectura(this.lectura.id, lecturaCompletaParaActualizar).subscribe({
       next: (updatedLectura: Lectura) => {
-        this.lectura = updatedLectura; 
+        this.lectura = updatedLectura;
+        console.log('Lectura actualizada:', updatedLectura);
       },
       error: (err: Error) => {
         console.error('Error updating status:', err);

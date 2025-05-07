@@ -23,50 +23,38 @@
         </a>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="col-md-8">
-            <h2 class="h5 mb-1">{{ lectura.libro.titulo }}</h2>
-            <p class="text-muted mb-3">por {{ lectura.libro.autor }}</p>
-            <p><span class="fw-bold">Género:</span> {{ lectura.libro.genero }}</p>
-            <p><span class="fw-bold">Año:</span> {{ lectura.libro.anioPublicacion }}</p>
-          </div>
-          <div class="col-md-4 border-start-md">
-            <h3 class="h6 text-muted mb-2">Progreso</h3>
-            <p><span class="fw-bold">Iniciada:</span> {{ lectura.fechaInicio | date:'dd/MM/yyyy' }}</p>
-            @if (lectura.fechaFin) {
-              <p><span class="fw-bold">Finalizada:</span> {{ lectura.fechaFin | date:'dd/MM/yyyy' }}</p>
-            }
+        <div class="d-flex justify-content-between">
+          <div>
+            <h2 class="h5">{{lectura.libro.titulo}}</h2>
+            <h3 class="h6 text-muted mb-3">por {{lectura.libro.autor}}</h3>
+            
             <div class="mb-3">
-              <label for="estadoLectura" class="form-label fw-bold">Estado:</label>
-              <select id="estadoLectura" class="form-select form-select-sm w-auto d-inline-block ms-2" 
-                      [(ngModel)]="lectura.estadoLectura" 
-                      (change)="onStatusChange($event)">
+              <p class="mb-1"><strong>Género:</strong> {{lectura.libro.genero}}</p>
+              <p class="mb-1"><strong>Año:</strong> {{lectura.libro.anioPublicacion}}</p>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <div class="mb-3">
+              <h4 class="h6">Progreso</h4>
+              <p class="mb-1"><strong>Iniciada:</strong> {{lectura.fechaInicio | date:'dd/MM/yyyy'}}</p>
+              <p class="mb-1" *ngIf="lectura.fechaFin"><strong>Finalizada:</strong> {{lectura.fechaFin | date:'dd/MM/yyyy'}}</p>
+            </div>
+
+            <div class="mb-3">
+              <h4 class="h6">Estado:</h4>
+              <select class="form-select w-auto" [value]="lectura.estadoLectura" (change)="onStatusChange($event)">
+                <option value="PENDING">Pendiente</option>
                 <option value="EN_PROGRESS">En Progreso</option>
-                <option value="COMPLETED">Completado</option>
-                <option value="ABANDONED">Abandonado</option>
+                <option value="COMPLETED">Completada</option>
+                <option value="ABANDONED">Abandonada</option>
               </select>
             </div>
-            <span class="badge fs-6" [ngClass]="{
-              'bg-warning-subtle text-warning-emphasis': lectura.estadoLectura === 'EN_PROGRESS',
-              'bg-success-subtle text-success-emphasis': lectura.estadoLectura === 'COMPLETED',
-              'bg-danger-subtle text-danger-emphasis': lectura.estadoLectura === 'ABANDONED'
-            }">
-              {{ lectura.estadoLectura === 'EN_PROGRESS' ? 'En progreso' :
-                 lectura.estadoLectura === 'COMPLETED' ? 'Completado' : 'Abandonado' }}
-            </span>
           </div>
         </div>
       </div>
     </div>
   }
 
-  <!-- Modal de Confirmación (Asegúrate de tener un componente modal o impórtalo) -->
-  <!-- <app-confirm-modal 
-    [isOpen]="showDeleteModal" 
-    title="Confirmar Eliminación"
-    message="¿Estás seguro de que deseas eliminar esta lectura? Esta acción no se puede deshacer."
-    (confirmed)="confirmDelete()" 
-    (cancelled)="cancelDelete()">
-  </app-confirm-modal> -->
 
 </div>

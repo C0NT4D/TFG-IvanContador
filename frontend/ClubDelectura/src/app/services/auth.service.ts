@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Usuario } from '@app/models/usuario.model';
 import { Mensaje } from '@app/models/mensaje.model';
+import { Lectura } from '@app/models/lectura.model';
 
 @Injectable({
   providedIn: 'root'
@@ -168,6 +169,41 @@ export class AuthService {
       }
     } else {
       console.error('No hay usuario actual para añadir el mensaje.');
+    }
+  }
+
+  addLecturaToCurrentUser(lectura: Lectura): void {
+    const currentUser = this.getCurrentUser();
+    if (currentUser) {
+      const updatedUser = { ...currentUser };
+      if (!updatedUser.lecturas) updatedUser.lecturas = [];
+      
+      const lecturaCopy: Partial<Lectura> = {
+        id: lectura.id,
+        estadoLectura: lectura.estadoLectura,
+        fechaInicio: lectura.fechaInicio,
+        fechaFin: lectura.fechaFin,
+        libro: {
+          id: lectura.libro.id,
+          titulo: lectura.libro.titulo,
+          autor: lectura.libro.autor,
+          genero: lectura.libro.genero,
+          anioPublicacion: lectura.libro.anioPublicacion,
+          sinopsis: lectura.libro.sinopsis,
+          lecturas: [],
+          recomendacions: []
+        }
+      };
+
+      if (!updatedUser.lecturas.some(l => l.id === lectura.id)) {
+        updatedUser.lecturas.push(lecturaCopy as Lectura);
+        this.setCurrentUser(updatedUser);
+        console.log(`Lectura ID ${lectura.id} añadida al usuario ID ${currentUser.id}`);
+      } else {
+        console.warn(`La lectura ID ${lectura.id} ya existe para el usuario ID ${currentUser.id}`);
+      }
+    } else {
+      console.error('No hay usuario actual para añadir la lectura.');
     }
   }
 

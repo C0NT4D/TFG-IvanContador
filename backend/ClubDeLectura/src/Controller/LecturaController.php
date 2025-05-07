@@ -32,16 +32,38 @@ final class LecturaController extends AbstractController
     }
 
     #[Route('/api/lecturas', name: 'get_lecturas', methods: ['GET'])]
-    public function getLecturas(): JsonResponse
+    public function getLecturas(Request $request): JsonResponse
     {
-        $lecturas = $this->lecturaRepository->findAll();
+        $usuarioId = $request->query->get('usuarioId');
+        
+        if (!$usuarioId) {
+            return $this->json(['message' => 'Se requiere el ID del usuario'], 400);
+        }
+
+        $usuario = $this->usuarioRepository->find($usuarioId);
+        if (!$usuario) {
+            return $this->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $lecturas = $this->lecturaRepository->findBy(['usuario' => $usuario]);
 
         $data = [];
         foreach ($lecturas as $lectura) {
+            if ($lectura->getUsuario()->getId() !== $usuario->getId()) {
+                continue;
+            }
+            
             $data[] = [
                 'id' => $lectura->getId(),
                 'usuario' => $lectura->getUsuario()->getNombre(),
-                'libro' => $lectura->getLibro()->getTitulo(),
+                'libro' => [
+                    'id' => $lectura->getLibro()->getId(),
+                    'titulo' => $lectura->getLibro()->getTitulo(),
+                    'autor' => $lectura->getLibro()->getAutor(),
+                    'genero' => $lectura->getLibro()->getGenero(),
+                    'anioPublicacion' => $lectura->getLibro()->getAnioPublicacion(),
+                    'sinopsis' => $lectura->getLibro()->getSinopsis()
+                ],
                 'estadoLectura' => $lectura->getEstadoLectura(),
                 'fechaInicio' => $lectura->getFechaInicio()->format('Y-m-d'),
                 'fechaFin' => $lectura->getFechaFin() ? $lectura->getFechaFin()->format('Y-m-d') : null,
@@ -52,18 +74,33 @@ final class LecturaController extends AbstractController
     }
 
     #[Route('/api/lectura/{id}', name: 'get_lectura', methods: ['GET'])]
-    public function getLectura(int $id): JsonResponse
+    public function getLectura(int $id, Request $request): JsonResponse
     {
-        $lectura = $this->lecturaRepository->find($id);
+        $usuarioId = $request->query->get('usuarioId');
+        if (!$usuarioId) {
+            return $this->json(['message' => 'Se requiere el ID del usuario'], 400);
+        }
 
+        $lectura = $this->lecturaRepository->find($id);
         if (!$lectura) {
             return $this->json(['message' => 'Lectura no encontrada'], 404);
+        }
+
+        if ($lectura->getUsuario()->getId() !== (int)$usuarioId) {
+            return $this->json(['message' => 'No tienes permiso para ver esta lectura'], 403);
         }
 
         return $this->json([
             'id' => $lectura->getId(),
             'usuario' => $lectura->getUsuario()->getNombre(),
-            'libro' => $lectura->getLibro()->getTitulo(),
+            'libro' => [
+                'id' => $lectura->getLibro()->getId(),
+                'titulo' => $lectura->getLibro()->getTitulo(),
+                'autor' => $lectura->getLibro()->getAutor(),
+                'genero' => $lectura->getLibro()->getGenero(),
+                'anioPublicacion' => $lectura->getLibro()->getAnioPublicacion(),
+                'sinopsis' => $lectura->getLibro()->getSinopsis()
+            ],
             'estadoLectura' => $lectura->getEstadoLectura(),
             'fechaInicio' => $lectura->getFechaInicio()->format('Y-m-d'),
             'fechaFin' => $lectura->getFechaFin() ? $lectura->getFechaFin()->format('Y-m-d') : null,
@@ -87,7 +124,10 @@ final class LecturaController extends AbstractController
         $lectura->setLibro($libro);
         $lectura->setEstadoLectura($data['estadoLectura']);
         $lectura->setFechaInicio(new \DateTimeImmutable($data['fechaInicio']));
-        $lectura->setFechaFin($data['fechaFin'] ? new \DateTimeImmutable($data['fechaFin']) : null);
+        
+        if ($data['estadoLectura'] === 'COMPLETED' || $data['estadoLectura'] === 'ABANDONED') {
+            $lectura->setFechaFin(new \DateTimeImmutable());
+        }
 
         $this->entityManager->persist($lectura);
         $this->entityManager->flush();
@@ -107,6 +147,10 @@ final class LecturaController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        if (!isset($data['usuarioId']) || !isset($data['libroId']) || !isset($data['estadoLectura']) || !isset($data['fechaInicio'])) {
+            return $this->json(['message' => 'Faltan datos requeridos'], 400);
+        }
+
         $lectura = $this->lecturaRepository->find($id);
 
         if (!$lectura) {
@@ -124,7 +168,12 @@ final class LecturaController extends AbstractController
         $lectura->setLibro($libro);
         $lectura->setEstadoLectura($data['estadoLectura']);
         $lectura->setFechaInicio(new \DateTimeImmutable($data['fechaInicio']));
-        $lectura->setFechaFin($data['fechaFin'] ? new \DateTimeImmutable($data['fechaFin']) : null);
+        
+        if ($data['estadoLectura'] === 'COMPLETED' || $data['estadoLectura'] === 'ABANDONED') {
+            $lectura->setFechaFin(new \DateTimeImmutable());
+        } else {
+            $lectura->setFechaFin(null);
+        }
 
         $this->entityManager->flush();
 

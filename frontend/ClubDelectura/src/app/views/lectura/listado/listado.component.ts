@@ -52,10 +52,17 @@ export class ListadoComponent implements OnInit {
         this.lecturas = lecturas;
         this.loading = false;
       },
-      error: (error: Error) => {
+      error: (error) => {
         console.error('Error loading lecturas:', error);
-        this.error = 'Error al cargar tus lecturas.';
+        if (error.status === 400) {
+          this.error = 'No se pudo cargar la lista de lecturas. Por favor, intenta iniciar sesión nuevamente.';
+        } else if (error.status === 404) {
+          this.error = 'No se encontraron lecturas para este usuario.';
+        } else {
+          this.error = 'Error al cargar tus lecturas. Por favor, intenta nuevamente más tarde.';
+        }
         this.loading = false;
+        this.lecturas = [];
       }
     });
   }

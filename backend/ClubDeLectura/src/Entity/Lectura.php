@@ -27,7 +27,7 @@ class Lectura
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fechaInicio = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $fechaFin = null;
 
     public function getId(): ?int
@@ -88,7 +88,7 @@ class Lectura
         return $this->fechaFin;
     }
 
-    public function setFechaFin(\DateTimeInterface $fechaFin): static
+    public function setFechaFin(?\DateTimeInterface $fechaFin): static
     {
         $this->fechaFin = $fechaFin;
 
