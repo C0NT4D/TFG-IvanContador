@@ -51,6 +51,39 @@
                 </div>
              </div>
              <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
+             
+             <div class="mt-4">
+               <h3 class="h5 mb-3">Mis Estadísticas</h3>
+               <div class="row g-3">
+                 <div class="col-6 col-md-4">
+                   <div class="stat-card text-center p-3 rounded bg-light">
+                     <div class="stat-icon mb-2">
+                       <i class="bi bi-book-fill text-primary"></i>
+                     </div>
+                     <h4 class="stat-value mb-0">{{ estadisticas.librosLeidos }}</h4>
+                     <p class="stat-label text-muted mb-0">Libros Leídos</p>
+                   </div>
+                 </div>
+                 <div class="col-6 col-md-4">
+                   <div class="stat-card text-center p-3 rounded bg-light">
+                     <div class="stat-icon mb-2">
+                       <i class="bi bi-bookmark-fill text-warning"></i>
+                     </div>
+                     <h4 class="stat-value mb-0">{{ estadisticas.librosEnProgreso }}</h4>
+                     <p class="stat-label text-muted mb-0">En Progreso</p>
+                   </div>
+                 </div>
+                 <div class="col-6 col-md-4">
+                   <div class="stat-card text-center p-3 rounded bg-light">
+                     <div class="stat-icon mb-2">
+                       <i class="bi bi-bookmark-plus-fill text-info"></i>
+                     </div>
+                     <h4 class="stat-value mb-0">{{ estadisticas.librosPendientes }}</h4>
+                     <p class="stat-label text-muted mb-0">Pendientes</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
           </div>
         </div>
       </div>

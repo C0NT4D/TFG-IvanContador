@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Resena;
 
 final class LecturaController extends AbstractController
 {
@@ -200,5 +201,23 @@ final class LecturaController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(['message' => 'Lectura eliminada con éxito']);
+    }
+
+    #[Route('/api/lecturas/usuario/{id}/estadisticas', name: 'app_lectura_estadisticas', methods: ['GET'])]
+    public function getEstadisticasUsuario(int $id): JsonResponse
+    {
+        $lecturas = $this->lecturaRepository->findBy(['usuario' => $id]);
+
+        $librosLeidos = count(array_filter($lecturas, fn($l) => $l->getEstadoLectura() === 'COMPLETED'));
+        $librosEnProgreso = count(array_filter($lecturas, fn($l) => $l->getEstadoLectura() === 'EN_PROGRESS'));
+        $librosPendientes = count(array_filter($lecturas, fn($l) => $l->getEstadoLectura() === 'PENDING'));
+
+        $estadisticas = [
+            'librosLeidos' => $librosLeidos,
+            'librosEnProgreso' => $librosEnProgreso,
+            'librosPendientes' => $librosPendientes
+        ];
+
+        return $this->json($estadisticas);
     }
 }

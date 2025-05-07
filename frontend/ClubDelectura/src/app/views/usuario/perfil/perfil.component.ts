@@ -29,6 +29,12 @@ export class PerfilComponent implements OnInit {
   selectedAvatar: string = '';
   showAvatarSelector = false;
 
+  estadisticas = {
+    librosLeidos: 0,
+    librosEnProgreso: 0,
+    librosPendientes: 0
+  };
+
   avatares = [
     'assets/avatars/avatar1.png',
     'assets/avatars/avatar2.png',
@@ -57,6 +63,20 @@ export class PerfilComponent implements OnInit {
         email: this.usuario.email
       });
       this.selectedAvatar = localStorage.getItem(`avatar_${this.usuario.id}`) || this.avatares[0];
+      this.cargarEstadisticas();
+    }
+  }
+
+  cargarEstadisticas() {
+    if (this.usuario) {
+      this.http.get(`/api/lecturas/usuario/${this.usuario.id}/estadisticas`).subscribe({
+        next: (data: any) => {
+          this.estadisticas = data;
+        },
+        error: (error) => {
+          console.error('Error al cargar estadísticas:', error);
+        }
+      });
     }
   }
 
