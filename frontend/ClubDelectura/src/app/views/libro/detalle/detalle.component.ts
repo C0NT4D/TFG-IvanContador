@@ -107,11 +107,11 @@ export class DetalleComponent implements OnInit {
     this.error = '';
     this.userHasReading$ = of(true);
 
-    const newReadingData: Omit<Lectura, 'id'> = {
-      libro: this.book,
-      usuario: currentUser,
-      fechaInicio: new Date(),
+    const newReadingData = {
+      usuario: { id: currentUser.id },
+      libro: { id: this.book.id },
       estadoLectura: 'EN_PROGRESS',
+      fechaInicio: new Date().toISOString(),
       fechaFin: null
     };
 

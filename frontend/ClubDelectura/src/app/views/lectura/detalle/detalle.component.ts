@@ -6,6 +6,7 @@ import { LecturaService } from '../../../services/lectura.service';
 import { Lectura } from '../../../models/lectura.model';
 import { AuthService } from '../../../services/auth.service';
 import { Usuario } from '../../../models/usuario.model';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-lectura-detalle',
@@ -22,6 +23,8 @@ export class DetalleComponent implements OnInit {
   lectura?: Lectura;
   loading = true;
   error = '';
+  isReading = false;
+  libroId?: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -96,6 +99,70 @@ export class DetalleComponent implements OnInit {
       error: (err: Error) => {
         console.error('Error updating status:', err);
         this.error = 'Error al actualizar el estado de la lectura.';
+      }
+    });
+  }
+
+  checkReadingStatus(): void {
+    this.loading = true;
+    this.error = '';
+    
+    this.lecturaService.getLecturas().pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: (lecturas) => {
+        const lectura = lecturas.find(l => l.libro.id === this.libroId);
+        if (lectura) {
+          this.lectura = lectura;
+          this.isReading = true;
+        } else {
+          this.isReading = false;
+          this.lectura = undefined;
+        }
+      },
+      error: (error) => {
+        console.error('Error checking reading status:', error);
+        this.error = 'Error al verificar el estado de lectura';
+        this.isReading = false;
+        this.lectura = undefined;
+      }
+    });
+  }
+
+  startReading(): void {
+    if (!this.libroId) {
+      this.error = 'No se ha seleccionado un libro';
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.error = 'Usuario no autenticado';
+      this.loading = false;
+      return;
+    }
+
+    const nuevaLectura = {
+      usuario: { id: currentUser.id },
+      libro: { id: this.libroId },
+      estadoLectura: 'EN_PROGRESS',
+      fechaInicio: new Date().toISOString(),
+      fechaFin: null
+    };
+
+    this.lecturaService.createLectura(nuevaLectura).subscribe({
+      next: (lectura) => {
+        this.lectura = lectura;
+        this.isReading = true;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error starting reading:', error);
+        this.error = 'Error al iniciar la lectura';
+        this.loading = false;
       }
     });
   }

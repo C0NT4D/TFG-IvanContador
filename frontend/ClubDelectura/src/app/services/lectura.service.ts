@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject, throwError } from 'rxjs';
-import { map, tap, find } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject, throwError, catchError } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { Lectura } from '../models/lectura.model';
 import { Usuario } from '../models/usuario.model';
 import { Libro } from '../models/libro.model';
@@ -21,9 +21,8 @@ export class LecturaService {
   getLecturas(): Observable<Lectura[]> {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
-      return throwError(() => new Error('Usuario no autenticado'));
+      return of([]);
     }
-
     return this.http.get<Lectura[]>(`${this.apiUrl}/lecturas?usuarioId=${currentUser.id}`);
   }
 
@@ -32,11 +31,10 @@ export class LecturaService {
     if (!currentUser) {
       return throwError(() => new Error('Usuario no autenticado'));
     }
-
     return this.http.get<Lectura>(`${this.apiUrl}/lectura/${id}?usuarioId=${currentUser.id}`);
   }
 
-  createLectura(lecturaData: Omit<Lectura, 'id'>): Observable<Lectura> {
+  createLectura(lecturaData: { usuario: { id: number }, libro: { id: number }, estadoLectura: string, fechaInicio: string, fechaFin: string | null }): Observable<Lectura> {
     const data = {
       usuarioId: lecturaData.usuario.id,
       libroId: lecturaData.libro.id,
@@ -125,8 +123,12 @@ export class LecturaService {
   }
 
   getLecturaByUsuarioAndLibro(usuarioId: number, libroId: number): Observable<Lectura | undefined> {
-    return this.http.get<Lectura[]>(`${this.apiUrl}/lecturas`).pipe(
-      map(lecturas => lecturas.find(l => l.usuario.id === usuarioId && l.libro.id === libroId))
+    return this.http.get<Lectura[]>(`${this.apiUrl}/lecturas?usuarioId=${usuarioId}&libroId=${libroId}`).pipe(
+      map(lecturas => lecturas[0] || undefined),
+      catchError(error => {
+        console.error('Error al obtener la lectura:', error);
+        return of(undefined);
+      })
     );
   }
 } 
