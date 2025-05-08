@@ -8,8 +8,8 @@ import { Recomendacion } from '../../../models/recomendacion.model';
 import { Lectura } from '../../../models/lectura.model';
 import { Usuario } from '../../../models/usuario.model';
 import { AuthService } from '@app/services/auth.service';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-detalle',
@@ -24,7 +24,7 @@ export class DetalleComponent implements OnInit {
   error = '';
   isUserLoggedIn = false;
   currentUserId: number | null = null;
-  userHasReading$: Observable<boolean> = of(false);
+  userHasReading$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -61,6 +61,9 @@ export class DetalleComponent implements OnInit {
       next: (book) => {
         this.book = book;
         this.loading = false;
+        if (this.isUserLoggedIn) {
+          this.checkUserReadingStatus(id);
+        }
       },
       error: (err) => {
         console.error('Error loading book details:', err);
@@ -71,19 +74,25 @@ export class DetalleComponent implements OnInit {
   }
 
   checkUserReadingStatus(bookId: number): void {
+    console.log('Checking reading status for book:', bookId, 'user:', this.currentUserId);
     if (this.currentUserId) {
-      this.userHasReading$ = this.lecturaService.getLecturaByUsuarioAndLibro(
+      this.lecturaService.getLecturaByUsuarioAndLibro(
         this.currentUserId,
         bookId
       ).pipe(
+        tap(lectura => console.log('Lectura encontrada:', lectura)),
         map(lectura => !!lectura),
         catchError(err => {
           console.error('Error checking reading status:', err);
           return of(false);
         })
-      );
+      ).subscribe(hasReading => {
+        console.log('Estado de lectura actualizado:', hasReading);
+        this.userHasReading$.next(hasReading);
+      });
     } else {
-      this.userHasReading$ = of(false);
+      console.log('No hay usuario logueado, estableciendo hasReading a false');
+      this.userHasReading$.next(false);
     }
   }
 
@@ -105,7 +114,6 @@ export class DetalleComponent implements OnInit {
     }
 
     this.error = '';
-    this.userHasReading$ = of(true);
 
     const newReadingData = {
       usuario: { id: currentUser.id },
@@ -118,12 +126,13 @@ export class DetalleComponent implements OnInit {
     this.lecturaService.createLectura(newReadingData).subscribe({
       next: (createdReading) => {
         console.log('Lectura iniciada:', createdReading);
+        this.userHasReading$.next(true);
         this.checkUserReadingStatus(this.book!.id);
       },
       error: (err: Error | any) => {
         console.error('Error al iniciar la lectura:', err);
         this.error = err?.message || 'Error desconocido al registrar la lectura.';
-        this.userHasReading$ = of(false);
+        this.userHasReading$.next(false);
       }
     });
   }

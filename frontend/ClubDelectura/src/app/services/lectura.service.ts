@@ -123,8 +123,8 @@ export class LecturaService {
   }
 
   getLecturaByUsuarioAndLibro(usuarioId: number, libroId: number): Observable<Lectura | undefined> {
-    return this.http.get<Lectura[]>(`${this.apiUrl}/lecturas?usuarioId=${usuarioId}&libroId=${libroId}`).pipe(
-      map(lecturas => lecturas[0] || undefined),
+    return this.http.get<Lectura[]>(`${this.apiUrl}/lecturas?usuarioId=${usuarioId}`).pipe(
+      map(lecturas => lecturas.find(l => l.libro.id === libroId)),
       catchError(error => {
         console.error('Error al obtener la lectura:', error);
         return of(undefined);
