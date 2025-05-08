@@ -38,42 +38,38 @@
             <p><span class="fw-bold">ID:</span> {{ usuario.id }}</p>
             <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
             
-            <!-- Eliminar toda esta sección de Actividad Reciente -->
-            <!--
-            <h3 class="h6 text-muted mt-4 mb-3">Actividad Reciente</h3>
-            <h5>Lecturas</h5>
-            @if (usuario.lecturas && usuario.lecturas.length > 0) {
-              <ul class="list-group list-group-flush mb-3">
-                @for(lectura of usuario.lecturas; track lectura.id) {
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a [routerLink]="['/libro', lectura.libro.id]" class="text-decoration-none">{{ lectura.libro.titulo }}</a>
-                    <span class="badge rounded-pill" [ngClass]="{
-                      'bg-success-subtle text-success-emphasis': lectura.estadoLectura === 'COMPLETED',
-                      'bg-warning-subtle text-warning-emphasis': lectura.estadoLectura === 'EN_PROGRESS',
-                      'bg-secondary': lectura.estadoLectura === 'PENDING'
-                    }">
-                      {{ lectura.estadoLectura | titlecase }}
-                    </span>
-                  </li>
-                }
-              </ul>
-            } @else {
-              <p class="text-muted fst-italic">Sin lecturas registradas.</p>
-            }
-
-            <h5>Foros Creados</h5>
-             @if (usuario.foros && usuario.foros.length > 0) {
-              <ul class="list-group list-group-flush mb-3">
-                @for(foro of usuario.foros; track foro.id) {
-                  <li class="list-group-item">
-                     <a [routerLink]="['/foro', foro.id]" class="text-decoration-none">{{ foro.titulo }}</a>
-                  </li>
-                }
-              </ul>
-            } @else {
-              <p class="text-muted fst-italic">Sin foros creados.</p>
-            }
-            -->
+            <div class="mt-4">
+              <h3 class="h6 text-muted mb-3">Estadísticas de Lectura</h3>
+              <div class="row g-3">
+                <div class="col-4">
+                  <div class="stat-card text-center p-3 rounded bg-light">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-book-fill text-primary"></i>
+                    </div>
+                    <h4 class="stat-value mb-0">{{ estadisticas.librosLeidos }}</h4>
+                    <p class="stat-label text-muted mb-0">Libros Leídos</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="stat-card text-center p-3 rounded bg-light">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-bookmark-fill text-warning"></i>
+                    </div>
+                    <h4 class="stat-value mb-0">{{ estadisticas.librosEnProgreso }}</h4>
+                    <p class="stat-label text-muted mb-0">En Progreso</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="stat-card text-center p-3 rounded bg-light">
+                    <div class="stat-icon mb-2">
+                      <i class="bi bi-bookmark-plus-fill text-info"></i>
+                    </div>
+                    <h4 class="stat-value mb-0">{{ estadisticas.librosPendientes }}</h4>
+                    <p class="stat-label text-muted mb-0">Pendientes</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
