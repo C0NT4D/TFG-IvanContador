@@ -123,16 +123,50 @@ final class UsuarioController extends AbstractController
     #[Route('/api/usuario/{id}', name: 'delete_usuario', methods: ['DELETE'])]
     public function deleteUsuario(int $id): JsonResponse
     {
-        $usuario = $this->usuarioRepository->find($id);
+        try {
+            $usuario = $this->usuarioRepository->find($id);
 
-        if (!$usuario) {
-            return $this->json(['message' => 'Usuario no encontrado'], 404);
+            if (!$usuario) {
+                return $this->json(['message' => 'Usuario no encontrado'], 404);
+            }
+
+            $mensajes = $usuario->getMensajes();
+            foreach ($mensajes as $mensaje) {
+                $this->entityManager->remove($mensaje);
+            }
+
+            $recomendaciones = $usuario->getRecomendacions();
+            foreach ($recomendaciones as $recomendacion) {
+                $this->entityManager->remove($recomendacion);
+            }
+
+            $lecturas = $usuario->getLecturas();
+            foreach ($lecturas as $lectura) {
+                $this->entityManager->remove($lectura);
+            }
+
+            $inscripciones = $usuario->getInscripcions();
+            foreach ($inscripciones as $inscripcion) {
+                $this->entityManager->remove($inscripcion);
+            }
+
+            $eventos = $usuario->getEventos();
+            foreach ($eventos as $evento) {
+                $this->entityManager->remove($evento);
+            }
+
+            $foros = $usuario->getForos();
+            foreach ($foros as $foro) {
+                $this->entityManager->remove($foro);
+            }
+
+            $this->entityManager->remove($usuario);
+            $this->entityManager->flush();
+
+            return $this->json(['message' => 'Usuario eliminado con éxito']);
+        } catch (\Exception $e) {
+            return $this->json(['message' => 'Error al eliminar el usuario: ' . $e->getMessage()], 500);
         }
-
-        $this->entityManager->remove($usuario);
-        $this->entityManager->flush();
-
-        return $this->json(['message' => 'Usuario eliminado con éxito']);
     }
 
     #[Route('/api/login', name: 'app_login', methods: ['POST'])]

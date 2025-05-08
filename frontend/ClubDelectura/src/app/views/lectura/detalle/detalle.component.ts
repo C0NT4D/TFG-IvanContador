@@ -93,7 +93,7 @@ export class DetalleComponent implements OnInit {
 
     this.lecturaService.updateLectura(this.lectura.id, lecturaCompletaParaActualizar).subscribe({
       next: (updatedLectura: Lectura) => {
-        this.lectura = updatedLectura;
+        this.lectura = updatedLectura; 
         console.log('Lectura actualizada:', updatedLectura);
       },
       error: (err: Error) => {
