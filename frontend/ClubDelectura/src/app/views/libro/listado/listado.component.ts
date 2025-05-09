@@ -36,6 +36,7 @@ export class ListadoComponent implements OnInit {
   showDeleteModal = false;
   libroToDelete: number | null = null;
   libroForm: FormGroup;
+  isDropdownOpen = false;
 
   constructor(
     private libroService: LibroService,
@@ -153,5 +154,13 @@ export class ListadoComponent implements OnInit {
 
   private checkAdminStatus() {
     this.isAdmin = this.authService.isAdmin();
+  }
+
+  toggleDropdown(): void {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
   }
 }

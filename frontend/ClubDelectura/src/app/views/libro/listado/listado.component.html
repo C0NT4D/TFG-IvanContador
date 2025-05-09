@@ -17,6 +17,36 @@
       }
     </div>
 
+      <!-- Filtro de género -->
+    <div class="mb-4 d-flex align-items-center gap-3">
+      <button type="button" 
+              class="btn btn-outline-primary" 
+              [class.active]="generoSeleccionado === ''"
+              (click)="filterByGenre('')">
+        <i class="bi bi-grid me-1"></i> Todos
+      </button>
+      
+      <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" 
+                type="button" 
+                (click)="toggleDropdown()">
+          <i class="bi bi-funnel me-1"></i>
+          {{ generoSeleccionado || 'Filtrar por género' }}
+        </button>
+        <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+          @for (genero of generos; track genero) {
+            <li>
+              <button class="dropdown-item" 
+                      [class.active]="generoSeleccionado === genero"
+                      (click)="filterByGenre(genero); closeDropdown()">
+                {{ genero }}
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
     @if (showAddForm) {
       <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -50,28 +80,28 @@
                 id="autor" 
                 formControlName="autor"
                 [class.is-invalid]="libroForm.get('autor')?.invalid && libroForm.get('autor')?.touched">
-              @if (libroForm.get('autor')?.invalid && libroForm.get('autor')?.touched) {
+              @if (libroForm.get('autor')?.errors?.['required'] && libroForm.get('autor')?.touched) {
                 <div class="invalid-feedback">
-                  @if (libroForm.get('autor')?.errors?.['required']) {
-                    <div>El autor es requerido</div>
-                  }
+                  El autor es requerido
                 </div>
               }
             </div>
 
             <div class="mb-3">
               <label for="genero" class="form-label">Género</label>
-              <input 
-                type="text" 
-                class="form-control" 
+              <select 
+                class="form-select" 
                 id="genero" 
                 formControlName="genero"
                 [class.is-invalid]="libroForm.get('genero')?.invalid && libroForm.get('genero')?.touched">
-              @if (libroForm.get('genero')?.invalid && libroForm.get('genero')?.touched) {
+                <option value="">Selecciona un género</option>
+                @for (genero of generos; track genero) {
+                  <option [value]="genero">{{ genero }}</option>
+                }
+              </select>
+              @if (libroForm.get('genero')?.errors?.['required'] && libroForm.get('genero')?.touched) {
                 <div class="invalid-feedback">
-                  @if (libroForm.get('genero')?.errors?.['required']) {
-                    <div>El género es requerido</div>
-                  }
+                  El género es requerido
                 </div>
               }
             </div>
@@ -84,14 +114,14 @@
                 id="anioPublicacion" 
                 formControlName="anioPublicacion"
                 [class.is-invalid]="libroForm.get('anioPublicacion')?.invalid && libroForm.get('anioPublicacion')?.touched">
-              @if (libroForm.get('anioPublicacion')?.invalid && libroForm.get('anioPublicacion')?.touched) {
+              @if (libroForm.get('anioPublicacion')?.errors?.['required'] && libroForm.get('anioPublicacion')?.touched) {
                 <div class="invalid-feedback">
-                  @if (libroForm.get('anioPublicacion')?.errors?.['required']) {
-                    <div>El año de publicación es requerido</div>
-                  }
-                  @if (libroForm.get('anioPublicacion')?.errors?.['pattern']) {
-                    <div>El año debe tener 4 dígitos</div>
-                  }
+                  El año de publicación es requerido
+                </div>
+              }
+              @if (libroForm.get('anioPublicacion')?.errors?.['pattern'] && libroForm.get('anioPublicacion')?.touched) {
+                <div class="invalid-feedback">
+                  El año debe tener 4 dígitos
                 </div>
               }
             </div>
@@ -101,14 +131,13 @@
               <textarea 
                 class="form-control" 
                 id="sinopsis" 
-                rows="3"
+                rows="3" 
                 formControlName="sinopsis"
-                [class.is-invalid]="libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched"></textarea>
-              @if (libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched) {
+                [class.is-invalid]="libroForm.get('sinopsis')?.invalid && libroForm.get('sinopsis')?.touched">
+              </textarea>
+              @if (libroForm.get('sinopsis')?.errors?.['required'] && libroForm.get('sinopsis')?.touched) {
                 <div class="invalid-feedback">
-                  @if (libroForm.get('sinopsis')?.errors?.['required']) {
-                    <div>La sinopsis es requerida</div>
-                  }
+                  La sinopsis es requerida
                 </div>
               }
             </div>
