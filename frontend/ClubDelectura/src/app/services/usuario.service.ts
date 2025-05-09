@@ -4,6 +4,12 @@ import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Usuario } from '@app/models/usuario.model';
 
+interface Estadisticas {
+  librosLeidos: number;
+  librosEnProgreso: number;
+  librosPendientes: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +26,12 @@ export class UsuarioService {
 
   getUsuario(id: number): Observable<Usuario | undefined> {
     return this.http.get<Usuario>(`${this.apiUrl}/usuario/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getEstadisticas(usuarioId: number): Observable<Estadisticas> {
+    return this.http.get<Estadisticas>(`${this.apiUrl}/lecturas/usuario/${usuarioId}/estadisticas`).pipe(
       catchError(this.handleError)
     );
   }
@@ -55,6 +67,10 @@ export class UsuarioService {
         return of(null);
       })
     );
+  }
+
+  changePassword(id: number, passwordData: { currentPassword: string, newPassword: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuario/${id}/change-password`, passwordData);
   }
 
   private handleError(error: HttpErrorResponse) {

@@ -1,11 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 import { Usuario } from '@app/models/usuario.model';
 import { HttpClient } from '@angular/common/http';
 import { AvatarService } from '@app/services/avatar.service';
+import { UsuarioService } from '@app/services/usuario.service';
+
+interface Estadisticas {
+  librosLeidos: number;
+  librosEnProgreso: number;
+  librosPendientes: number;
+}
 
 @Component({
   selector: 'app-perfil',
@@ -24,13 +31,14 @@ export class PerfilComponent implements OnInit {
   isEditing = false;
   inscripciones: any[] = []; 
   perfilForm: FormGroup;
+  passwordForm: FormGroup;
+  showPasswordForm = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isLoading = false;
   selectedAvatar: string = '';
   showAvatarSelector = false;
-
-  estadisticas = {
+  estadisticas: Estadisticas = {
     librosLeidos: 0,
     librosEnProgreso: 0,
     librosPendientes: 0
@@ -48,39 +56,58 @@ export class PerfilComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private http: HttpClient,
-    private avatarService: AvatarService
+    private avatarService: AvatarService,
+    private usuarioService: UsuarioService
   ) {
     this.perfilForm = this.fb.group({
-      nombre: [''],
-      email: [{ value: '', disabled: true }]
+      nombre: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
     });
+
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit(): void {
-    this.usuario = this.authService.getCurrentUser();
-    if (this.usuario) {
-      this.editedUsuario = { ...this.usuario };
-      this.perfilForm.patchValue({
-        nombre: this.usuario.nombre,
-        email: this.usuario.email
-      });
-      this.selectedAvatar = localStorage.getItem(`avatar_${this.usuario.id}`) || this.avatares[0];
-      this.avatarService.updateAvatar(this.selectedAvatar);
-      this.cargarEstadisticas();
+    const userId = this.authService.getCurrentUserId();
+    if (userId) {
+      this.loadUsuario(userId);
     }
   }
 
-  cargarEstadisticas() {
-    if (this.usuario) {
-      this.http.get(`/api/lecturas/usuario/${this.usuario.id}/estadisticas`).subscribe({
-        next: (data: any) => {
-          this.estadisticas = data;
-        },
-        error: (error) => {
-          console.error('Error al cargar estadísticas:', error);
+  loadUsuario(id: number): void {
+    this.usuarioService.getUsuario(id).subscribe({
+      next: (usuario) => {
+        if (usuario) {
+          this.usuario = usuario;
+          this.perfilForm.patchValue({
+            nombre: usuario.nombre,
+            email: usuario.email
+          });
+          this.selectedAvatar = localStorage.getItem(`avatar_${this.usuario.id}`) || this.avatares[0];
+          this.avatarService.updateAvatar(this.selectedAvatar);
+          this.cargarEstadisticas(id);
         }
-      });
-    }
+      },
+      error: (error: Error) => {
+        console.error('Error al cargar usuario:', error);
+        this.errorMessage = 'Error al cargar los datos del usuario';
+      }
+    });
+  }
+
+  cargarEstadisticas(usuarioId: number): void {
+    this.usuarioService.getEstadisticas(usuarioId).subscribe({
+      next: (estadisticas: Estadisticas) => {
+        this.estadisticas = estadisticas;
+      },
+      error: (error: Error) => {
+        console.error('Error al cargar estadísticas:', error);
+      }
+    });
   }
 
   toggleAvatarSelector() {
@@ -115,49 +142,57 @@ export class PerfilComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.errorMessage = null;
-    this.successMessage = null;
-    
-    if (this.perfilForm.valid && this.perfilForm.dirty && this.usuario) {
+    if (this.perfilForm.valid && this.usuario) {
       this.isLoading = true;
-      
-      const updatedName = this.perfilForm.get('nombre')?.value;
-      
-      const updateData = {
-        nombre: updatedName,
-        email: this.usuario.email,
-        rol: this.usuario.rol
-      };
-      
-      this.http.put(`/api/usuario/${this.usuario.id}`, updateData)
-        .subscribe({
-          next: (response: any) => {
-            this.isLoading = false;
-            
-            const updatedUser = {
-              ...this.usuario!,
-              nombre: updatedName
-            };
-            
-            this.authService.setCurrentUser(updatedUser);
-            this.usuario = updatedUser;
-            
-            this.successMessage = 'Perfil actualizado correctamente';
-            this.perfilForm.markAsPristine(); 
-          },
-          error: (error) => {
-            this.isLoading = false;
-            this.errorMessage = error.message || 'Error al actualizar el perfil';
-            console.error('Error al actualizar el perfil:', error);
-          }
-        });
-    } else {
-      if (!this.perfilForm.dirty) {
-        this.errorMessage = 'No hay cambios para guardar';
-      } else if (!this.perfilForm.valid) {
-        this.errorMessage = 'Por favor, completa correctamente todos los campos';
-      }
+      this.usuarioService.updateUsuario(this.usuario.id, this.perfilForm.value).subscribe({
+        next: (usuario) => {
+          this.usuario = usuario;
+          this.successMessage = 'Perfil actualizado correctamente';
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error al actualizar perfil:', error);
+          this.errorMessage = 'Error al actualizar el perfil';
+          this.isLoading = false;
+        }
+      });
     }
+  }
+
+  togglePasswordForm(): void {
+    this.showPasswordForm = !this.showPasswordForm;
+    if (!this.showPasswordForm) {
+      this.passwordForm.reset();
+    }
+  }
+
+  onChangePassword(): void {
+    if (this.passwordForm.valid && this.usuario) {
+      this.isLoading = true;
+      const { currentPassword, newPassword } = this.passwordForm.value;
+      
+      this.usuarioService.changePassword(this.usuario.id, {
+        currentPassword,
+        newPassword
+      }).subscribe({
+        next: () => {
+          this.successMessage = 'Contraseña actualizada correctamente';
+          this.showPasswordForm = false;
+          this.passwordForm.reset();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error al cambiar contraseña:', error);
+          this.errorMessage = 'Error al cambiar la contraseña';
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('newPassword')?.value === g.get('confirmPassword')?.value
+      ? null : { mismatch: true };
   }
 
   logout(): void {

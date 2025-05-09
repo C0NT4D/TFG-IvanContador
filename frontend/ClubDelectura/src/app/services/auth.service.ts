@@ -12,7 +12,7 @@ import { Lectura } from '@app/models/lectura.model';
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
+  public currentUser$ = this.currentUserSubject.asObservable();
   private apiUrl = '/api';
 
   constructor(private router: Router, private http: HttpClient) {
@@ -138,6 +138,10 @@ export class AuthService {
 
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
+  }
+
+  getCurrentUserId(): number | null {
+    return this.currentUserSubject.value?.id || null;
   }
 
   setCurrentUser(user: Usuario) {

@@ -199,4 +199,32 @@ final class UsuarioController extends AbstractController
             'fechaRegistro' => $usuario->getFechaRegistro()->format('Y-m-d H:i:s'),
         ]);
     }
+
+    #[Route('/api/usuario/{id}/change-password', name: 'change_password', methods: ['POST'])]
+    public function changePassword(int $id, Request $request): JsonResponse
+    {
+        try {
+            $data = json_decode($request->getContent(), true);
+            
+            if (!isset($data['currentPassword']) || !isset($data['newPassword'])) {
+                return $this->json(['message' => 'Se requieren la contraseña actual y la nueva contraseña'], 400);
+            }
+
+            $usuario = $this->usuarioRepository->find($id);
+            if (!$usuario) {
+                return $this->json(['message' => 'Usuario no encontrado'], 404);
+            }
+
+            if ($usuario->getContrasena() !== $data['currentPassword']) {
+                return $this->json(['message' => 'La contraseña actual es incorrecta'], 401);
+            }
+
+            $usuario->setContrasena($data['newPassword']);
+            $this->entityManager->flush();
+
+            return $this->json(['message' => 'Contraseña actualizada correctamente']);
+        } catch (\Exception $e) {
+            return $this->json(['message' => 'Error al cambiar la contraseña: ' . $e->getMessage()], 500);
+        }
+    }
 }
