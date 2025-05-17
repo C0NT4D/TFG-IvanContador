@@ -1,19 +1,135 @@
 <div class="container mt-4">
-  <h1 class="h3 mb-4">Mi Perfil</h1>
+  <h1 id="profileTitle" class="h3 mb-4">Mi Perfil</h1>
 
   @if (!usuario) {
-    <div class="d-flex justify-content-center my-5">
-      <div class="spinner-border text-primary" role="status">
+    <div class="d-flex justify-content-center my-5" role="status" aria-label="Cargando perfil">
+      <div class="spinner-border text-primary">
         <span class="visually-hidden">Cargando perfil...</span>
       </div>
     </div>
   } @else {
     <div class="row">
-      <!-- Columna Información y Actividad -->
-      <div class="col-lg-7 col-xl-8 mb-4 mb-lg-0">
+     
+      <div class="col-lg-5 col-xl-4 mb-4 mb-lg-0">
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h2 class="h5 mb-0">Editar Perfil</h2>
+          </div>
+          <div class="card-body">
+            @if (successMessage) {
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" 
+                        class="btn-close" 
+                        (click)="successMessage = null"
+                        aria-label="Cerrar mensaje de éxito"></button>
+              </div>
+            }
+            
+            @if (errorMessage) {
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ errorMessage }}
+                <button type="button" 
+                        class="btn-close" 
+                        (click)="errorMessage = null"
+                        aria-label="Cerrar mensaje de error"></button>
+              </div>
+            }
+            
+            <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" 
+                       id="nombre" 
+                       class="form-control" 
+                       formControlName="nombre"
+                       aria-required="true">
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" 
+                       id="email" 
+                       class="form-control" 
+                       formControlName="email" 
+                       readonly
+                       aria-readonly="true">
+                <small class="form-text text-muted">El email no se puede cambiar.</small>
+              </div>
+              <button type="submit" 
+                      class="btn btn-primary w-100 mb-3" 
+                      [disabled]="!perfilForm.dirty || isLoading"
+                      [attr.aria-label]="isLoading ? 'Guardando cambios...' : 'Guardar cambios'">
+                @if (isLoading) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                  Guardando...
+                } @else {
+                  <i class="bi bi-check-lg me-1" aria-hidden="true"></i> Guardar Cambios
+                }
+              </button>
+            </form>
+
+            <hr>
+            
+            <button class="btn btn-outline-primary w-100 mb-3" 
+                    (click)="togglePasswordForm()"
+                    aria-label="Cambiar contraseña">
+              <i class="bi bi-key me-1" aria-hidden="true"></i> Cambiar Contraseña
+            </button>
+
+            @if (showPasswordForm) {
+              <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="mt-3">
+                <div class="mb-3">
+                  <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                  <input type="password" 
+                         id="currentPassword" 
+                         class="form-control" 
+                         formControlName="currentPassword"
+                         aria-required="true">
+                </div>
+                <div class="mb-3">
+                  <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                  <input type="password" 
+                         id="newPassword" 
+                         class="form-control" 
+                         formControlName="newPassword"
+                         aria-required="true">
+                </div>
+                <div class="mb-3">
+                  <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
+                  <input type="password" 
+                         id="confirmPassword" 
+                         class="form-control" 
+                         formControlName="confirmPassword"
+                         aria-required="true">
+                </div>
+                <button type="submit" 
+                        class="btn btn-primary w-100" 
+                        [disabled]="!passwordForm.valid || isLoading">
+                  @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    Cambiando...
+                  } @else {
+                    <i class="bi bi-check-lg me-1" aria-hidden="true"></i> Cambiar Contraseña
+                  }
+                </button>
+              </form>
+            }
+            
+            <hr>
+            
+            <button class="btn btn-outline-danger w-100" 
+                    (click)="logout()"
+                    aria-label="Cerrar sesión">
+              <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7 col-xl-8">
         <div class="card shadow-sm mb-4">
           <div class="card-header bg-light">
-            Información del Perfil
+            <h3 class="h5 mb-0">Información del Perfil</h3>
           </div>
           <div class="card-body">
              <div class="d-flex align-items-center mb-4">
@@ -22,12 +138,15 @@
                        class="rounded-circle" 
                        style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid #dee2e6;"
                        (click)="toggleAvatarSelector()"
-                       alt="Avatar">
+                       [attr.alt]="'Avatar de ' + usuario.nombre"
+                       role="button"
+                       [attr.aria-label]="'Cambiar avatar de ' + usuario.nombre">
                   
-                  <!-- Selector de avatares -->
                   @if (showAvatarSelector) {
                     <div class="avatar-selector position-absolute top-100 start-0 mt-2"
-                         style="z-index: 1000;">
+                         style="z-index: 1000;"
+                         role="dialog"
+                         aria-label="Selector de avatar">
                       <div class="d-flex flex-wrap gap-2 justify-content-center">
                         @for (avatar of avatares; track avatar) {
                           <img [src]="avatar" 
@@ -35,145 +154,63 @@
                                style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
                                (click)="selectAvatar(avatar)"
                                [class.selected]="selectedAvatar === avatar"
-                               alt="Avatar option">
+                               [attr.alt]="'Opción de avatar ' + ($index + 1)"
+                               role="button"
+                               [attr.aria-label]="'Seleccionar avatar ' + ($index + 1)"
+                               [attr.aria-pressed]="selectedAvatar === avatar">
                         }
                       </div>
                     </div>
                   }
                 </div>
                 <div>
-                  <h2 class="h5 mb-0">{{ usuario.nombre }}</h2>
+                  <h4 class="h5 mb-0">{{ usuario.nombre }}</h4>
                   <p class="text-muted mb-1">{{ usuario.email }}</p>
                   <span class="badge rounded-pill" 
-                        [ngClass]="usuario.rol === 'admin' ? 'bg-danger' : 'bg-secondary'">
+                        [ngClass]="usuario.rol === 'admin' ? 'bg-danger' : 'bg-secondary'"
+                        [attr.aria-label]="'Rol: ' + usuario.rol">
                     {{ usuario.rol | titlecase }}
                   </span>
                 </div>
              </div>
-             <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
+             <p>
+               <span class="fw-bold">Miembro desde:</span> 
+               <span class="visually-hidden">Fecha de registro: </span>
+               {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}
+             </p>
              
              <div class="mt-4">
-               <h3 class="h5 mb-3">Mis Estadísticas</h3>
+               <h5 class="h5 mb-3">Mis Estadísticas</h5>
                <div class="row g-3">
                  <div class="col-6 col-md-4">
                    <div class="stat-card text-center p-3 rounded bg-light">
                      <div class="stat-icon mb-2">
-                       <i class="bi bi-book-fill text-primary"></i>
+                       <i class="bi bi-book-fill text-primary" aria-hidden="true"></i>
                      </div>
-                     <h4 class="stat-value mb-0">{{ estadisticas.librosLeidos }}</h4>
+                     <h6 class="stat-value mb-0">{{ estadisticas.librosLeidos }}</h6>
                      <p class="stat-label text-muted mb-0">Libros Leídos</p>
                    </div>
                  </div>
                  <div class="col-6 col-md-4">
                    <div class="stat-card text-center p-3 rounded bg-light">
                      <div class="stat-icon mb-2">
-                       <i class="bi bi-bookmark-fill text-warning"></i>
+                       <i class="bi bi-bookmark-fill text-warning" aria-hidden="true"></i>
                      </div>
-                     <h4 class="stat-value mb-0">{{ estadisticas.librosEnProgreso }}</h4>
+                     <h6 class="stat-value mb-0">{{ estadisticas.librosEnProgreso }}</h6>
                      <p class="stat-label text-muted mb-0">En Progreso</p>
                    </div>
                  </div>
                  <div class="col-6 col-md-4">
                    <div class="stat-card text-center p-3 rounded bg-light">
                      <div class="stat-icon mb-2">
-                       <i class="bi bi-bookmark-plus-fill text-info"></i>
+                       <i class="bi bi-bookmark-plus-fill text-info" aria-hidden="true"></i>
                      </div>
-                     <h4 class="stat-value mb-0">{{ estadisticas.librosPendientes }}</h4>
+                     <h6 class="stat-value mb-0">{{ estadisticas.librosPendientes }}</h6>
                      <p class="stat-label text-muted mb-0">Pendientes</p>
                    </div>
                  </div>
                </div>
              </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Columna Editar Perfil y Logout -->
-      <div class="col-lg-5 col-xl-4">
-        <div class="card shadow-sm">
-           <div class="card-header bg-light">
-            Editar Perfil
-          </div>
-          <div class="card-body">
-            @if (successMessage) {
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ successMessage }}
-                <button type="button" class="btn-close" (click)="successMessage = null"></button>
-              </div>
-            }
-            
-            @if (errorMessage) {
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ errorMessage }}
-                <button type="button" class="btn-close" (click)="errorMessage = null"></button>
-              </div>
-            }
-            
-            <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
-              <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" id="nombre" class="form-control" formControlName="nombre">
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" formControlName="email" readonly>
-                <small class="form-text text-muted">El email no se puede cambiar.</small>
-              </div>
-              <button type="submit" class="btn btn-primary w-100 mb-3" 
-                      [disabled]="!perfilForm.dirty || isLoading">
-                @if (isLoading) {
-                  <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                  Guardando...
-                } @else {
-                  <i class="bi bi-check-lg me-1"></i> Guardar Cambios
-                }
-              </button>
-            </form>
-
-            <hr>
-
-            <button class="btn btn-outline-primary w-100 mb-3" (click)="togglePasswordForm()">
-              <i class="bi bi-key me-1"></i>
-              {{ showPasswordForm ? 'Cancelar Cambio de Contraseña' : 'Cambiar Contraseña' }}
-            </button>
-
-            @if (showPasswordForm) {
-              <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="mt-3">
-                <div class="mb-3">
-                  <label for="currentPassword" class="form-label">Contraseña Actual</label>
-                  <input type="password" id="currentPassword" class="form-control" formControlName="currentPassword">
-                </div>
-                <div class="mb-3">
-                  <label for="newPassword" class="form-label">Nueva Contraseña</label>
-                  <input type="password" id="newPassword" class="form-control" formControlName="newPassword">
-                  <small class="form-text text-muted">La contraseña debe tener al menos 6 caracteres.</small>
-                </div>
-                <div class="mb-3">
-                  <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
-                  <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword">
-                </div>
-                @if (passwordForm.hasError('mismatch')) {
-                  <div class="alert alert-danger">
-                    Las contraseñas no coinciden
-                  </div>
-                }
-                <button type="submit" class="btn btn-success w-100" 
-                        [disabled]="!passwordForm.valid || isLoading">
-                  @if (isLoading) {
-                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                    Actualizando...
-                  } @else {
-                    <i class="bi bi-check-lg me-1"></i> Actualizar Contraseña
-                  }
-                </button>
-              </form>
-            }
-
-            <hr>
-            
-            <button class="btn btn-outline-danger w-100" (click)="logout()">
-              <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
-            </button>
           </div>
         </div>
       </div>

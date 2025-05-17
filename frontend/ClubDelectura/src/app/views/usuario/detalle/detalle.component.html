@@ -1,7 +1,7 @@
 <div class="container mt-4">
   @if (loading) {
-    <div class="d-flex justify-content-center my-5">
-      <div class="spinner-border text-primary" role="status">
+    <div class="d-flex justify-content-center my-5" role="status" aria-label="Cargando detalles del usuario">
+      <div class="spinner-border text-primary">
         <span class="visually-hidden">Cargando detalles del usuario...</span>
       </div>
     </div>
@@ -16,27 +16,35 @@
   @if (usuario && !loading && !error) {
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-light d-flex justify-content-between align-items-center">
-        <h1 class="h4 mb-0">Detalles del Usuario</h1>
-        <a routerLink="/usuario" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-arrow-left me-1"></i> Volver al Listado
+        <h1 id="userDetailsTitle" class="h4 mb-0">Detalles del Usuario</h1>
+        <a routerLink="/usuario" 
+           class="btn btn-sm btn-outline-secondary"
+           aria-label="Volver al listado de usuarios">
+          <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver al Listado
         </a>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="col-md-4 text-center mb-3 mb-md-0">
-            <!-- Placeholder for Avatar -->
-            <i class="bi bi-person-circle" style="font-size: 5rem; color: #6c757d;"></i>
+            <i class="bi bi-person-circle" 
+               style="font-size: 5rem; color: #6c757d;"
+               aria-hidden="true"></i>
             <h2 class="h5 mt-2 mb-1">{{ usuario.nombre }}</h2>
             <p class="text-muted mb-2">{{ usuario.email }}</p>
             <span class="badge rounded-pill" 
-                  [ngClass]="usuario.rol === 'admin' ? 'bg-danger' : 'bg-secondary'">
+                  [ngClass]="usuario.rol === 'admin' ? 'bg-danger' : 'bg-secondary'"
+                  [attr.aria-label]="'Rol: ' + usuario.rol">
               {{ usuario.rol | titlecase }}
             </span>
           </div>
           <div class="col-md-8 border-start-md ps-md-4">
             <h3 class="h6 text-muted mb-3">Información</h3>
             <p><span class="fw-bold">ID:</span> {{ usuario.id }}</p>
-            <p><span class="fw-bold">Miembro desde:</span> {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}</p>
+            <p>
+              <span class="fw-bold">Miembro desde:</span> 
+              <span class="visually-hidden">Fecha de registro: </span>
+              {{ usuario.fechaRegistro | date:'dd/MM/yyyy' }}
+            </p>
             
             <div class="mt-4">
               <h3 class="h6 text-muted mb-3">Estadísticas de Lectura</h3>
@@ -82,14 +90,20 @@
 </div>
 
 @if (showDeleteModal) {
-  <div class="modal-overlay">
+  <div class="modal-overlay" role="dialog" aria-labelledby="deleteModalTitle">
     <div class="modal-content">
-      <h2>Confirmar Eliminación</h2>
+      <h2 id="deleteModalTitle">Confirmar Eliminación</h2>
       <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
       <div class="modal-actions">
-        <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancelar</button>
-        <button class="btn btn-outline-danger" (click)="confirmDelete()">
-          <i class="bi bi-trash"></i> Eliminar
+        <button class="btn btn-secondary" 
+                (click)="closeDeleteModal()"
+                aria-label="Cancelar eliminación">
+          Cancelar
+        </button>
+        <button class="btn btn-outline-danger" 
+                (click)="confirmDelete()"
+                aria-label="Confirmar eliminación">
+          <i class="bi bi-trash" aria-hidden="true"></i> Eliminar
         </button>
       </div>
     </div>

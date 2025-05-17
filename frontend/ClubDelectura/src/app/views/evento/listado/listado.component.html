@@ -1,18 +1,20 @@
 <div class="container py-4">
   @if (loading) {
-    <app-loading></app-loading>
+    <app-loading role="status" aria-label="Cargando eventos"></app-loading>
   }
 
   @if (error) {
-    <app-error [message]="error"></app-error>
+    <app-error [message]="error" role="alert"></app-error>
   }
 
   @if (!loading && !error) {
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="mb-0">Eventos</h1>
+      <h1 id="eventsTitle" class="mb-0">Eventos</h1>
       @if (isAdmin) {
-        <button class="btn btn-primary" (click)="openAddEvent()">
-          <i class="bi bi-plus-circle me-1"></i> Crear Evento
+        <button class="btn btn-primary" 
+                (click)="openAddEvent()"
+                aria-label="Crear nuevo evento">
+          <i class="bi bi-plus-circle me-1" aria-hidden="true"></i> Crear Evento
         </button>
       }
     </div>
@@ -20,8 +22,10 @@
     @if (showAddForm) {
       <div class="card shadow-sm mb-4">
         <div class="card-body p-4">
-          <h3 class="card-title mb-4">Crear Nuevo Evento</h3>
-          <form [formGroup]="eventoForm" (ngSubmit)="onSubmit()">
+          <h2 class="card-title mb-4" id="createEventTitle">Crear Nuevo Evento</h2>
+          <form [formGroup]="eventoForm" 
+                (ngSubmit)="onSubmit()" 
+                aria-labelledby="createEventTitle">
             <div class="row g-3">
               <div class="col-md-6">
                 <label for="titulo" class="form-label">Título</label>
@@ -31,9 +35,12 @@
                   id="titulo" 
                   formControlName="titulo"
                   placeholder="Ingresa el título del evento"
-                  [class.is-invalid]="eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched">
+                  [class.is-invalid]="eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched"
+                  aria-required="true"
+                  aria-invalid="eventoForm.get('titulo')?.invalid"
+                  aria-describedby="tituloError">
                 @if (eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback" id="tituloError" role="alert">
                     @if (eventoForm.get('titulo')?.errors?.['required']) {
                       <div>El título es requerido</div>
                     }
@@ -52,9 +59,12 @@
                   id="ubicacion" 
                   formControlName="ubicacion"
                   placeholder="Ingresa la ubicación del evento"
-                  [class.is-invalid]="eventoForm.get('ubicacion')?.invalid && eventoForm.get('ubicacion')?.touched">
+                  [class.is-invalid]="eventoForm.get('ubicacion')?.invalid && eventoForm.get('ubicacion')?.touched"
+                  aria-required="true"
+                  aria-invalid="eventoForm.get('ubicacion')?.invalid"
+                  aria-describedby="ubicacionError">
                 @if (eventoForm.get('ubicacion')?.invalid && eventoForm.get('ubicacion')?.touched) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback" id="ubicacionError" role="alert">
                     @if (eventoForm.get('ubicacion')?.errors?.['required']) {
                       <div>La ubicación es requerida</div>
                     }
@@ -73,10 +83,13 @@
                   rows="4" 
                   formControlName="descripcion"
                   placeholder="Ingresa la descripción del evento"
-                  [class.is-invalid]="eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched">
+                  [class.is-invalid]="eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched"
+                  aria-required="true"
+                  aria-invalid="eventoForm.get('descripcion')?.invalid"
+                  aria-describedby="descripcionError">
                 </textarea>
                 @if (eventoForm.get('descripcion')?.invalid && eventoForm.get('descripcion')?.touched) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback" id="descripcionError" role="alert">
                     @if (eventoForm.get('descripcion')?.errors?.['required']) {
                       <div>La descripción es requerida</div>
                     }
@@ -94,9 +107,12 @@
                   class="form-control" 
                   id="fecha" 
                   formControlName="fecha"
-                  [class.is-invalid]="eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched">
+                  [class.is-invalid]="eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched"
+                  aria-required="true"
+                  aria-invalid="eventoForm.get('fecha')?.invalid"
+                  aria-describedby="fechaError">
                 @if (eventoForm.get('fecha')?.invalid && eventoForm.get('fecha')?.touched) {
-                  <div class="invalid-feedback">
+                  <div class="invalid-feedback" id="fechaError" role="alert">
                     @if (eventoForm.get('fecha')?.errors?.['required']) {
                       <div>La fecha es requerida</div>
                     }
@@ -106,11 +122,17 @@
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-4">
-              <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
-                <i class="bi bi-x-circle me-1"></i> Cancelar
+              <button type="button" 
+                      class="btn btn-outline-secondary" 
+                      (click)="onCancel()"
+                      aria-label="Cancelar creación de evento">
+                <i class="bi bi-x-circle me-1" aria-hidden="true"></i> Cancelar
               </button>
-              <button type="submit" class="btn btn-primary" [disabled]="eventoForm.invalid">
-                <i class="bi bi-check-circle me-1"></i> Crear Evento
+              <button type="submit" 
+                      class="btn btn-primary" 
+                      [disabled]="eventoForm.invalid"
+                      aria-label="Crear nuevo evento">
+                <i class="bi bi-check-circle me-1" aria-hidden="true"></i> Crear Evento
               </button>
             </div>
           </form>
@@ -118,9 +140,11 @@
       </div>
     }
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" 
+         role="list" 
+         aria-labelledby="eventsTitle">
       @for (event of eventos; track event.id) {
-        <div class="col">
+        <div class="col" role="listitem">
           <app-event-card 
             [event]="event"
             [showDelete]="isAdmin"

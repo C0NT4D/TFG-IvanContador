@@ -13,14 +13,16 @@
   </div>
   <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
     <a [routerLink]="['/libro', recomendacion.libro.id]" 
-       class="text-primary text-decoration-none fw-medium">
+       class="text-primary text-decoration-none fw-medium"
+       [attr.aria-label]="'Ver detalles del libro ' + recomendacion.libro.titulo">
       Ver libro
     </a>
     @if (showDelete) {
       <button 
         (click)="onDelete()" 
-        class="btn btn-sm btn-outline-danger">
-        <i class="bi bi-trash"></i> Eliminar
+        class="btn btn-sm btn-outline-danger"
+        [attr.aria-label]="'Eliminar recomendación de ' + recomendacion.libro.titulo">
+        <i class="bi bi-trash" aria-hidden="true"></i> Eliminar
       </button>
     }
   </div>

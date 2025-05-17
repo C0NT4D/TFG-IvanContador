@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h1 class="h3 mb-4">Página de Contacto</h1>
+  <h1 id="contactTitle" class="h3 mb-4">Página de Contacto</h1>
 
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -7,86 +7,105 @@
         <div class="card-body">
           <h2 class="card-title h5 mb-4 text-center">Envíanos un mensaje</h2>
 
-          <!-- Mostrar mensaje de éxito -->
           @if (success) {
-            <div class="alert alert-success" role="alert">
-              <i class="bi bi-check-circle-fill me-2"></i>
+            <div class="alert alert-success" role="alert" aria-live="polite">
+              <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>
               ¡Mensaje enviado con éxito! Gracias por contactarnos.
             </div>
           }
 
-          <!-- Mostrar mensaje de error general -->
           @if (error && !loading && !success) {
-            <div class="alert alert-danger" role="alert">
-               <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div class="alert alert-danger" role="alert" aria-live="assertive">
+               <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
               {{ error }}
             </div>
           }
 
-          <!-- Formulario -->
-          @if (!success) { <!-- Ocultar form si hay éxito -->
-            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
+          @if (!success) { 
+            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate aria-labelledby="contactTitle">
               
-              <!-- Campo Nombre -->
               <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" id="nombre" class="form-control" formControlName="nombre"
-                       [class.is-invalid]="contactForm.get('nombre')?.invalid && (contactForm.get('nombre')?.touched || contactForm.get('nombre')?.dirty)">
+                <input type="text" 
+                       id="nombre" 
+                       class="form-control" 
+                       formControlName="nombre"
+                       [class.is-invalid]="contactForm.get('nombre')?.invalid && (contactForm.get('nombre')?.touched || contactForm.get('nombre')?.dirty)"
+                       aria-required="true"
+                       aria-invalid="contactForm.get('nombre')?.invalid"
+                       aria-describedby="nombreError">
                 @if (contactForm.get('nombre')?.errors?.['required'] && (contactForm.get('nombre')?.touched || contactForm.get('nombre')?.dirty)) {
-                  <div class="invalid-feedback">El nombre es obligatorio.</div>
+                  <div class="invalid-feedback" id="nombreError" role="alert">El nombre es obligatorio.</div>
                 }
                 @if (contactForm.get('nombre')?.errors?.['minlength'] && (contactForm.get('nombre')?.touched || contactForm.get('nombre')?.dirty)) {
-                  <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>
+                  <div class="invalid-feedback" id="nombreError" role="alert">El nombre debe tener al menos 3 caracteres.</div>
                 }
               </div>
 
-              <!-- Campo Email -->
               <div class="mb-3">
                 <label for="email" class="form-label">Correo Electrónico</label>
-                <input type="email" id="email" class="form-control" formControlName="email"
-                       [class.is-invalid]="contactForm.get('email')?.invalid && (contactForm.get('email')?.touched || contactForm.get('email')?.dirty)">
+                <input type="email" 
+                       id="email" 
+                       class="form-control" 
+                       formControlName="email"
+                       [class.is-invalid]="contactForm.get('email')?.invalid && (contactForm.get('email')?.touched || contactForm.get('email')?.dirty)"
+                       aria-required="true"
+                       aria-invalid="contactForm.get('email')?.invalid"
+                       aria-describedby="emailError">
                 @if (contactForm.get('email')?.errors?.['required'] && (contactForm.get('email')?.touched || contactForm.get('email')?.dirty)) {
-                  <div class="invalid-feedback">El correo electrónico es obligatorio.</div>
+                  <div class="invalid-feedback" id="emailError" role="alert">El correo electrónico es obligatorio.</div>
                 }
                 @if (contactForm.get('email')?.errors?.['email'] && (contactForm.get('email')?.touched || contactForm.get('email')?.dirty)) {
-                  <div class="invalid-feedback">Introduce un correo electrónico válido.</div>
+                  <div class="invalid-feedback" id="emailError" role="alert">Introduce un correo electrónico válido.</div>
                 }
               </div>
 
-              <!-- Campo Asunto -->
               <div class="mb-3">
                 <label for="asunto" class="form-label">Asunto</label>
-                <input type="text" id="asunto" class="form-control" formControlName="asunto"
-                       [class.is-invalid]="contactForm.get('asunto')?.invalid && (contactForm.get('asunto')?.touched || contactForm.get('asunto')?.dirty)">
+                <input type="text" 
+                       id="asunto" 
+                       class="form-control" 
+                       formControlName="asunto"
+                       [class.is-invalid]="contactForm.get('asunto')?.invalid && (contactForm.get('asunto')?.touched || contactForm.get('asunto')?.dirty)"
+                       aria-required="true"
+                       aria-invalid="contactForm.get('asunto')?.invalid"
+                       aria-describedby="asuntoError">
                  @if (contactForm.get('asunto')?.errors?.['required'] && (contactForm.get('asunto')?.touched || contactForm.get('asunto')?.dirty)) {
-                  <div class="invalid-feedback">El asunto es obligatorio.</div>
+                  <div class="invalid-feedback" id="asuntoError" role="alert">El asunto es obligatorio.</div>
                 }
                  @if (contactForm.get('asunto')?.errors?.['minlength'] && (contactForm.get('asunto')?.touched || contactForm.get('asunto')?.dirty)) {
-                  <div class="invalid-feedback">El asunto debe tener al menos 5 caracteres.</div>
+                  <div class="invalid-feedback" id="asuntoError" role="alert">El asunto debe tener al menos 5 caracteres.</div>
                 }
               </div>
 
-              <!-- Campo Mensaje -->
               <div class="mb-3">
                 <label for="mensaje" class="form-label">Mensaje</label>
-                <textarea id="mensaje" class="form-control" rows="5" formControlName="mensaje"
-                          [class.is-invalid]="contactForm.get('mensaje')?.invalid && (contactForm.get('mensaje')?.touched || contactForm.get('mensaje')?.dirty)"></textarea>
+                <textarea id="mensaje" 
+                          class="form-control" 
+                          rows="5" 
+                          formControlName="mensaje"
+                          [class.is-invalid]="contactForm.get('mensaje')?.invalid && (contactForm.get('mensaje')?.touched || contactForm.get('mensaje')?.dirty)"
+                          aria-required="true"
+                          aria-invalid="contactForm.get('mensaje')?.invalid"
+                          aria-describedby="mensajeError"></textarea>
                  @if (contactForm.get('mensaje')?.errors?.['required'] && (contactForm.get('mensaje')?.touched || contactForm.get('mensaje')?.dirty)) {
-                  <div class="invalid-feedback">El mensaje es obligatorio.</div>
+                  <div class="invalid-feedback" id="mensajeError" role="alert">El mensaje es obligatorio.</div>
                 }
                  @if (contactForm.get('mensaje')?.errors?.['minlength'] && (contactForm.get('mensaje')?.touched || contactForm.get('mensaje')?.dirty)) {
-                  <div class="invalid-feedback">El mensaje debe tener al menos 10 caracteres.</div>
+                  <div class="invalid-feedback" id="mensajeError" role="alert">El mensaje debe tener al menos 10 caracteres.</div>
                 }
               </div>
 
-              <!-- Botón Enviar y Loading -->
               <div class="d-grid">
-                <button type="submit" class="btn btn-primary" [disabled]="loading">
+                <button type="submit" 
+                        class="btn btn-primary" 
+                        [disabled]="loading"
+                        [attr.aria-label]="loading ? 'Enviando mensaje...' : 'Enviar mensaje'">
                   @if (loading) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Enviando...
                   } @else {
-                    <i class="bi bi-send-fill me-1"></i>
+                    <i class="bi bi-send-fill me-1" aria-hidden="true"></i>
                     Enviar Mensaje
                   }
                 </button>

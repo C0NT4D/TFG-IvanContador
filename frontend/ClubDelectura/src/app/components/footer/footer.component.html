@@ -1,35 +1,33 @@
-<footer class="footer bg-dark text-white py-4 mt-auto">
+<footer class="footer bg-dark text-white py-4 mt-auto" role="contentinfo">
   <div class="container">
     <div class="row gy-3">
-      <!-- Columna 1: Nombre y Copyright -->
       <div class="col-md-4 text-center text-md-start">
-        <h5 class="text-white mb-2">Club de Lectura</h5>
+        <h2 class="h5 text-white mb-2">Club de Lectura</h2>
         <p class="small text-white-50 mb-0">© {{currentYear}} Todos los derechos reservados.</p>
       </div>
       
-      <!-- Columna 2: Enlaces Rápidos -->
       <div class="col-md-4 text-center">
-        <h5 class="text-white mb-2">Enlaces Rápidos</h5>
-        <ul class="list-unstyled small">
-          <li><a routerLink="/libro" class="link-light link-opacity-75-hover text-decoration-none">Libros</a></li>
-          <li><a routerLink="/foro" class="link-light link-opacity-75-hover text-decoration-none">Foros</a></li>
-          <li><a routerLink="/evento" class="link-light link-opacity-75-hover text-decoration-none">Eventos</a></li>
-          <li><a routerLink="/recomendacion" class="link-light link-opacity-75-hover text-decoration-none">Recomendaciones</a></li>
-           <!-- Añadir enlace a Contacto -->
-          <li><a routerLink="/contacto" class="link-light link-opacity-75-hover text-decoration-none">Contacto</a></li>
-        </ul>
+        <h2 class="h5 text-white mb-2">Enlaces Rápidos</h2>
+        <nav aria-label="Enlaces rápidos">
+          <ul class="list-unstyled small">
+            <li><a routerLink="/libro" class="link-light link-opacity-75-hover text-decoration-none" aria-label="Ir a la sección de libros">Libros</a></li>
+            <li><a routerLink="/foro" class="link-light link-opacity-75-hover text-decoration-none" aria-label="Ir a la sección de foros">Foros</a></li>
+            <li><a routerLink="/evento" class="link-light link-opacity-75-hover text-decoration-none" aria-label="Ir a la sección de eventos">Eventos</a></li>
+            <li><a routerLink="/recomendacion" class="link-light link-opacity-75-hover text-decoration-none" aria-label="Ir a la sección de recomendaciones">Recomendaciones</a></li>
+            <li><a routerLink="/contacto" class="link-light link-opacity-75-hover text-decoration-none" aria-label="Ir a la página de contacto">Contacto</a></li>
+          </ul>
+        </nav>
       </div>
       
-      <!-- Columna 3: Contacto Info -->
       <div class="col-md-4 text-center text-md-end">
-        <h5 class="text-white mb-2">Contacto</h5>
+        <h2 class="h5 text-white mb-2">Contacto</h2>
         <p class="small mb-1">
-          <a href="mailto:info@clublectura.com" class="link-light link-opacity-75-hover text-decoration-none">
-            <i class="bi bi-envelope-fill me-1"></i> info&#64;clublectura.com
+          <a href="mailto:info@clublectura.com" 
+             class="link-light link-opacity-75-hover text-decoration-none"
+             aria-label="Enviar correo electrónico a info@clublectura.com">
+            <i class="bi bi-envelope-fill me-1" aria-hidden="true"></i> info&#64;clublectura.com
           </a>
         </p>
-        <!-- Podrías añadir más info aquí, como redes sociales -->
-        <!-- 
         <div class="mt-2">
           <a href="#" class="link-light me-2"><i class="bi bi-twitter-x"></i></a>
           <a href="#" class="link-light me-2"><i class="bi bi-facebook"></i></a>

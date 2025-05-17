@@ -1,63 +1,87 @@
 <div class="container mt-4">
-  <!-- Encabezado y botón para añadir -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Recomendaciones</h1>
+    <h1 id="recommendationsTitle" class="h3">Recomendaciones</h1>
     @if (!showAddForm) {
-      <button class="btn btn-primary" (click)="openAddRecomendacion()">
-        <i class="bi bi-plus-circle me-1"></i> Añadir Recomendación
+      <button class="btn btn-primary" 
+              (click)="openAddRecomendacion()"
+              aria-label="Añadir nueva recomendación">
+        <i class="bi bi-plus-circle me-1" aria-hidden="true"></i> Añadir Recomendación
       </button>
     }
   </div>
 
-  <!-- Formulario para añadir recomendación -->
   @if (showAddForm) {
     <div class="card shadow-sm mb-4">
-      <div class="card-header">Añadir Nueva Recomendación</div>
+      <div class="card-header">
+        <h2 id="addRecommendationTitle">Añadir Nueva Recomendación</h2>
+      </div>
       <div class="card-body">
-        <form [formGroup]="recomendacionForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="recomendacionForm" 
+              (ngSubmit)="onSubmit()"
+              aria-labelledby="addRecommendationTitle">
           <div class="mb-3">
             <label for="libroId" class="form-label">Libro</label>
-            <select id="libroId" class="form-select" formControlName="libroId"
-                    [class.is-invalid]="recomendacionForm.get('libroId')?.invalid && recomendacionForm.get('libroId')?.touched">
+            <select id="libroId" 
+                    class="form-select" 
+                    formControlName="libroId"
+                    [class.is-invalid]="recomendacionForm.get('libroId')?.invalid && recomendacionForm.get('libroId')?.touched"
+                    aria-required="true"
+                    aria-invalid="recomendacionForm.get('libroId')?.invalid"
+                    aria-describedby="libroError">
               <option value="" disabled>Selecciona un libro</option>
               @for (libro of librosDisponibles; track libro.id) {
                   <option [value]="libro.id">{{libro.titulo}}</option>
               }
             </select>
             @if (recomendacionForm.get('libroId')?.errors?.['required'] && recomendacionForm.get('libroId')?.touched) {
-              <div class="invalid-feedback">
+              <div class="invalid-feedback" id="libroError" role="alert">
                 Debes seleccionar un libro.
               </div>
             }
           </div>
           <div class="mb-3">
             <label for="comentario" class="form-label">Comentario</label>
-            <textarea id="comentario" class="form-control" rows="3" formControlName="comentario"
-                      [class.is-invalid]="recomendacionForm.get('comentario')?.invalid && recomendacionForm.get('comentario')?.touched"></textarea>
+            <textarea id="comentario" 
+                      class="form-control" 
+                      rows="3" 
+                      formControlName="comentario"
+                      [class.is-invalid]="recomendacionForm.get('comentario')?.invalid && recomendacionForm.get('comentario')?.touched"
+                      aria-required="true"
+                      aria-invalid="recomendacionForm.get('comentario')?.invalid"
+                      aria-describedby="comentarioError"></textarea>
             @if (recomendacionForm.get('comentario')?.errors?.['required'] && recomendacionForm.get('comentario')?.touched) {
-              <div class="invalid-feedback">
+              <div class="invalid-feedback" id="comentarioError" role="alert">
                 El comentario es obligatorio.
               </div>
             }
             @if (recomendacionForm.get('comentario')?.errors?.['minlength'] && recomendacionForm.get('comentario')?.touched) {
-              <div class="invalid-feedback">
+              <div class="invalid-feedback" id="comentarioError" role="alert">
                 El comentario debe tener al menos {{ recomendacionForm.get('comentario')?.errors?.['minlength']?.requiredLength }} caracteres.
               </div>
             }
           </div>
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary me-2" (click)="onCancel()">Cancelar</button>
-            <button type="submit" class="btn btn-success" [disabled]="recomendacionForm.invalid">Guardar Recomendación</button>
+            <button type="button" 
+                    class="btn btn-secondary me-2" 
+                    (click)="onCancel()"
+                    aria-label="Cancelar creación de recomendación">
+              Cancelar
+            </button>
+            <button type="submit" 
+                    class="btn btn-success" 
+                    [disabled]="recomendacionForm.invalid"
+                    aria-label="Guardar recomendación">
+              Guardar Recomendación
+            </button>
           </div>
         </form>
       </div>
     </div>
   }
 
-  <!-- Indicadores de carga y error -->
   @if (loading) {
-    <div class="d-flex justify-content-center my-5">
-      <div class="spinner-border text-primary" role="status">
+    <div class="d-flex justify-content-center my-5" role="status" aria-label="Cargando recomendaciones">
+      <div class="spinner-border text-primary">
         <span class="visually-hidden">Cargando recomendaciones...</span>
       </div>
     </div>
@@ -68,34 +92,38 @@
     </div>
   }
 
-  <!-- Listado de recomendaciones -->
   @if (!loading && !error) {
     @if (recomendaciones.length > 0) {
-      <div class="row row-cols-1 row-cols-md-2 g-4">
+      <div class="row row-cols-1 row-cols-md-2 g-4" 
+           role="list" 
+           aria-labelledby="recommendationsTitle">
         @for (rec of recomendaciones; track rec.id) {
-          <div class="col">
+          <div class="col" role="listitem">
             <div class="card h-100 shadow-sm recommendation-card">
               <div class="card-body d-flex flex-column">
                 <blockquote class="blockquote mb-3 flex-grow-1">
                   <p class="mb-2 fs-6">"{{ rec.comentario }}"</p>
                 </blockquote>
                 <footer class="blockquote-footer">
-                  <!-- DEBUG Eliminado -->
                   <cite title="Usuario">{{ rec.usuario.nombre || 'Usuario desconocido' }}</cite>
                   recomendó 
                   <strong class="text-dark">{{ rec.libro.titulo || 'Libro desconocido' }}</strong>
                 </footer>
                 <small class="text-muted mt-2">{{ rec.fecha | date:'mediumDate' }}</small>
-                <!-- Botón "Ver Libro" movido al footer -->
               </div>
-              <!-- Footer siempre presente para "Ver Libro", condicionalmente para "Eliminar" -->
               <div class="card-footer bg-light text-end">
-                  <a [routerLink]="['/libro', rec.libro.id]" class="btn btn-sm btn-outline-primary me-2">Ver Libro</a>
-                  @if (isAdmin || rec.usuario.id === currentUserId) {
-                    <button class="btn btn-sm btn-outline-danger" (click)="onDeleteRecomendacion(rec.id)">
-                      <i class="bi bi-trash"></i> Eliminar
-                    </button>
-                  }
+                <a [routerLink]="['/libro', rec.libro.id]" 
+                   class="btn btn-sm btn-outline-primary me-2"
+                   [attr.aria-label]="'Ver detalles del libro ' + rec.libro.titulo">
+                  Ver Libro
+                </a>
+                @if (isAdmin || rec.usuario.id === currentUserId) {
+                  <button class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteRecomendacion(rec.id)"
+                          [attr.aria-label]="'Eliminar recomendación de ' + rec.libro.titulo">
+                    <i class="bi bi-trash" aria-hidden="true"></i> Eliminar
+                  </button>
+                }
               </div>
             </div>
           </div>

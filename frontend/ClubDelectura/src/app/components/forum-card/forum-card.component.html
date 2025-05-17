@@ -1,14 +1,18 @@
 <div class="card h-100">
   <div class="card-body">
-    <h5 class="card-title">{{ forum.titulo }}</h5>
+    <h3 class="card-title h5">{{ forum.titulo }}</h3>
     <p class="card-text text-muted">{{ forum.descripcion }}</p>
     <div class="d-flex justify-content-between align-items-center">
-      <a [routerLink]="['/foro', forum.id]" class="btn btn-primary">
+      <a [routerLink]="['/foro', forum.id]" 
+         class="btn btn-primary"
+         [attr.aria-label]="'Ver discusiones de ' + forum.titulo">
         Ver Discusiones
       </a>
       @if (showDelete) {
-        <button class="btn btn-sm btn-outline-danger" (click)="onDelete()">
-          <i class="bi bi-trash"></i> Eliminar
+        <button class="btn btn-sm btn-outline-danger" 
+                (click)="onDelete()"
+                [attr.aria-label]="'Eliminar foro ' + forum.titulo">
+          <i class="bi bi-trash" aria-hidden="true"></i> Eliminar
         </button>
       }
     </div>

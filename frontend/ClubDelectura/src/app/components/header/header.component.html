@@ -1,62 +1,122 @@
-<header class="bg-primary bg-opacity-90 text-white">
-  <nav class="navbar navbar-expand-lg navbar-dark">
+<header class="bg-primary bg-opacity-90 text-white" role="banner">
+  <nav class="navbar navbar-expand-lg navbar-dark" role="navigation" aria-label="Navegación principal">
     <div class="container">
-      <a class="navbar-brand fw-bold d-flex align-items-center" routerLink="/">
+      <a class="navbar-brand fw-bold d-flex align-items-center" routerLink="/" aria-label="Ir a la página principal">
         <img src="/assets/images/logo.png" alt="Club de Lectura Logo" class="logo-circle me-2">
         Club de Lectura
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
+      <button class="navbar-toggler" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Alternar navegación">
+        <span class="navbar-toggler-icon" aria-hidden="true"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/libro" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Libros</a>
+        <ul class="navbar-nav me-auto" role="menubar">
+          <li class="nav-item" role="none">
+            <a class="nav-link" 
+               routerLink="/libro" 
+               routerLinkActive="active" 
+               [routerLinkActiveOptions]="{exact: false}"
+               role="menuitem"
+               aria-current="page">Libros</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/foro" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Foros</a>
+          <li class="nav-item" role="none">
+            <a class="nav-link" 
+               routerLink="/foro" 
+               routerLinkActive="active" 
+               [routerLinkActiveOptions]="{exact: false}"
+               role="menuitem"
+               aria-current="page">Foros</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/evento" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Eventos</a>
+          <li class="nav-item" role="none">
+            <a class="nav-link" 
+               routerLink="/evento" 
+               routerLinkActive="active" 
+               [routerLinkActiveOptions]="{exact: false}"
+               role="menuitem"
+               aria-current="page">Eventos</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/recomendacion" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Recomendaciones</a>
+          <li class="nav-item" role="none">
+            <a class="nav-link" 
+               routerLink="/recomendacion" 
+               routerLinkActive="active" 
+               [routerLinkActiveOptions]="{exact: false}"
+               role="menuitem"
+               aria-current="page">Recomendaciones</a>
           </li>
           @if (isLoggedIn) {
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/lectura" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Mis Lecturas</a>
+            <li class="nav-item" role="none">
+              <a class="nav-link" 
+                 routerLink="/lectura" 
+                 routerLinkActive="active" 
+                 [routerLinkActiveOptions]="{exact: false}"
+                 role="menuitem"
+                 aria-current="page">Mis Lecturas</a>
             </li>
           }
           @if (isAdmin) {
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/usuario" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Usuarios</a>
+            <li class="nav-item" role="none">
+              <a class="nav-link" 
+                 routerLink="/usuario" 
+                 routerLinkActive="active" 
+                 [routerLinkActiveOptions]="{exact: false}"
+                 role="menuitem"
+                 aria-current="page">Usuarios</a>
             </li>
           }
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/contacto" routerLinkActive="active">Contacto</a>
+          <li class="nav-item" role="none">
+            <a class="nav-link" 
+               routerLink="/contacto" 
+               routerLinkActive="active"
+               role="menuitem"
+               aria-current="page">Contacto</a>
           </li>
         </ul>
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" role="menubar">
           @if (isLoggedIn) {
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+            <li class="nav-item" role="none">
+              <a class="nav-link" 
+                 routerLink="/perfil" 
+                 routerLinkActive="active" 
+                 [routerLinkActiveOptions]="{exact: false}"
+                 role="menuitem"
+                 aria-current="page">
                 <img [src]="selectedAvatar" 
                      class="rounded-circle" 
                      style="width: 32px; height: 32px; object-fit: cover; border: 2px solid white;"
-                     alt="Avatar">
+                     alt="Avatar del usuario">
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" (click)="logout()" style="cursor: pointer;" title="Cerrar Sesión">
-                <i class="bi bi-box-arrow-right fs-5"></i>
+            <li class="nav-item" role="none">
+              <a class="nav-link" 
+                 (click)="logout()" 
+                 style="cursor: pointer;" 
+                 role="menuitem"
+                 aria-label="Cerrar sesión">
+                <i class="bi bi-box-arrow-right fs-5" aria-hidden="true"></i>
+                <span class="visually-hidden">Cerrar sesión</span>
               </a>
             </li>
           } @else {
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Iniciar Sesión</a>
+            <li class="nav-item" role="none">
+              <a class="nav-link" 
+                 routerLink="/login" 
+                 routerLinkActive="active" 
+                 [routerLinkActiveOptions]="{exact: false}"
+                 role="menuitem"
+                 aria-current="page">Iniciar Sesión</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/registro" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">Registro</a>
+            <li class="nav-item" role="none">
+              <a class="nav-link" 
+                 routerLink="/registro" 
+                 routerLinkActive="active" 
+                 [routerLinkActiveOptions]="{exact: false}"
+                 role="menuitem"
+                 aria-current="page">Registro</a>
             </li>
           }
         </ul>

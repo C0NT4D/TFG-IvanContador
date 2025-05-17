@@ -6,15 +6,20 @@
     <h2 class="card-title h5 mb-2">{{lectura.libro.titulo}}</h2>
     <p class="text-secondary mb-4">{{lectura.libro.autor}}</p>
     <div class="d-flex justify-content-between align-items-center">
-      <span class="badge" [ngClass]="{
-        'bg-warning-subtle text-warning-emphasis': lectura.estadoLectura === 'EN_PROGRESS',
-        'bg-success-subtle text-success-emphasis': lectura.estadoLectura === 'COMPLETED',
-        'bg-danger-subtle text-danger-emphasis': lectura.estadoLectura === 'ABANDONED'
-      }">
+      <span class="badge" 
+            [ngClass]="{
+              'bg-warning-subtle text-warning-emphasis': lectura.estadoLectura === 'EN_PROGRESS',
+              'bg-success-subtle text-success-emphasis': lectura.estadoLectura === 'COMPLETED',
+              'bg-danger-subtle text-danger-emphasis': lectura.estadoLectura === 'ABANDONED'
+            }"
+            [attr.aria-label]="'Estado: ' + (lectura.estadoLectura === 'EN_PROGRESS' ? 'En progreso' :
+               lectura.estadoLectura === 'COMPLETED' ? 'Completado' : 'Abandonado')">
         {{lectura.estadoLectura === 'EN_PROGRESS' ? 'En progreso' :
           lectura.estadoLectura === 'COMPLETED' ? 'Completado' : 'Abandonado'}}
       </span>
-      <a [routerLink]="['/lectura', lectura.id]" class="btn btn-link text-primary text-decoration-none p-0">
+      <a [routerLink]="['/lectura', lectura.id]" 
+         class="btn btn-link text-primary text-decoration-none p-0"
+         [attr.aria-label]="'Ver detalles de la lectura de ' + lectura.libro.titulo">
         Ver detalles
       </a>
     </div>

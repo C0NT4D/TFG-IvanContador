@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LibroService } from '../../../services/libro.service';
@@ -37,6 +37,7 @@ export class ListadoComponent implements OnInit {
   libroToDelete: number | null = null;
   libroForm: FormGroup;
   isDropdownOpen = false;
+  currentFocusIndex = -1;
 
   constructor(
     private libroService: LibroService,
@@ -50,6 +51,69 @@ export class ListadoComponent implements OnInit {
       anioPublicacion: ['', [Validators.required, Validators.pattern('^[0-9]{4}$')]],
       sinopsis: ['', Validators.required]
     });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const dropdown = document.querySelector('.dropdown');
+    const dropdownButton = document.querySelector('.dropdown-toggle');
+    
+    if (dropdown && !dropdown.contains(event.target as Node) && 
+        dropdownButton && !dropdownButton.contains(event.target as Node)) {
+      this.closeDropdown();
+    }
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (!this.isDropdownOpen) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.generos.length - 1);
+        this.focusDropdownItem();
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0);
+        this.focusDropdownItem();
+        break;
+      case 'Enter':
+      case ' ':
+        if (this.currentFocusIndex >= 0) {
+          event.preventDefault();
+          this.filterByGenre(this.generos[this.currentFocusIndex]);
+          this.closeDropdown();
+        }
+        break;
+      case 'Escape':
+        this.closeDropdown();
+        break;
+    }
+  }
+
+  private focusDropdownItem(): void {
+    const items = document.querySelectorAll('.dropdown-item');
+    if (items[this.currentFocusIndex]) {
+      (items[this.currentFocusIndex] as HTMLElement).focus();
+    }
+  }
+
+  toggleDropdown(): void {
+    this.isDropdownOpen = !this.isDropdownOpen;
+    if (this.isDropdownOpen) {
+      this.currentFocusIndex = -1;
+      setTimeout(() => {
+        const firstItem = document.querySelector('.dropdown-item') as HTMLElement;
+        if (firstItem) firstItem.focus();
+      });
+    }
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+    this.currentFocusIndex = -1;
   }
 
   ngOnInit(): void {
@@ -154,13 +218,5 @@ export class ListadoComponent implements OnInit {
 
   private checkAdminStatus() {
     this.isAdmin = this.authService.isAdmin();
-  }
-
-  toggleDropdown(): void {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  closeDropdown(): void {
-    this.isDropdownOpen = false;
   }
 }
